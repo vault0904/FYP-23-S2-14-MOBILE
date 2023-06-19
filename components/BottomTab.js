@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from './teacher_module/HomeScreen';
 import PickupScreen from './teacher_module/PickupScreen';
-import ProfileScreen from './teacher_module/ProfileScreen';
+import ProfileScreen from './teacher_module/profile';
 import ChatScreen from './teacher_module/ChatScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -15,7 +15,8 @@ export default function BottomTab() {
         initialRouteName="Home" 
         screenOptions={{
             headerStyle: {
-                backgroundColor: '#56844B',
+                backgroundColor: '#56844B'
+
             },
             headerTintColor: '#FFFFFF',
             headerTitleStyle: {
@@ -35,7 +36,7 @@ export default function BottomTab() {
             }} 
         />
         <Tab.Screen 
-            name="Pickup" 
+            name="PICKUP" 
             component={PickupScreen} 
             options={{
                 tabBarLabel: 'Pickup',
@@ -55,7 +56,7 @@ export default function BottomTab() {
             }} 
         />
         <Tab.Screen 
-            name="Profile" 
+            name="PROFILE" 
             component={ProfileScreen} 
             options={{
                 tabBarLabel: 'Profile',

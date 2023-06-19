@@ -8,7 +8,13 @@ const Login = ({navigation}) => {
 
     return (
         <View style={StyleSheet.container}>
-            <Text style={styles.title}>Login Page</Text>
+            <View style={styles.titleContainer}>
+                <Text style={styles.title}>MARSU-</Text>
+                <Text style={styles.title}>PIUM-</Text>
+            </View>
+            <View>
+                <Text style={styles.subTitleContainer}>Welcome back.</Text>
+            </View>
             <View style={styles.inputView}>
                 <TextInput 
                     style={styles.inputText} 
@@ -45,21 +51,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title:{
-        marginTop: 50,
         fontWeight: 'bold',
-        fontSize: 50,
+        fontSize: 76,
         color: '#56844B',
-        marginBottom: 100,
         width: '80%',
-        padding:20
+    },
+    titleContainer: {
+        marginTop: 100,
+        marginLeft: 35,
+    },
+    subTitleContainer: {
+        color: '#56844B',
+        marginLeft: 40,
+        fontWeight: 'bold'
     },
     inputView:{
-        marginVertical: 16,
+        marginVertical: 145,
         borderRadius:25,
         height:50,
-        marginBottom:50,
+        marginBottom: 10,
         justifyContent:"center",
-        padding:20
+        padding:20,
+        marginHorizontal: 25,
     },
     inputText:{
         height:50,
