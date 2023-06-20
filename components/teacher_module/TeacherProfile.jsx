@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     borderRadius:10,
     height:50,
     alignItems:'center',
-    marginTop:150,
+    marginTop:130,
     marginBottom:50,
 },
 btnText:{
