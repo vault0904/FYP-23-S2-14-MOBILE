@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, SafeAreaView, TextInput } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Logo from '../common/avatars/child.jpg'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ChildProfile = ({navigation}) => {
+const TeacherProfile = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -15,8 +16,8 @@ const ChildProfile = ({navigation}) => {
                 size={80}
               />
               <View style={{marginLeft: 20, marginTop: 10}}>
-                  <Title style={styles.title}>BELL ZETTIFAR</Title>
-                  <Caption style={styles.caption}>Student</Caption>
+                  <Title style={styles.title}>Loden Greatstorm</Title>
+                  <Caption style={styles.caption}>Teacher</Caption>
               </View>
             </View>
         </Card>
@@ -26,24 +27,30 @@ const ChildProfile = ({navigation}) => {
             <Text style={styles.profileInfo}>
                 Profile Information
             </Text>
+            <View>
+            <TouchableOpacity key='edit'
+            onPress={() => navigation.navigate('Login')}>
+              <Icon name="pencil" size={20} color="#56844B"/>
+            </TouchableOpacity> 
+            </View>
         </View>
 
         <View>
           <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Teacher name</Text>
+            <Text style={styles.profileTag}>Username</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'Loden Greatstorm' 
+              value = 'gvps_greatstorm' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
 
           <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Teacher username</Text>
+            <Text style={styles.profileTag}>Email</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'gvps_greatstorm' 
+              value = 'l_greatstorm@moe.edu.sg' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -60,21 +67,28 @@ const ChildProfile = ({navigation}) => {
           </View>
 
           <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Dismissal gate</Text>
+            <Text style={styles.profileTag}>School</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'West gate' 
+              value = 'Starfleet Primary School' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={styles.loginBtn}
+          >
+            <Text style={styles.btnText}>Logout</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
 }
 
-export default ChildProfile;
+export default TeacherProfile;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
@@ -95,10 +109,17 @@ const styles = StyleSheet.create({
     color: '#56844B',
     fontSize: 18,
     fontWeight: 'bold',
+    flex: 2,
+    justifyContent: 'flex-start',
+  },
+  editProfileBtn:{
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   information :{
     marginTop: 35,
     marginBottom: 10,
+    flexDirection: 'row'
   },
   profileContainer: {
     marginTop: 10,
@@ -110,17 +131,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     marginTop: 22,
-    fontSize: 15,
-    marginRight: 15
+    fontSize: 15
   },
   profileText:{
     height:50,
     borderBottomWidth: 1,
     borderBottomColor: '#56844B',
-    flex: 2.5,
+    flex: 2,
     justifyContent: 'flex-end',
     color: '#56844B',
-    marginTop: 8,
+    marginTop: 5
   },
   userInfoSection: {
     paddingHorizontal: 30,
@@ -150,11 +170,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 100,
   },
-  btnText:{
-      padding: 15,
-      color: '#FFFFFF',
-      fontSize: 18,
-      textAlign: 'center',
-      fontWeight: 'bold'
-  }
+  loginBtn:{
+    backgroundColor: '#FFA500',
+    marginVertical: 14,
+    borderRadius:10,
+    height:50,
+    alignItems:'center',
+    marginTop:150,
+    marginBottom:50,
+},
+btnText:{
+    padding: 15,
+    color: '#FFFFFF',
+    fontSize: 18,
+    textAlign: 'center',
+    fontWeight: 'bold'
+}
 });

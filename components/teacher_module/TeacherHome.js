@@ -22,7 +22,7 @@ const Item = ({title}) => (
     </View>
 );
 
-const Home = () => (
+const TeacherHome = () => (
     <View style={styles.container}>
         <View style={styles.row}>
           <Text style={styles.header}>Announcements</Text>
@@ -42,7 +42,7 @@ const Home = () => (
     </View>
 );
 
-export default Home;
+export default TeacherHome;
 
 const styles = StyleSheet.create({
     container: {

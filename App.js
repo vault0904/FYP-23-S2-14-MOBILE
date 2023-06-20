@@ -2,8 +2,17 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/Login';
-import BottomTabScreen from './components/BottomTab';
+import TeacherNav from './components/teacher_module/TeacherNav';
+import ParentNav from './components/parent_module/ParentNav';
 
+
+/*
+      <Stack.Screen 
+        name = "TeacherNav" 
+        component={TeacherNav} 
+        options={{ headerShown: false }}
+      />
+      */
 
 const Stack = createStackNavigator();
 
@@ -20,8 +29,8 @@ export const AppNavigator = () => (
         }} 
       />
       <Stack.Screen 
-        name = "BottomTab" 
-        component={BottomTabScreen} 
+        name = "TeacherNav" 
+        component={TeacherNav} 
         options={{ headerShown: false }}
       />
   </Stack.Navigator>

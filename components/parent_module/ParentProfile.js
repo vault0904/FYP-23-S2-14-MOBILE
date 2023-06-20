@@ -4,7 +4,7 @@ import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Logo from '../common/avatars/child.jpg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Profile = ({navigation}) => {
+const ParentProfile = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -16,8 +16,8 @@ const Profile = ({navigation}) => {
                 size={80}
               />
               <View style={{marginLeft: 20, marginTop: 10}}>
-                  <Title style={styles.title}>Loden Greatstorm</Title>
-                  <Caption style={styles.caption}>Teacher</Caption>
+                  <Title style={styles.title}>Mell Zettifar</Title>
+                  <Caption style={styles.caption}>Parent</Caption>
               </View>
             </View>
         </Card>
@@ -40,7 +40,7 @@ const Profile = ({navigation}) => {
             <Text style={styles.profileTag}>Username</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'gvps_greatstorm' 
+              value = 'gvps_kriss' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -50,17 +50,7 @@ const Profile = ({navigation}) => {
             <Text style={styles.profileTag}>Email</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'l_greatstorm@moe.edu.sg' 
-              placeholderTextColor='#56844B'
-              editable = {false}
-            />
-          </View>
-
-          <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Form class</Text>
-            <TextInput 
-              style={styles.profileText} 
-              value = '1 Empathy' 
+              value = 'avar_kriss@gmail.com' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -88,15 +78,12 @@ const Profile = ({navigation}) => {
   );
 }
 
-export default Profile;
+export default ParentProfile;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   cardDisplay: {
     paddingBottom: 25,
@@ -176,7 +163,7 @@ const styles = StyleSheet.create({
     borderRadius:10,
     height:50,
     alignItems:'center',
-    marginTop:150,
+    marginTop:210,
     marginBottom:50,
 },
 btnText:{

@@ -31,7 +31,7 @@ const Login = ({navigation}) => {
                 />
             </View>
             <TouchableOpacity
-                onPress={() => navigation.navigate('BottomTab')}
+                onPress={() => navigation.navigate('TeacherNav')}
                 style={styles.loginBtn}
             >
                 <Text style={styles.btnText}>LOGIN</Text>
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     },
     title:{
         fontWeight: 'bold',
-        fontSize: 76,
+        fontSize: 70,
         color: '#56844B',
         width: '80%',
     },

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './teacher_module/HomeScreen';
-import PickupScreen from './teacher_module/PickupScreen';
-import ProfileScreen from './teacher_module/profile';
-import ChatScreen from './teacher_module/ChatScreen';
+import TeacherHome from './TeacherHome';
+import TeacherPickup from './TeacherPickup';
+import TeacherChat from './TeacherChat';
+import TeacherProfile from './TeacherProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Tab = createBottomTabNavigator();
 
 
-export default function BottomTab() {
+export default function TeacherNav() {
     return (
       <Tab.Navigator 
         initialRouteName="Home" 
@@ -27,7 +27,7 @@ export default function BottomTab() {
       >
         <Tab.Screen 
             name="Hello, Teacher GREATSTORM" 
-            component={HomeScreen}
+            component={TeacherHome}
             options={{
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
@@ -36,8 +36,8 @@ export default function BottomTab() {
             }} 
         />
         <Tab.Screen 
-            name="PICKUP" 
-            component={PickupScreen} 
+            name="Pickup" 
+            component={TeacherPickup} 
             options={{
                 tabBarLabel: 'Pickup',
                 tabBarIcon: ({ color, size }) => (
@@ -47,7 +47,7 @@ export default function BottomTab() {
         />
         <Tab.Screen 
             name="Chat" 
-            component={ChatScreen} 
+            component={TeacherChat} 
             options={{
                 tabBarLabel: 'Chat',
                 tabBarIcon: ({ color, size }) => (
@@ -56,8 +56,8 @@ export default function BottomTab() {
             }} 
         />
         <Tab.Screen 
-            name="PROFILE" 
-            component={ProfileScreen} 
+            name="Profile" 
+            component={TeacherProfile} 
             options={{
                 tabBarLabel: 'Profile',
                 tabBarIcon: ({ color, size }) => (

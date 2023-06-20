@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-const PickupScreen = () => (
+const TeacherPickup = () => (
     <View style={{ flex: 1, justifyContent: 'center' }}>
         <Text>Pick up Page</Text>
     </View>
 );
 
-export default PickupScreen;
+export default TeacherPickup;

@@ -1,7 +1,7 @@
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 
-const PickupSelection = () => (
+const PickupSelection = ({navigation}) => (
     <View style={styles.container}>
       <View style={styles.headerContainer}> 
         <Text style={styles.header}>Pickup time-slot selection</Text>
