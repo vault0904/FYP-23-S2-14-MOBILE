@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     },
     title:{
         fontWeight: 'bold',
-        fontSize: 76,
+        fontSize: 70,
         color: '#56844B',
         width: '80%',
     },
