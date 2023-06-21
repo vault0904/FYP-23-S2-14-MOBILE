@@ -31,8 +31,8 @@ export const AppNavigator = () => (
         }} 
       />
       <Stack.Screen 
-        name = "DriverNav" 
-        component={DriverNav} 
+        name = "TeacherNav" 
+        component={TeacherNav} 
         options={{ headerShown: false }}
       />
   </Stack.Navigator>

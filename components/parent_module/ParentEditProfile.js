@@ -1,65 +1,83 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ScrollView, View,  Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
-
-
-const ParentEditProfile = ({navigation}) => {
-    const profileDetails = {
-        name: 'Mell Zettifar',
-        username: 'gvps_zettifar',
-        email: 'mZettifar@gmail.com',
-        contact: '98765432',
-        subscription: 'Self Pick Up',
-        address: '11 Serangoon North Avenue 5 06-01',
+export default class ParentEditProfile extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: "Mell Zettifar",
+            username: "gvps_zettifar",
+            email: "mZettifar@gmail.com",
+            contact: "98765432",
+            subscription: "Self Pick Up",
+            address: "11 Serangoon North Avenue 5 06-01",
+            password: "",  //to store password
+            passwordErrorMessage: "",  //password error msg
+            confirmPassword: "",      //to store password
+            confirmPasswordErrorMessage: "",    //confirm password error msg
+            loading: false,    //manage loader
+        }
     }
+    /* Authenticate User */
+    formValidation = async () => {
+        const {navigate} = this.props.navigation;
+        this.setState({ loading: true })
+        let errorFlag = false
 
-    const [name, setName] = useState(profileDetails.name);
-    const [username, setUsername] = useState(profileDetails.username);
-    const [email, setEmail] = useState(profileDetails.email);
-    const [contact, setContact] = useState(profileDetails.contact);
-    const [subscription, setSubscription] = useState(profileDetails.subscription);
-    const [address, setAddress] = useState(profileDetails.address);
-    const [newpassword, setNewPassword] = useState('');
-    const [confirmpass, setConfirmPass] = useState('');
+        // input validation
+        if (this.state.password !==  this.state.confirmPassword ) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
+        }
 
-    return (
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-            <ScrollView style={styles.form}>
-                {/*Profile Information*/}
-                <View style={styles.profileView}>
-                    <Text style={styles.title}>Profile Information</Text>
-                    <Text style={styles.label}>Name</Text>
-                    <TextInput style={styles.uneditInput} value={name} onChangeText={setName} editable={false}/>
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput style={styles.uneditInput} value={email} onChangeText={setEmail} editable={false}/>
-                    <Text style={styles.label}>Contact</Text>
-                    <TextInput style={styles.input} value={contact} onChangeText={setContact}/>
-                    <Text style={styles.label}>Address</Text>
-                    <TextInput style={styles.input} value={address} onChangeText={setAddress}/>
-                </View>
-                {/*Account Information*/}
-                <View>
-                    <Text style={styles.title}>Account Information</Text>
-                    <Text style={styles.label}>Username</Text>
-                    <TextInput style={styles.uneditInput} value={username} onChangeText={setUsername} editable={false}/>
-                    <Text style={styles.label}>New Password</Text>
-                    <TextInput style={styles.input} value={newpassword} onChangeText={setNewPassword}/>
-                    <Text style={styles.label}>Confirm New Password</Text>
-                    <TextInput style={styles.input} value={confirmpass} onChangeText={setConfirmPass}/>
-                </View>
-                {/*onPress={() => navigation.navigate('Profile')}*/}
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('ParentProfile')}
-                    style={styles.btn}
-                >
-                    <Text style={styles.btnText}>Save Changes</Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </View>
-    )
-}
+        if (errorFlag) {
+            console.log("errorFlag");
+        } else {
+            this.setState({ loading: false });
+            navigate('ParentProfile');
+        }
     
-export default ParentEditProfile;
+    }
+    render() {
+        return  (
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ScrollView style={styles.form}>
+                    {/*Profile Information*/}
+                    <View style={styles.profileView}>
+                        <Text style={styles.title}>Profile Information</Text>
+                        <Text style={styles.label}>Name</Text>
+                        <TextInput style={styles.uneditInput} value={this.state.name} onChangeText={name => this.setState({name})} editable={false}/>
+                        <Text style={styles.label}>Email</Text>
+                        <TextInput style={styles.uneditInput} value={this.state.email} onChangeText={email => this.setState({email})} editable={false}/>
+                        <Text style={styles.label}>Contact</Text>
+                        <TextInput style={styles.input} value={this.state.contact} onChangeText={contact => this.setState({contact})}/>
+                        <Text style={styles.label}>Address</Text>
+                        <TextInput style={styles.input} value={this.state.address} onChangeText={address => this.setState({address})}/>
+                    </View>
+                    {/*Account Information*/}
+                    <View>
+                        <Text style={styles.title}>Account Information</Text>
+                        <Text style={styles.label}>Username</Text>
+                        <TextInput style={styles.uneditInput} value={this.state.username} onChangeText={username => this.setState({username})} editable={false}/>
+                        <Text style={styles.label}>New Password</Text>
+                        <TextInput style={styles.input} value={this.state.password} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
+                        {this.state.passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.passwordErrorMessage}</Text>}
+                        <Text style={styles.label}>Confirm New Password</Text>
+                        <TextInput style={styles.input} value={this.state.confirmPassword} secureTextEntry={true} onChangeText={confirmPassword => this.setState({confirmPassword})}/>
+                        {this.state.confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.confirmPasswordErrorMessage}</Text>}
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => this.formValidation()}
+                        style={styles.btn}
+                    >
+                        <Text style={styles.btnText}>Save Changes</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </View>
+        )
+    }
+}
+
 
 const styles = StyleSheet.create({
     title: {
@@ -108,5 +126,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center',
         fontWeight: 'bold'
+    },
+    textDanger: {
+        color: "#dc3545"
     }
 })

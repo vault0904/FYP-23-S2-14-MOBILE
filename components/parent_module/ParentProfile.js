@@ -90,7 +90,7 @@ const ParentProfile = ({navigation}) => {
 
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
-            style={styles.loginBtn}
+            style={styles.logoutBtn}
           >
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
@@ -179,13 +179,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 100,
   },
-  loginBtn:{
+  logoutBtn:{
     backgroundColor: '#FFA500',
     marginVertical: 14,
     borderRadius:10,
     height:50,
     alignItems:'center',
-    marginTop:180,
+    marginTop:50,
     marginBottom:50,
 },
 btnText:{

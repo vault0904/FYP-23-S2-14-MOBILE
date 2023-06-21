@@ -1,55 +1,99 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
-
-
-const TeacherEditProfile = ({navigation}) => {
-    const profileDetails = {
-        name: 'Loden GreatStorm',
-        username: 'gvps_greatstorm',
-        email: 'lgreatstorm@moe.edu.sg',
+export default class TeacherEditProfile extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: "Loden GreatStorm",
+            username: "gvps_greatstorm",
+            email: "lgreatstorm@moe.edu.sg",
+            password: "",  //to store password
+            passwordErrorMessage: "",  //password error msg
+            confirmPassword: "",      //to store password
+            confirmPasswordErrorMessage: "",    //confirm password error msg
+            loading: false,    //manage loader
+        }
     }
+    /* Authenticate User */
+    formValidation = async () => {
+        const {navigate} = this.props.navigation;
+        this.setState({ loading: true })
+        let errorFlag = false
 
-    const [name, setName] = useState(profileDetails.name);
-    const [username, setUsername] = useState(profileDetails.username);
-    const [email, setEmail] = useState(profileDetails.email);
-    const [newpassword, setNewPassword] = useState('');
-    const [confirmpass, setConfirmPass] = useState('');
+        /*
+        if (this.state.password.length == 0) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Password is required field"});
+        } else if (this.state.password.length < 8 ||  this.state.password.length > 20) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Password should be min 8 char and max 20 char"});
+        } else if (this.state.password !==  this.state.confirmPassword ) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
+        }
+        
+        if (this.state.password.length == 0) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Password is required field"});
+        } else if (this.state.confirmPassword.length < 8 ||  this.state.confirmPassword.length > 20) {
+            errorFlag = true;
+            this.setState({ confirmPasswordErrorMessage: "Password should be min 8 char and max 20 char"});
+        } else if (this.state.password !==  this.state.confirmPassword ) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
+        }
+        */
 
-    return (
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-            <View style={styles.form}>
-                {/*Profile Information*/}
-                <View style={styles.profileView}>
-                    <Text style={styles.title}>Profile Information</Text>
-                    <Text style={styles.label}>Name</Text>
-                    <TextInput style={styles.uneditInput} value={name} onChangeText={setName} editable={false}/>
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput style={styles.uneditInput} value={email} onChangeText={setEmail} editable={false}/>
-                </View>
-                {/*Account Information*/}
-                <View>
-                    <Text style={styles.title}>Account Information</Text>
-                    <Text style={styles.label}>Username</Text>
-                    <TextInput style={styles.uneditInput} value={username} onChangeText={setUsername} editable={false}/>
-                    <Text style={styles.label}>New Password</Text>
-                    <TextInput style={styles.input} value={newpassword} onChangeText={setNewPassword}/>
-                    <Text style={styles.label}>Confirm New Password</Text>
-                    <TextInput style={styles.input} value={confirmpass} onChangeText={setConfirmPass}/>
-                </View>
-                {/*onPress={() => navigation.navigate('Profile')}*/}
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('TeacherProfile')}
-                    style={styles.btn}
-                >
-                    <Text style={styles.btnText}>Save Changes</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    )
-}
+        // input validation to check if new password and confirm password matches
+        if (this.state.password !==  this.state.confirmPassword ) {
+            errorFlag = true;
+            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
+        }
+
+        if (errorFlag) {
+            console.log("errorFlag");
+        } else {
+            this.setState({ loading: false });
+            navigate('TeacherProfile');
+        }
     
-export default TeacherEditProfile;
+    }
+    render() {
+        return  (
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+                <ScrollView style={styles.form}>
+                    {/*Profile Information*/}
+                    <View style={styles.profileView}>
+                        <Text style={styles.title}>Profile Information</Text>
+                        <Text style={styles.label}>Name</Text>
+                        <TextInput style={styles.uneditInput} value={this.state.name} onChangeText={name => this.setState({name})} editable={false}/>
+                        <Text style={styles.label}>Email</Text>
+                        <TextInput style={styles.uneditInput} value={this.state.email} onChangeText={email => this.setState({email})} editable={false}/>
+                    </View>
+                    {/*Account Information*/}
+                    <View>
+                        <Text style={styles.title}>Account Information</Text>
+                        <Text style={styles.label}>Username</Text>
+                        <TextInput style={styles.uneditInput} value={this.state.username} onChangeText={username => this.setState({username})} editable={false}/>
+                        <Text style={styles.label}>New Password</Text>
+                        <TextInput style={styles.input} value={this.state.password} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
+                        {this.state.passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.passwordErrorMessage}</Text>}
+                        <Text style={styles.label}>Confirm New Password</Text>
+                        <TextInput style={styles.input} value={this.state.confirmPassword} secureTextEntry={true} onChangeText={confirmPassword => this.setState({confirmPassword})}/>
+                        {this.state.confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.confirmPasswordErrorMessage}</Text>}
+                    </View>
+                    <TouchableOpacity
+                        onPress={() => this.formValidation()}
+                        style={styles.btn}
+                    >
+                        <Text style={styles.btnText}>Save Changes</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+            </View>
+        )
+    }
+}
 
 const styles = StyleSheet.create({
     title: {
@@ -98,5 +142,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'center',
         fontWeight: 'bold'
+    },
+    textDanger: {
+        color: "#dc3545"
     }
 })
