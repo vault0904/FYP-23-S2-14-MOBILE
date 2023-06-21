@@ -29,7 +29,7 @@ const Profile = ({navigation}) => {
             </Text>
             <View>
             <TouchableOpacity key='edit'
-            onPress={() => navigation.navigate('Login')}>
+            onPress={() => navigation.navigate('DriverEditProfile')}>
               <Icon name="pencil" size={20} color="#56844B"/>
             </TouchableOpacity> 
             </View>
@@ -78,7 +78,7 @@ const Profile = ({navigation}) => {
 
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
-            style={styles.loginBtn}
+            style={styles.logoutBtn}
           >
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
@@ -170,13 +170,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 100,
   },
-  loginBtn:{
+  logoutBtn:{
     backgroundColor: '#FFA500',
     marginVertical: 14,
     borderRadius:10,
     height:50,
     alignItems:'center',
-    marginTop:145,
+    marginTop:110,
     marginBottom:50,
 },
 btnText:{

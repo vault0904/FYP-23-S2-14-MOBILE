@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TeacherHome from './TeacherHome';
-import TeacherPickup from './TeacherPickup';
-import TeacherChat from './TeacherChat';
-import TeacherProfile from './TeacherProfile';
-import TeacherEditProfile from './TeacherEditProfile';
+import FacilHome from './FacilHome';
+import FacilPickup from './FacilPickup';
+import FacilChat from './FacilChat';
+import FacilProfile from './FacilProfile';
+import FacilEditProfile from './FacilEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 {/* For stack navigation between profile and edit profile page */}
@@ -26,15 +26,15 @@ function ProfileStackScreen() {
             }}
         >
             <ProfileStack.Screen 
-                name="TeacherProfile" 
-                component={TeacherProfile}
+                name="FacilProfile" 
+                component={FacilProfile}
                 options={{
                     title:"Profile"
                 }}
             />
             <ProfileStack.Screen 
-                name="TeacherEditProfile" 
-                component={TeacherEditProfile} 
+                name="FacilEditProfile" 
+                component={FacilEditProfile} 
                 options={{
                     title:"Edit Profile"
                 }}
@@ -43,11 +43,12 @@ function ProfileStackScreen() {
     );
 }
 
+{/* For tab navigation the four pages below */}
 
 const Tab = createBottomTabNavigator();
 
 
-export default function TeacherNav() {
+export default function FacilNav() {
     return (
       <Tab.Navigator 
         initialRouteName="Home" 
@@ -64,8 +65,8 @@ export default function TeacherNav() {
         }}
       >
         <Tab.Screen 
-            name="Hello, Teacher GREATSTORM" 
-            component={TeacherHome}
+            name="Hello, Facilator KRISS" 
+            component={FacilHome}
             options={{
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
@@ -75,7 +76,7 @@ export default function TeacherNav() {
         />
         <Tab.Screen 
             name="Pickup" 
-            component={TeacherPickup} 
+            component={FacilPickup} 
             options={{
                 tabBarLabel: 'Pickup',
                 tabBarIcon: ({ color, size }) => (
@@ -85,7 +86,7 @@ export default function TeacherNav() {
         />
         <Tab.Screen 
             name="Chat" 
-            component={TeacherChat} 
+            component={FacilChat} 
             options={{
                 tabBarLabel: 'Chat',
                 tabBarIcon: ({ color, size }) => (

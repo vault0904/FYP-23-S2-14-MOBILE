@@ -38,7 +38,7 @@ const FacilHome = () => (
         />
         </View>
         <Text style={styles.header}>Gate assignment</Text>
-        <Text style={styles.gate}>WEST GATE</Text>
+        <Text style={styles.gate}>NORTH GATE</Text>
     </View>
 );
 

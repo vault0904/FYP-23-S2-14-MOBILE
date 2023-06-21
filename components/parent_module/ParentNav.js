@@ -1,11 +1,48 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ParentHome from './ParentHome';
 import ChildDetails from './ChildProfile';
 import ParentPickup from './PickupSelection';
 import ParentChat from './ParentChat';
 import ParentProfile from './ParentProfile';
+import ParentEditProfile from './ParentEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+{/* For stack navigation between profile and edit profile page */}
+const ProfileStack = createNativeStackNavigator();
+
+function ProfileStackScreen() {
+    return (
+        <ProfileStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            <ProfileStack.Screen 
+                name="ParentProfile" 
+                component={ParentProfile}
+                options={{
+                    title:"Profile"
+                }}
+            />
+            <ProfileStack.Screen 
+                name="ParentEditProfile" 
+                component={ParentEditProfile} 
+                options={{
+                    title:"Edit Profile"
+                }}
+            />
+        </ProfileStack.Navigator>
+    );
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -67,9 +104,10 @@ export default function ParentNav() {
             }} 
         />
         <Tab.Screen 
-            name="Profile" 
-            component={ParentProfile} 
+            name="ProfileStack" 
+            component={ProfileStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Profile',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="cog" color={color} size={size} />

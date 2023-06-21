@@ -31,7 +31,7 @@ const Login = ({navigation}) => {
                 />
             </View>
             <TouchableOpacity
-                onPress={() => navigation.navigate('TeacherNav')}
+                onPress={() => navigation.navigate('DriverNav')}
                 style={styles.loginBtn}
             >
                 <Text style={styles.btnText}>LOGIN</Text>

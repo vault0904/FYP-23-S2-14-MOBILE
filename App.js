@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/Login';
 import TeacherNav from './components/teacher_module/TeacherNav';
 import ParentNav from './components/parent_module/ParentNav';
+import FacilNav from './components/event_facil_module/FacilNav';
+import DriverNav from './components/bus_driver_module/DriverNav';
 
 
 /*
@@ -29,8 +31,8 @@ export const AppNavigator = () => (
         }} 
       />
       <Stack.Screen 
-        name = "TeacherNav" 
-        component={TeacherNav} 
+        name = "DriverNav" 
+        component={DriverNav} 
         options={{ headerShown: false }}
       />
   </Stack.Navigator>

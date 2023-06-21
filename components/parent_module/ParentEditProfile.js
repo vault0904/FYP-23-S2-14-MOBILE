@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, View,  Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 
 
 
-const FacilEditProfile = ({navigation}) => {
+const ParentEditProfile = ({navigation}) => {
     const profileDetails = {
-        name: 'Avar Kriss',
-        username: 'gvps_kriss',
-        email: 'avar_kriss@gmail.com',
+        name: 'Mell Zettifar',
+        username: 'gvps_zettifar',
+        email: 'mZettifar@gmail.com',
+        contact: '98765432',
+        subscription: 'Self Pick Up',
+        address: '11 Serangoon North Avenue 5 06-01',
     }
 
     const [name, setName] = useState(profileDetails.name);
     const [username, setUsername] = useState(profileDetails.username);
     const [email, setEmail] = useState(profileDetails.email);
+    const [contact, setContact] = useState(profileDetails.contact);
+    const [subscription, setSubscription] = useState(profileDetails.subscription);
+    const [address, setAddress] = useState(profileDetails.address);
     const [newpassword, setNewPassword] = useState('');
     const [confirmpass, setConfirmPass] = useState('');
 
     return (
         <View style={{ flex: 1, justifyContent: 'center' }}>
-            <View style={styles.form}>
+            <ScrollView style={styles.form}>
                 {/*Profile Information*/}
                 <View style={styles.profileView}>
                     <Text style={styles.title}>Profile Information</Text>
@@ -26,6 +32,10 @@ const FacilEditProfile = ({navigation}) => {
                     <TextInput style={styles.uneditInput} value={name} onChangeText={setName} editable={false}/>
                     <Text style={styles.label}>Email</Text>
                     <TextInput style={styles.uneditInput} value={email} onChangeText={setEmail} editable={false}/>
+                    <Text style={styles.label}>Contact</Text>
+                    <TextInput style={styles.input} value={contact} onChangeText={setContact}/>
+                    <Text style={styles.label}>Address</Text>
+                    <TextInput style={styles.input} value={address} onChangeText={setAddress}/>
                 </View>
                 {/*Account Information*/}
                 <View>
@@ -39,17 +49,17 @@ const FacilEditProfile = ({navigation}) => {
                 </View>
                 {/*onPress={() => navigation.navigate('Profile')}*/}
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('FacilProfile')}
+                    onPress={() => navigation.navigate('ParentProfile')}
                     style={styles.btn}
                 >
                     <Text style={styles.btnText}>Save Changes</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </View>
     )
 }
     
-export default FacilEditProfile;
+export default ParentEditProfile;
 
 const styles = StyleSheet.create({
     title: {
@@ -90,7 +100,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         height:50,
         textAlign: 'auto',
-        marginTop: 80,
+        marginTop: 50,
     },
     btnText:{
         padding: 12,

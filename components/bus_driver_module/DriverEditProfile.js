@@ -6,32 +6,37 @@ const DriverEditProfile = ({navigation}) => {
         name: 'Leox Gyasi',
         username: 'ctb_gyasi',
         email: 'l_gyasi@ctb.com',
-        license: 'S1234567A',
-        company: 'Coolidge Trucks & Buses',
     }
 
     const [name, setName] = useState(profileDetails.name);
     const [username, setUsername] = useState(profileDetails.username);
     const [email, setEmail] = useState(profileDetails.email);
-    const [license, setLicense] = useState(profileDetails.license);
-    const [company, setCompany] = useState(profileDetails.company);
+    const [newpassword, setNewPassword] = useState('');
+    const [confirmpass, setConfirmPass] = useState('');
 
     return (
         <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={styles.title}>Profile Information</Text>
             <View style={styles.form}>
-                <Text style={styles.label}>Name</Text>
-                <TextInput style={styles.input} value={name} onChangeText={setName}/>
-                <Text style={styles.label}>Username</Text>
-                <TextInput style={styles.input} value={username} onChangeText={setUsername} />
-                <Text style={styles.label}>Email</Text>
-                <TextInput style={styles.input} value={email} onChangeText={setEmail} />
-                <Text style={styles.label}>Driving license</Text>
-                <TextInput style={styles.input} value={license} onChangeText={setLicense} />
-                <Text style={styles.label}>Company</Text>
-                <TextInput style={styles.input} value={company} onChangeText={setCompany} />
+                {/*Profile Information*/}
+                <View style={styles.profileView}>
+                    <Text style={styles.title}>Profile Information</Text>
+                    <Text style={styles.label}>Name</Text>
+                    <TextInput style={styles.uneditInput} value={name} onChangeText={setName} editable={false}/>
+                    <Text style={styles.label}>Email</Text>
+                    <TextInput style={styles.uneditInput} value={email} onChangeText={setEmail} editable={false}/>
+                </View>
+                {/*Account Information*/}
+                <View>
+                    <Text style={styles.title}>Account Information</Text>
+                    <Text style={styles.label}>Username</Text>
+                    <TextInput style={styles.uneditInput} value={username} onChangeText={setUsername} editable={false}/>
+                    <Text style={styles.label}>New Password</Text>
+                    <TextInput style={styles.input} value={newpassword} onChangeText={setNewPassword}/>
+                    <Text style={styles.label}>Confirm New Password</Text>
+                    <TextInput style={styles.input} value={confirmpass} onChangeText={setConfirmPass}/>
+                </View>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Profile')}
+                    onPress={() => navigation.navigate('DriverProfile')}
                     style={styles.btn}
                 >
                     <Text style={styles.btnText}>Save Changes</Text>
@@ -48,12 +53,15 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 16,
         fontWeight: 'bold',
-        margin: 25
+        marginTop: 30
     },
     form: {
         flex: 1,
         padding: 25,
         paddingTop: 0
+    },
+    profileView: {
+        marginBottom: 16
     },
     label: {
         marginVertical: 16,
@@ -65,6 +73,12 @@ const styles = StyleSheet.create({
     input: {
         padding: 8,
         backgroundColor: '#E6E6E6',
+        borderRadius: 8,
+        height: 40
+    },
+    uneditInput: {
+        padding: 8,
+        backgroundColor: '#CCCCCC',
         borderRadius: 8,
         height: 40
     },

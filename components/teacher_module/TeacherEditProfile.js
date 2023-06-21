@@ -3,11 +3,11 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 
 
 
-const FacilEditProfile = ({navigation}) => {
+const TeacherEditProfile = ({navigation}) => {
     const profileDetails = {
-        name: 'Avar Kriss',
-        username: 'gvps_kriss',
-        email: 'avar_kriss@gmail.com',
+        name: 'Loden GreatStorm',
+        username: 'gvps_greatstorm',
+        email: 'lgreatstorm@moe.edu.sg',
     }
 
     const [name, setName] = useState(profileDetails.name);
@@ -39,7 +39,7 @@ const FacilEditProfile = ({navigation}) => {
                 </View>
                 {/*onPress={() => navigation.navigate('Profile')}*/}
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('FacilProfile')}
+                    onPress={() => navigation.navigate('TeacherProfile')}
                     style={styles.btn}
                 >
                     <Text style={styles.btnText}>Save Changes</Text>
@@ -49,7 +49,7 @@ const FacilEditProfile = ({navigation}) => {
     )
 }
     
-export default FacilEditProfile;
+export default TeacherEditProfile;
 
 const styles = StyleSheet.create({
     title: {

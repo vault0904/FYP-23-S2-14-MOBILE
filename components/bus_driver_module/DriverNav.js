@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TeacherHome from './TeacherHome';
-import TeacherPickup from './TeacherPickup';
-import TeacherChat from './TeacherChat';
-import TeacherProfile from './TeacherProfile';
-import TeacherEditProfile from './TeacherEditProfile';
+import DriverHome from './DriverHome';
+import DriverPickup from './DriverPickup';
+import DriverChat from './DriverChat';
+import DriverProfile from './DriverProfile';
+import DriverEditProfile from './DriverEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 {/* For stack navigation between profile and edit profile page */}
@@ -26,15 +26,15 @@ function ProfileStackScreen() {
             }}
         >
             <ProfileStack.Screen 
-                name="TeacherProfile" 
-                component={TeacherProfile}
+                name="DriverProfile" 
+                component={DriverProfile}
                 options={{
                     title:"Profile"
                 }}
             />
             <ProfileStack.Screen 
-                name="TeacherEditProfile" 
-                component={TeacherEditProfile} 
+                name="DriverEditProfile" 
+                component={DriverEditProfile} 
                 options={{
                     title:"Edit Profile"
                 }}
@@ -47,7 +47,7 @@ function ProfileStackScreen() {
 const Tab = createBottomTabNavigator();
 
 
-export default function TeacherNav() {
+export default function DriverNav() {
     return (
       <Tab.Navigator 
         initialRouteName="Home" 
@@ -64,8 +64,8 @@ export default function TeacherNav() {
         }}
       >
         <Tab.Screen 
-            name="Hello, Teacher GREATSTORM" 
-            component={TeacherHome}
+            name="Hello, Mr GYASI" 
+            component={DriverHome}
             options={{
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
@@ -75,7 +75,7 @@ export default function TeacherNav() {
         />
         <Tab.Screen 
             name="Pickup" 
-            component={TeacherPickup} 
+            component={DriverPickup} 
             options={{
                 tabBarLabel: 'Pickup',
                 tabBarIcon: ({ color, size }) => (
@@ -85,7 +85,7 @@ export default function TeacherNav() {
         />
         <Tab.Screen 
             name="Chat" 
-            component={TeacherChat} 
+            component={DriverChat} 
             options={{
                 tabBarLabel: 'Chat',
                 tabBarIcon: ({ color, size }) => (

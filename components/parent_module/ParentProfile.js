@@ -29,7 +29,7 @@ const ParentProfile = ({navigation}) => {
             </Text>
             <View>
             <TouchableOpacity key='edit'
-            onPress={() => navigation.navigate('Login')}>
+            onPress={() => navigation.navigate('ParentEditProfile')}>
               <Icon name="pencil" size={20} color="#56844B"/>
             </TouchableOpacity> 
             </View>
@@ -40,7 +40,7 @@ const ParentProfile = ({navigation}) => {
             <Text style={styles.profileTag}>Username</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'gvps_kriss' 
+              value = 'gvps_zettifar' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -50,17 +50,39 @@ const ParentProfile = ({navigation}) => {
             <Text style={styles.profileTag}>Email</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'avar_kriss@gmail.com' 
+              value = 'mZettifar@gmail.com' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
 
           <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>School</Text>
+            <Text style={styles.profileTag}>Contact</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'Starfleet Primary School' 
+              value = '98765432' 
+              placeholderTextColor='#56844B'
+              editable = {false}
+            />
+          </View>
+
+          <View style={styles.profileContainer}>
+            <Text style={styles.profileTag}>Subscription</Text>
+            <TextInput 
+              style={styles.profileText} 
+              value = 'Premium Tier' 
+              placeholderTextColor='#56844B'
+              editable = {false}
+            />
+          </View>
+
+          <View style={styles.profileContainer}>
+            <Text style={styles.profileTag}>Address</Text>
+            <TextInput 
+              style={styles.profileText} 
+              multiline
+              numberOfLines={3}
+              value = '11 Serangoon North Avenue 5 06-01' 
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -163,7 +185,7 @@ const styles = StyleSheet.create({
     borderRadius:10,
     height:50,
     alignItems:'center',
-    marginTop:210,
+    marginTop:180,
     marginBottom:50,
 },
 btnText:{

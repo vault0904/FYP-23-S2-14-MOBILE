@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/child.jpg'
+import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
+import Logo from '../common/avatars/child.jpg';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const TeacherProfile = ({navigation}) => {
   return (
@@ -26,6 +27,12 @@ const TeacherProfile = ({navigation}) => {
             <Text style={styles.profileInfo}>
                 Profile Information
             </Text>
+            <View>
+              <TouchableOpacity key='edit'
+              onPress={() => navigation.navigate('TeacherEditProfile')}>
+                <Icon name="pencil" size={20} color="#56844B"/>
+              </TouchableOpacity> 
+            </View>
         </View>
 
         <View>
@@ -104,6 +111,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 2,
     justifyContent: 'flex-start',
+  },
+  editProfileBtn:{
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   information :{
     marginTop: 35,
