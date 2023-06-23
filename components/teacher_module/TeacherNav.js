@@ -74,10 +74,10 @@ export default function TeacherNav() {
             }} 
         />
         <Tab.Screen 
-            name="Pickup" 
+            name="Pick up" 
             component={TeacherPickup} 
             options={{
-                tabBarLabel: 'Pickup',
+                tabBarLabel: 'Pick up',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="account" color={color} size={size} />
                 ),

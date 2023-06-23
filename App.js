@@ -30,6 +30,8 @@ export const AppNavigator = () => (
           }
         }} 
       />
+
+      {/* validation for profiles here */}
       <Stack.Screen 
         name = "TeacherNav" 
         component={TeacherNav} 

@@ -74,10 +74,10 @@ export default function DriverNav() {
             }} 
         />
         <Tab.Screen 
-            name="Pickup" 
+            name="Pick up" 
             component={DriverPickup} 
             options={{
-                tabBarLabel: 'Pickup',
+                tabBarLabel: 'Pick up',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="account" color={color} size={size} />
                 ),
