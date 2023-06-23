@@ -31,10 +31,11 @@ const Login = ({navigation}) => {
                 />
             </View>
             <TouchableOpacity
+                /// linked to app.js stack.screen name
                 onPress={() => navigation.navigate('TeacherNav')}
                 style={styles.loginBtn}
             >
-                <Text style={styles.btnText}>LOGIN</Text>
+                <Text style={styles.btnText}>LOGIN123</Text>
             </TouchableOpacity>
         </View>
     );
