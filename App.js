@@ -34,7 +34,7 @@ export const AppNavigator = () => (
       {/* validation for profiles here */}
       <Stack.Screen 
         name = "TeacherNav"   // change the naming - linked to login.js .navigate 
-        component={TeacherNav} 
+        component={DriverNav} 
         options={{ headerShown: false }}
       />
   </Stack.Navigator>
