@@ -26,18 +26,23 @@ const users = [
     },
 ];
 
-const DriverPickup = () => {
+const DriverPickup = ({navigation}) => {
   const pickup = {
     gate: 'west gate',
   }
-
   const [gate, setGate] = useState(pickup.gate);
-
+  
   return (
     <SafeAreaView style={styles.container}>
         <View>
-            <Text style={styles.header}>Student Pick-Up Details</Text>
-
+            <View style={styles.header_row}>
+                <Text style={styles.header}>Student Pick-Up Details</Text>
+                <Icon style={styles.icon} 
+                      name='qrcode-scan'
+                      type='material-community'
+                      onPress={() => navigation.navigate('TeacherScanQR')}
+                />
+            </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Gate Assignment</Text>
                 <TextInput style={styles.input} value={gate} editable={false}/>
@@ -99,6 +104,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 23,
     color: '#e27602',
+  },
+  header_row:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  icon:{
+    paddingTop: 15,
+    paddingLeft:110,
   },
   row: {
     flexDirection: 'row',
