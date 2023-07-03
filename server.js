@@ -56,8 +56,10 @@ app.post('/api/login', (req, res) => {
     console.log('results: ', results);
 
     if (results.length > 0) {
+      const user_ID = results[0].user_ID;
       // User is authenticated
-      res.json({ success: true });
+      res.json({ success: true, user_ID });
+
     } else {
       // Authentication failed
       res.json({ success: false, error: 'Invalid username or password' });
