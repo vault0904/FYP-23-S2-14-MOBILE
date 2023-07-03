@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriverHome from './DriverHome';
 import DriverPickup from './DriverPickup';
+import DriverScanQR from './DriverScanQR';
 import DriverChat from './DriverChat';
 import DriverProfile from './DriverProfile';
 import DriverEditProfile from './DriverEditProfile';
@@ -43,6 +44,41 @@ function ProfileStackScreen() {
     );
 }
 
+{/* For stack navigation between pickup and qr scanning page */}
+const PickUpStack = createNativeStackNavigator();
+
+function PickUpStackScreen() {
+    return (
+        <PickUpStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            <PickUpStack.Screen 
+                name="DriverPickup" 
+                component={DriverPickup}
+                options={{
+                    title:"Pick Up"
+                }}
+            />
+            <PickUpStack.Screen 
+                name="DriverScanQR" 
+                component={DriverScanQR} 
+                options={{
+                    title:"Scanning QR Code"
+                }}
+            />
+        </PickUpStack.Navigator>
+    );
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -74,9 +110,10 @@ export default function DriverNav() {
             }} 
         />
         <Tab.Screen 
-            name="Pick up" 
-            component={DriverPickup} 
+            name="PickUpStack" 
+            component={PickUpStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Pick up',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="account" color={color} size={size} />

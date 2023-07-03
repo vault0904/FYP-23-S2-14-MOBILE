@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TeacherHome from './TeacherHome';
 import TeacherPickup from './TeacherPickup';
+import TeacherScanQR from './TeacherScanQR';
 import TeacherChat from './TeacherChat';
 import TeacherProfile from './TeacherProfile';
 import TeacherEditProfile from './TeacherEditProfile';
@@ -43,6 +44,41 @@ function ProfileStackScreen() {
     );
 }
 
+{/* For stack navigation between pickup and qr scanning page */}
+const PickUpStack = createNativeStackNavigator();
+
+function PickUpStackScreen() {
+    return (
+        <PickUpStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            <PickUpStack.Screen 
+                name="TeacherPickup" 
+                component={TeacherPickup}
+                options={{
+                    title:"Pick Up"
+                }}
+            />
+            <PickUpStack.Screen 
+                name="TeacherScanQR" 
+                component={TeacherScanQR} 
+                options={{
+                    title:"Scanning QR Code"
+                }}
+            />
+        </PickUpStack.Navigator>
+    );
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -74,9 +110,10 @@ export default function TeacherNav() {
             }} 
         />
         <Tab.Screen 
-            name="Pick up" 
-            component={TeacherPickup} 
+            name="PickUpStack" 
+            component={PickUpStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Pick up',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="account" color={color} size={size} />
