@@ -22,7 +22,7 @@ const users = [
     },
 ];
 
-const DriverPickup = () => {
+const DriverPickup = ({navigation}) => {
   const pickupDetails = {
     time: '1:15pm',
   }
@@ -32,8 +32,14 @@ const DriverPickup = () => {
   return (
     <SafeAreaView style={styles.container}>
         <View>
-            <Text style={styles.header}>Student Passenger Details</Text>
-
+            <View style={styles.header_row}>
+              <Text style={styles.header}>Student Passenger Details</Text>
+              <Icon style={styles.icon} 
+                        name='qrcode-scan'
+                        type='material-community'
+                        onPress={() => navigation.navigate('DriverScanQR')}
+              />
+            </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Today's Pickup Time</Text>
                 <TextInput style={styles.input} value={time} editable={false}/>
@@ -88,6 +94,14 @@ const styles = StyleSheet.create({
   },
   address: {
     paddingTop: 5
+  },
+  header_row:{
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  icon:{
+    paddingTop: 15,
+    paddingLeft:90,
   },
   row: {
     flexDirection: 'row',
