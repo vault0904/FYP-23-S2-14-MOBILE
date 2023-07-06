@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -16,8 +17,12 @@ const Login = ({ navigation }) => {
     axios
       .post('http://localhost:3306/api/login', userData)
       .then((response) => {
+        console.log("Response from server:", response.data);
         if (response.data.success) {
-          navigation.navigate('TeacherNav');
+          const userType = response.data.user_ID;
+          console.log("User Type:", userType);
+          navigation.navigate('ScreenNav', { userType });
+          console.log("User Type:", userType);
         } else {
           console.log(response.data.error);
         }
