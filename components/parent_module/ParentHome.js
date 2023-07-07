@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 
+// announcements dummy data
 const DATA = [
     {
         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -22,52 +23,72 @@ const Item = ({title}) => (
     </View>
 );
 
-const ParentHome = () => {
+// pickup dummy data
+const ParentHome = ({navigation}) => {
     const pickupDetails = {
         time: '1:15pm',
         mode: 'Self pickup',
         gate: 'West gate',
-        otp: '630234',
+        status: 'picked up',
     }
 
     const [time, setTime] = useState(pickupDetails.time);
     const [mode, setMode] = useState(pickupDetails.mode);
     const [gate, setGate] = useState(pickupDetails.gate);
-    const [otp, setOtp] = useState(pickupDetails.otp);
+    const [status, setStatus] = useState(pickupDetails.status);
 
     return(
-        <View style={styles.container}>
-            <View style={styles.upperRow}>
-                <Text style={styles.header}>Announcements</Text>
-                <TouchableOpacity key='View More'>
-                    <Text style={styles.btnText}>View More</Text>
-                </TouchableOpacity> 
+        <ScrollView>
+            <View style={styles.container}>
+                <View style={styles.upperRow}>
+                    
+                    {/* header */}
+                    <Text style={styles.header}>Announcements</Text>
+                    <TouchableOpacity key='View More'
+                        onPress={() => navigation.navigate('AnnouncementPage')}
+                    >
+                        <Text style={styles.btnText}>View More</Text>
+                    </TouchableOpacity> 
+                </View>
+
+                {/* NEXT STEP: add code to limit announcements to only 3 */}
+                <View style={styles.list}>
+                    <FlatList 
+                    data={DATA}
+                    renderItem={({item}) => <Item title={item.title} />}
+                    keyExtractor={item => item.id}
+                    />
+                </View>
+
+                {/* pickup details */}
+                <Text style={styles.header}>Pickup details</Text>
+
+                {/* pickup : time */}
+                <View style={styles.row}>
+                    <Text style={styles.label}>Time</Text>
+                    <TextInput style={styles.input} value={time} onChangeText={setTime} editable={false}/>
+                </View>
+
+                {/* pickup : mode */}
+                <View style={styles.row}>
+                    <Text style={styles.label}>Mode</Text>
+                    <TextInput style={styles.input} value={mode} onChangeText={setMode} editable={false}/>
+                </View>
+
+                {/* pickup : gate */}
+                <View style={styles.row}>
+                    <Text style={styles.label}>Gate</Text>
+                    <TextInput style={styles.input} value={gate} onChangeText={setGate} editable={false}/>
+                </View>
+
+                {/* pickup : status */}
+                <View style={styles.row}>
+                    <Text style={styles.label}>Status</Text>
+                    {/* text colour changes based on pick up status  */}
+                    <TextInput style={(pickupDetails.status == 'picked up') ? styles.inputGreen : styles.inputRed} value={status} onChangeText={setStatus} editable={false}/>
+                </View>
             </View>
-            <View style={styles.list}>
-                <FlatList 
-                data={DATA}
-                renderItem={({item}) => <Item title={item.title} />}
-                keyExtractor={item => item.id}
-                />
-            </View>
-            <Text style={styles.header}>Pickup details</Text>
-            <View style={styles.row}>
-                <Text style={styles.label}>Time</Text>
-                <TextInput style={styles.input} value={time} onChangeText={setTime} editable={false}/>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Mode</Text>
-                <TextInput style={styles.input} value={mode} onChangeText={setMode} editable={false}/>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Gate</Text>
-                <TextInput style={styles.input} value={gate} onChangeText={setGate} editable={false}/>
-            </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>OTP</Text>
-                <TextInput style={styles.input} value={otp} onChangeText={setOtp} editable={false}/>
-            </View>
-        </View>
+        </ScrollView>
     )
 }
    
@@ -132,11 +153,35 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: 'bold',
     },
+    inputRed: {
+        padding: 15,
+        backgroundColor: '#E6E6E6',
+        borderRadius: 8,
+        height: 35,
+        width: 220,
+        marginVertical: 5,
+        marginHorizontal: 50,
+        color: '#FF0000',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    inputGreen: {
+        padding: 15,
+        backgroundColor: '#E6E6E6',
+        borderRadius: 8,
+        height: 35,
+        width: 220,
+        marginVertical: 5,
+        marginHorizontal: 50,
+        color: '#56844B',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
     btnText: {
         fontSize: 12,
         fontWeight: 'bold',
         color: '#56844B',
-        marginTop: 50,
+        marginTop: 35,
         marginLeft: 150 
     }
 });

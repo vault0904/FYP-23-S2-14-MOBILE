@@ -1,56 +1,128 @@
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Text } from 'react-native-paper'
+import { SelectList } from 'react-native-dropdown-select-list'
+import { Button } from 'react-native'
+import DatePicker from 'react-native-date-picker'
+import React, { useState } from "react";
 
-const PickupSelection = ({navigation}) => (
+function PickupSelection () {
+  const child = "BELL ZETTIFAR";
+
+  const [selected, setSelected] = React.useState("");
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
+
+  const data = [
+      // disabled param : to show the timeslot is fully booked
+      {key:'1', value:'1:15pm', disabled:true},
+      {key:'2', value:'1:25pm', disabled:true},
+      {key:'3', value:'1:35pm'},
+      {key:'4', value:'1:45pm'},
+  ]
+  const gatedata = [
+    // disabled param : to show the timeslot is fully booked
+    {key:'1', value:'west gate'},
+    {key:'2', value:'north gate'},
+    {key:'3', value:'south gate'},
+    {key:'4', value:'main gate'},
+]
+
+  return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}> 
-        <Text style={styles.header}>Pickup time-slot selection</Text>
-        <Text style={styles.subheader}>Please select one of the following time-slots for child pickup</Text>
-      
-       {/* Pickup time slots -- need to do mapping */}
-       <View style={styles.timeContainer}>
-        <TouchableOpacity style={styles.timeBtn}>
-          <Text style={styles.timeText}>1.15pm</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.timeBtn}>
-          <Text style={styles.timeText}>1.15pm</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.timeBtn}>
-          <Text style={styles.timeText}>1.15pm</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.timeBtn}>
-          <Text style={styles.timeText}>1.15pm</Text>
-        </TouchableOpacity>
-       </View>
-      </View>
+      <ScrollView>
+        {/* header for specified child profile chosen */}
+        
+        {/* i'm not sure how to pass props from childselectionpage to this, 
+        so that we can get the child's name based on profile chosen */}
 
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Pickup method selection</Text>
-        <Text style={styles.subheader}>Please select one of the following time-slots for child pickup</Text>
-        {/* Pickup method */}
-        <View style={styles.btnContainer}>
-          <TouchableOpacity 
-          style={styles.pickupBtn}>
-            <Text style={styles.pickupText}>Self Pickup</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-          style={styles.pickupBtn}>
-            <Text style={styles.pickupText}>Bus Pickup</Text>
-          </TouchableOpacity>
+        <View>
+          <Text style={styles.childHeader}>Pickup Selection for {child}</Text>
         </View>
-      </View>
 
-      <View style={styles.confirmContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Login')}
-          style={styles.confirmBtn}
-        >
-          <Text style={styles.btnText}>Confirm</Text>
-        </TouchableOpacity> 
-      </View>
+        {/* pickup date selection */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Pickup date selection</Text>
+          <Text style={styles.subheader}>Please select one of the following dates for child pickup</Text>
+          
+          {/* Pickup date */}
+          <Button title="Open" onPress={() => setOpen(true)} style={{backgroundColor: '#56844B', marginTop: '10px'}} />
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            onConfirm={(date) => {
+              setOpen(false)
+              setDate(date)
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
+          />
+        </View>
+        
+        {/* pickup method selection - bus / self etc*/}
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Pickup method selection</Text>
+          <Text style={styles.subheader}>Please select one of the following methods for child pickup</Text>
+          
+          {/* Pickup method */}
+          <View style={styles.btnContainer}>
+            <TouchableOpacity 
+            style={styles.pickupBtn}>
+              <Text style={styles.pickupText}>Self Pickup</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+            style={styles.pickupBtn}>
+              <Text style={styles.pickupText}>Bus Pickup</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* pickup gate selection */}
+        <View style={styles.headerContainer}> 
+          <Text style={styles.header}>Pickup gate selection</Text>
+          <Text style={styles.subheader}>If you selected "Self Pickup", please choose a gate below</Text>
+        
+          {/* drop down for timing selection */}
+          <View style={{marginTop: '15px'}}>
+            <SelectList 
+            setSelected={(val) => setSelected(val)} 
+            data={gatedata} 
+            save="value"
+            />
+          </View>
+        </View>
+
+        {/* pickup timeslot selection */}
+        <View style={styles.headerContainer}> 
+          <Text style={styles.header}>Pickup time-slot selection</Text>
+          <Text style={styles.subheader}>If you selected "Self Pickup", please choose a timeslot below</Text>
+        
+          {/* drop down for timing selection */}
+          <View style={{marginTop: '15px'}}>
+            <SelectList 
+            setSelected={(val) => setSelected(val)} 
+            data={data} 
+            save="value"
+            />
+          </View>
+        </View>
+
+        {/* confirm button  */}
+        <View style={styles.confirmContainer}>
+          <TouchableOpacity
+            // onPress={() => navigation.navigate('Login')}
+            style={styles.confirmBtn}
+          >
+            <Text style={styles.btnText}>Confirm</Text>
+          </TouchableOpacity> 
+        </View>
+
+      </ScrollView>
     </View>
-);
+  );
+}
 
 export default PickupSelection;
 
@@ -58,12 +130,18 @@ const styles = StyleSheet.create({
   container: {
       flex: 1,
   },
-  confirmContainer: {
-    marginHorizontal: 30,
+  childHeader: {
+    marginHorizontal: 25,
+    color: '#56844B',
+    fontSize: 18,
+    fontWeight: 'bold',
     marginTop: 20
   },
+  confirmContainer: {
+    marginHorizontal: 30,
+  },
   headerContainer: {
-    marginTop: 50,
+    marginTop: 20,
     marginHorizontal: 25
   },
   header: {
@@ -71,33 +149,10 @@ const styles = StyleSheet.create({
     color: '#717171',
     fontSize: 18
   },
-  btnContainer: {
-    marginTop: 10
-  },
   subheader: {
     color: '#999999',
     fontSize: 13,
     marginTop: 5,
-  },
-  timeContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10
-  },
-  timeBtn: {
-    flexBasis: '30%',
-    backgroundColor: '#56844B',
-    marginTop: 15,
-    borderRadius: 8,
-    paddingLeft: 13,
-    paddingVertical: 15,
-    marginRight: 7,
-  },
-  timeText: {
-    alignItems: 'center',
-    color: '#FFFFFF',
-    marginLeft: 15,
-    fontWeight: 'bold'
   },
   pickupBtn: {
     backgroundColor: '#56844B',
@@ -117,8 +172,7 @@ const styles = StyleSheet.create({
     borderRadius:10,
     height:50,
     alignItems:'center',
-    marginTop:100,
-    marginBottom:50,
+    marginBottom:30,
   },
   btnText:{
     padding: 15,

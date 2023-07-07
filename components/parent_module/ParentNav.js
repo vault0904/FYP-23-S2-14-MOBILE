@@ -4,13 +4,28 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ParentHome from './ParentHome';
 import ChildDetails from './ChildProfile';
 import ParentPickup from './PickupSelection';
+import ChildSelection from './ChildSelectionPage';
 import ParentChat from './ParentChat';
 import ParentProfile from './ParentProfile';
 import ParentEditProfile from './ParentEditProfile';
+import ChildProfileSelection from './ChildProfileSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Announcements from '../common/AnnouncementPage';
+
+// calling parent's name here to display on top bar
+const name = 'MS ZETTIFAR'
+
+{/* For stack navigation between child tabs and child profile */}
+const AnnouncementStack = createNativeStackNavigator();
 
 {/* For stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
+
+{/* For stack navigation between child tabs and pickup selection page */}
+const PickupSelectStack = createNativeStackNavigator();
+
+{/* For stack navigation between child tabs and child profile */}
+const ChildProfileStack = createNativeStackNavigator();
 
 function ProfileStackScreen() {
     return (
@@ -26,6 +41,7 @@ function ProfileStackScreen() {
                 headerBackTitleVisible: false
             }}
         >
+            {/* main page */}
             <ProfileStack.Screen 
                 name="ParentProfile" 
                 component={ParentProfile}
@@ -33,6 +49,8 @@ function ProfileStackScreen() {
                     title:"Profile"
                 }}
             />
+
+            {/* page to route to from main */}
             <ProfileStack.Screen 
                 name="ParentEditProfile" 
                 component={ParentEditProfile} 
@@ -41,6 +59,111 @@ function ProfileStackScreen() {
                 }}
             />
         </ProfileStack.Navigator>
+    );
+}
+
+function ChildSelectionStackScreen() {
+    return (
+        <PickupSelectStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            {/* main page */}
+            <PickupSelectStack.Screen 
+                name="ChildPickupSelection" 
+                component={ChildSelection}
+                options={{
+                    title:"Select Child Pickup"
+                }}
+            />
+
+            {/* page to route to from main */}
+            <PickupSelectStack.Screen 
+                name="PickupSelection" 
+                component={ParentPickup} 
+                options={{
+                    title:"Pickup Selection"
+                }}
+            />
+        </PickupSelectStack.Navigator>
+    );
+}
+
+function ChildProfileStackScreen() {
+    return (
+        <ChildProfileStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            {/* main page */}
+            <ChildProfileStack.Screen 
+                name="ChildProfileSelection" 
+                component={ChildProfileSelection}
+                options={{
+                    title:"Select Child Profile"
+                }}
+            />
+
+            {/* page to route to from main */}
+            <ChildProfileStack.Screen 
+                name="ChildDetails" 
+                component={ChildDetails} 
+                options={{
+                    title:"Child Details"
+                }}
+            />
+        </ChildProfileStack.Navigator>
+    );
+}
+
+function AnnouncementStackScreen() {
+    return (
+        <AnnouncementStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            {/* main page */}
+            <AnnouncementStack.Screen 
+                name="ParentHome" 
+                component={ParentHome}
+                options={{
+                    title: "Hello, " + name
+                }}
+            />
+
+            {/* page to route to from main */}
+            <AnnouncementStack.Screen 
+                name="AnnouncementPage" 
+                component={Announcements} 
+                options={{
+                    title:"Announcements"
+                }}
+            />
+        </AnnouncementStack.Navigator>
     );
 }
 
@@ -64,9 +187,10 @@ export default function ParentNav() {
         }}
       >
         <Tab.Screen 
-            name="Hello, MS ZETTIFAR" 
-            component={ParentHome}
+            name="Hello, "
+            component={AnnouncementStackScreen}
             options={{
+                headerShown: false,
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="home" color={color} size={size} />
@@ -75,8 +199,9 @@ export default function ParentNav() {
         />
         <Tab.Screen 
             name="Child Details" 
-            component={ChildDetails} 
+            component={ChildProfileStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Child',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="account" color={color} size={size} />
@@ -84,9 +209,10 @@ export default function ParentNav() {
             }} 
         />
         <Tab.Screen 
-            name="Pickup Selection" 
-            component={ParentPickup} 
+            name="Select Child Profile" 
+            component={ChildSelectionStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Pickup',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="star" color={color} size={size} />
