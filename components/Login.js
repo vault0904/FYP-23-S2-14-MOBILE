@@ -15,7 +15,7 @@ const Login = ({ navigation }) => {
       password: password,
     };
     axios
-      .post('http://localhost:3306/api/login', userData)
+      .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/login', userData)
       .then((response) => {
         console.log("Response from server:", response.data);
         if (response.data.success) {

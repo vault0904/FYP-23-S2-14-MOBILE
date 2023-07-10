@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         color: 'grey',
         marginHorizontal: 10,
         marginVertical: 10,
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: 'bold'
     },
 });
