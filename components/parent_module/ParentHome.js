@@ -38,7 +38,6 @@ const ParentHome = ({navigation}) => {
     const [status, setStatus] = useState(pickupDetails.status);
 
     return(
-        <ScrollView>
             <View style={styles.container}>
                 <View style={styles.upperRow}>
                     
@@ -88,7 +87,6 @@ const ParentHome = ({navigation}) => {
                     <TextInput style={(pickupDetails.status == 'picked up') ? styles.inputGreen : styles.inputRed} value={status} onChangeText={setStatus} editable={false}/>
                 </View>
             </View>
-        </ScrollView>
     )
 }
    

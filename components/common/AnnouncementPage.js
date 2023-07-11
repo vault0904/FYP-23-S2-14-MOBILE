@@ -29,8 +29,7 @@ const announcements = [
 const Announcements = () => {
 
     return(
-        <ScrollView>
-            <View style={styles.container}>
+        <View style={styles.container}>
                 <View style={styles.upperRow}>
                     <Text style={styles.header}>Announcement History</Text> 
                 </View>
@@ -49,7 +48,6 @@ const Announcements = () => {
                     })}
                 </View>
             </View>
-        </ScrollView>
     )
 }
    

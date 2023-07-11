@@ -29,7 +29,7 @@ const ChildSelection = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
 
-        <View style={{marginBottom: '20px'}}>
+        <View style={styles.headerContainer}>
             <Text style={styles.header}>Child Pickup Selection</Text>
             <Text style={styles.subheader}>Please select a profile you would like to choose a pickup slot for</Text>
         </View>
@@ -71,6 +71,9 @@ export default ChildSelection;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    marginBottom: 20
   },
   header: {
     fontWeight: 'bold',

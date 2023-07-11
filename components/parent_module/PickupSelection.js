@@ -9,8 +9,8 @@ function PickupSelection () {
   const child = "BELL ZETTIFAR";
 
   const [selected, setSelected] = React.useState("");
-  const [date, setDate] = useState(new Date())
-  const [open, setOpen] = useState(false)
+  // const [date, setDate] = useState(new Date())
+  // const [open, setOpen] = useState(false)
 
   const data = [
       // disabled param : to show the timeslot is fully booked
@@ -45,8 +45,8 @@ function PickupSelection () {
           <Text style={styles.subheader}>Please select one of the following dates for child pickup</Text>
           
           {/* Pickup date */}
-          <Button title="Open" onPress={() => setOpen(true)} style={{backgroundColor: '#56844B', marginTop: '10px'}} />
-          <DatePicker
+          {/* <Button title="Open" onPress={() => setOpen(true)} style={{backgroundColor: '#56844B', marginTop: '10px'}} /> */}
+          {/* <DatePicker
             modal
             open={open}
             date={date}
@@ -57,7 +57,7 @@ function PickupSelection () {
             onCancel={() => {
               setOpen(false)
             }}
-          />
+          /> */}
         </View>
         
         {/* pickup method selection - bus / self etc*/}
@@ -84,8 +84,8 @@ function PickupSelection () {
           <Text style={styles.header}>Pickup gate selection</Text>
           <Text style={styles.subheader}>If you selected "Self Pickup", please choose a gate below</Text>
         
-          {/* drop down for timing selection */}
-          <View style={{marginTop: '15px'}}>
+          {/* drop down for gate selection */}
+          <View style={styles.dropdownContainer}>
             <SelectList 
             setSelected={(val) => setSelected(val)} 
             data={gatedata} 
@@ -100,7 +100,7 @@ function PickupSelection () {
           <Text style={styles.subheader}>If you selected "Self Pickup", please choose a timeslot below</Text>
         
           {/* drop down for timing selection */}
-          <View style={{marginTop: '15px'}}>
+          <View style={styles.dropdownContainer}>
             <SelectList 
             setSelected={(val) => setSelected(val)} 
             data={data} 
@@ -129,6 +129,9 @@ export default PickupSelection;
 const styles = StyleSheet.create({
   container: {
       flex: 1,
+  },
+  dropdownContainer: {
+    marginTop: 15
   },
   childHeader: {
     marginHorizontal: 25,

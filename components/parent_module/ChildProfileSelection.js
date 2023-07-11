@@ -29,12 +29,11 @@ const ChildProfileSelection = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
 
-        <View style={{marginBottom: '20px'}}>
+        <View style={styles.headerContainer}>
             <Text style={styles.header}>Child Profile</Text>
             <Text style={styles.subheader}>Please select a profile you would like to view</Text>
         </View>
         
-        <ScrollView>
             <View>
                 {child.map((child) => {
                     return(
@@ -59,7 +58,6 @@ const ChildProfileSelection = ({navigation}) => {
                     )
                 })}
             </View>
-        </ScrollView> 
       </View>
     </SafeAreaView>
   );
@@ -71,6 +69,9 @@ export default ChildProfileSelection;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    marginBottom: 20
   },
   header: {
     fontWeight: 'bold',
