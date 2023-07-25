@@ -1,10 +1,63 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, TextInput, ScrollView} from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/child.jpg'
-import QRCode from 'react-native-qrcode-svg'
+import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
+import Logo from '../common/avatars/child.jpg';
+import QRCode from 'react-native-qrcode-svg';
+import React, { useState, useEffect, useLayoutEffect} from "react";
+import axios from 'axios';
+import {useRoute} from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+
 
 const ChildProfile = () => {
+    //grab the childID
+    const route = useRoute();
+    //this childID is based on the GUI ID
+    const {thisChild} = route.params;
+    console.log("thisID", thisChild);
+    const iSFocused = useIsFocused();
+    const[thisChildData, setThisData] = useState(null);
+  
+    const fetchData = () => {
+      //axios to get child data
+      console.log("current child id", thisChild)
+      axios
+        .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/thischild/${thisChild}`)
+        .then((response) => {
+          const recData = response.data;
+          setThisData(recData);
+        })
+        .catch((error) => {
+          console.log('Error fetching child data:', error);
+        });
+      };
+
+      useEffect(() => {
+        console.log("thischildData:", thisChildData);
+      }, [thisChildData]);
+
+      useEffect(() => {
+        fetchData();
+      }, []);
+    
+      useLayoutEffect(() => {
+        if (iSFocused)  { 
+          fetchData();
+        }
+      }, [iSFocused]);
+      
+      if (!thisChildData) {
+        return (
+          <View style={styles.loadingContainer}>
+            <Text>Loading...</Text>
+          </View>
+        );
+      }
+      //generate QR code
+      const secretKey = "fypPickupAPP";
+      const qrData = thisChildData.child_ID + "|" +secretKey;
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -20,8 +73,8 @@ const ChildProfile = () => {
 
                 {/* child name & level */}
                 <View style={{marginLeft: 20, marginTop: 10}}>
-                    <Title style={styles.title}>BELL ZETTIFAR</Title>
-                    <Caption style={styles.caption}>Primary 1</Caption>
+                    <Title style={styles.title}>{thisChildData.firstName} {thisChildData.lastName}</Title>
+                    <Caption style={styles.caption}>{thisChildData.grade}</Caption>
                 </View>
               </View>
           </Card>
@@ -35,30 +88,20 @@ const ChildProfile = () => {
 
           <View>
             <View style={styles.profileContainer}>
-              <Text style={styles.profileTag}>Teacher name</Text>
+              <Text style={styles.profileTag}>School Name</Text>
               <TextInput 
                 style={styles.profileText} 
-                value = 'Loden Greatstorm' 
+                value = {thisChildData.school_Name}
                 placeholderTextColor='#56844B'
                 editable = {false}
               />
             </View>
 
             <View style={styles.profileContainer}>
-              <Text style={styles.profileTag}>Teacher username</Text>
+              <Text style={styles.profileTag}>Form Class</Text>
               <TextInput 
                 style={styles.profileText} 
-                value = 'gvps_greatstorm' 
-                placeholderTextColor='#56844B'
-                editable = {false}
-              />
-            </View>
-
-            <View style={styles.profileContainer}>
-              <Text style={styles.profileTag}>Form class</Text>
-              <TextInput 
-                style={styles.profileText} 
-                value = '1 Empathy' 
+                value = {thisChildData.formClass}
                 placeholderTextColor='#56844B'
                 editable = {false}
               />
@@ -68,33 +111,56 @@ const ChildProfile = () => {
               <Text style={styles.profileTag}>Dismissal gate</Text>
               <TextInput 
                 style={styles.profileText} 
-                value = 'West gate' 
+                value = 'Temporary' 
+                placeholderTextColor='#56844B'
+                editable = {false}
+              />
+            </View>
+
+            <View style={styles.profileContainer}>
+              <Text style={styles.profileTag}>Form Teacher</Text>
+              <TextInput 
+                style={styles.profileText} 
+                value={`${thisChildData.teacherFirstName} ${thisChildData.teacherLastName}`}
+                placeholderTextColor='#56844B'
+                editable = {false}
+              />
+            </View>
+
+            <View style={styles.profileContainer}>
+              <Text style={styles.profileTag}>Teacher Email</Text>
+              <TextInput 
+                style={styles.profileText} 
+                value = {thisChildData.teacherEmail}
                 placeholderTextColor='#56844B'
                 editable = {false}
               />
             </View>
           </View>
 
-          {/* displaying QR code */}
-          <View style={styles.qrContainer}>
-          <QRCode
-            value='https://memory-alpha.fandom.com/wiki/James_T._Kirk'
-            color={'#56844B'}
-            backgroundColor={'white'}
-            size={160}
-            // logo={require('../../../embed_logo_file_path')} // or logo={{uri: base64logo}}
-            logoMargin={2}
-            logoSize={20}
-            logoBorderRadius={10}
-            logoBackgroundColor={'transparent'}
-            />
-          </View>
-        </View>
-      
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+              {/* Displaying QR code */}
+              <View style={styles.qrContainer}>
+                {/* Move QRCode component here */}
+                {thisChildData && (
+                  <QRCode
+                    value={qrData}
+                    color={'#56844B'}
+                    backgroundColor={'white'}
+                    size={160}
+                    // logo={require('../../../embed_logo_file_path')} // or logo={{uri: base64logo}}
+                    logoMargin={2}
+                    logoSize={20}
+                    logoBorderRadius={10}
+                    logoBackgroundColor={'transparent'}
+                  />
+                )}
+              </View>
+            </View>
+          
+          </ScrollView>
+        </SafeAreaView>
+      );
+    }
 
 export default ChildProfile;
 

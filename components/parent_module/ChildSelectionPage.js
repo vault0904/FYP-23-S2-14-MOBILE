@@ -1,30 +1,13 @@
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Logo from '../common/avatars/child.jpg'
+import React, { useState, useEffect } from "react";
+import { childID } from './ChildProfileSelection';
 
-// child data 
-const child = [
-    {
-        id: 1,
-        image: {Logo},
-        name: "Bell Zettifar",
-        level: "Primary 1"
-    },
-    {
-        id: 2,
-        image: {Logo},
-        name: "Geralt Zettifar",
-        level: "Primary 3"
-    },
-    {
-        id: 3,
-        image: {Logo},
-        name: "Toto Zettifar",
-        level: "Primary 4"
-    }
-]
+import axios from 'axios';
 
 const ChildSelection = ({navigation}) => {
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>

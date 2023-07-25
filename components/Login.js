@@ -1,38 +1,53 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
+import RNPickerSelect from 'react-native-picker-select';
 
+
+//global variable
+export let usernameValue = '';
+export let userLastName = '';
+
+
+
+// login function for all user types
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState('parent');
 
+  // Login function
   const handleLogin = () => {
-    console.log("Username: ", username);
-    console.log("Password: ", password);
+    console.log('Username: ', username);
+    console.log('Password: ', password);
+    usernameValue = username;
+
+    //create user data object
     const userData = {
       username: username,
       password: password,
+      userType: userType,
     };
+
+    //using axios to send post request to server
     axios
       .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/login', userData)
       .then((response) => {
-        console.log("Response from server:", response.data);
+        console.log('Response from server:', response.data);
         if (response.data.success) {
-          const userType = response.data.user_ID;
-          console.log("User Type:", userType);
+          const userLName = response.data.LName;
+          userLastName = userLName;
           navigation.navigate('ScreenNav', { userType });
-          console.log("User Type:", userType);
         } else {
           console.log(response.data.error);
         }
       })
       .catch((error) => {
-        console.log("Error during login", error);
+        console.log('Error during login', error);
       });
   };
 
-
+  //display
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -43,16 +58,27 @@ const Login = ({ navigation }) => {
         <Text style={styles.subTitleContainer}>Welcome back.</Text>
       </View>
       <View style={styles.inputView}>
+        <RNPickerSelect
+          value = {userType}
+          onValueChange={(value) => setUserType(value)}
+          placeholder={{ label: 'Select User Type', value: null }}
+          items = {[
+            { label: 'Parent', value: 'parent' },
+            { label: 'Teacher', value: 'teacher' },
+            { label: 'Driver', value: 'driver' },
+            {label: 'Event Facilitator', value: 'event_facilitator'}
+          ]}
+        />
         <TextInput
           style={styles.inputText}
-          placeholder='Username'
-          placeholderTextColor='#56844B'
+          placeholder="Username"
+          placeholderTextColor="#56844B"
           onChangeText={(username) => setUsername(username)}
         />
         <TextInput
           style={styles.inputText}
-          placeholder='Password'
-          placeholderTextColor='#56844B'
+          placeholder="Password"
+          placeholderTextColor="#56844B"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
@@ -66,6 +92,7 @@ const Login = ({ navigation }) => {
 
 export default Login;
 
+//styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

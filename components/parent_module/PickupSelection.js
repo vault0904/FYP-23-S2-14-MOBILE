@@ -2,8 +2,11 @@ import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper'
 import { SelectList } from 'react-native-dropdown-select-list'
 import { Button } from 'react-native'
-import DatePicker from 'react-native-date-picker'
 import React, { useState } from "react";
+import DropDownSelect from 'react-native-dropdown-select-list';
+import DatePicker from 'react-native-date-picker';
+
+
 
 function PickupSelection () {
   const child = "BELL ZETTIFAR";
