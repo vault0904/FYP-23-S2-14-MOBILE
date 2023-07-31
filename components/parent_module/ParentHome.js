@@ -8,6 +8,7 @@ const Item = ({message}) => (
     </View>
 );
 
+
 // pickup dummy data
 const ParentHome = ({navigation}) => {
     const pickupDetails = {
@@ -38,26 +39,26 @@ const ParentHome = ({navigation}) => {
     }, []);
 
     return(
-            <View style={styles.container}>
-                <View style={styles.upperRow}>
-                    
-                    {/* header */}
-                    <Text style={styles.header}>Announcements</Text>
-                    <TouchableOpacity key='View More'
-                        onPress={() => navigation.navigate('AnnouncementPage')}
-                    >
-                        <Text style={styles.btnText}>View More</Text>
-                    </TouchableOpacity> 
-                </View>
+        <View style={styles.container}>
+        <View style={styles.upperRow}>
+            
+            {/* header */}
+            <Text style={styles.header}>Announcements</Text>
+            <TouchableOpacity key='View More'
+                onPress={() => navigation.navigate('AnnouncementPage')}
+            >
+                <Text style={styles.btnText}>View More</Text>
+            </TouchableOpacity> 
+        </View>
 
-                {/* NEXT STEP: add code to limit announcements to only 3 */}
-                <View style={styles.list}>
-                    <FlatList 
-                    data={announcements}
-                    renderItem={({item}) => <Item message={item.message} />}
-                    keyExtractor={(item) => item.ann_ID.toString()}
-                    />
-                </View>
+        {/* NEXT STEP: add code to limit announcements to only 3 */}
+        <View style={styles.list}>
+            <FlatList 
+            data={announcements}
+            renderItem={({item}) => <Item message={item.message} />}
+            keyExtractor={(item) => item.ann_ID.toString()}
+            />
+        </View>
 
                 {/* pickup details */}
                 <Text style={styles.header}>Pickup details</Text>

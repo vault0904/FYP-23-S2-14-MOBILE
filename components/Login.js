@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableWithoutFeedback, Keyboard,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
 import axios from 'axios';
-import RNPickerSelect from 'react-native-picker-select';
-
 
 //global variable
 export let usernameValue = '';
 export let userLastName = '';
 
-
-
 // login function for all user types
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('parent');
+  const [userType, setUserType] = useState('event_facilitator'); // Default user type is set to "parent"
 
   // Login function
   const handleLogin = () => {
@@ -47,52 +43,53 @@ const Login = ({ navigation }) => {
       });
   };
 
-  //display
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
+  // Display
   return (
-    <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>MARSU-</Text>
-        <Text style={styles.title}>PIUM-</Text>
-      </View>
-      <View>
-        <Text style={styles.subTitleContainer}>Welcome back.</Text>
-      </View>
-      <View style={styles.inputView}>
-        <RNPickerSelect
-          value = {userType}
-          onValueChange={(value) => setUserType(value)}
-          placeholder={{ label: 'Select User Type', value: null }}
-          items = {[
-            { label: 'Parent', value: 'parent' },
-            { label: 'Teacher', value: 'teacher' },
-            { label: 'Driver', value: 'driver' },
-            {label: 'Event Facilitator', value: 'event_facilitator'}
-          ]}
-        />
-        <TextInput
-          style={styles.inputText}
-          placeholder="Username"
-          placeholderTextColor="#56844B"
-          onChangeText={(username) => setUsername(username)}
-        />
-        <TextInput
-          style={styles.inputText}
-          placeholder="Password"
-          placeholderTextColor="#56844B"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-      </View>
-      <TouchableOpacity onPress={handleLogin} style={styles.loginBtn}>
-        <Text style={styles.btnText}>LOGIN</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <KeyboardAvoidingView style={styles.container} behavior="position" keyboardVerticalOffset={0}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>MARSU-</Text>
+          <Text style={styles.title}>PIUM-</Text>
+        </View>
+        <View>
+          <Text style={styles.subTitleContainer}>Welcome back.</Text>
+        </View>
+        <View style={styles.inputView}>
+          {/* Username Input */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Username"
+              placeholderTextColor="#56844B"
+              onChangeText={(username) => setUsername(username)}
+            />
+          </View>
+          {/* Password Input */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Password"
+              placeholderTextColor="#56844B"
+              secureTextEntry={true}
+              onChangeText={(password) => setPassword(password)}
+            />
+          </View>
+        </View>
+        <TouchableOpacity onPress={handleLogin} style={styles.loginBtn}>
+          <Text style={styles.btnText}>LOGIN</Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 
 export default Login;
 
-//styling
+// Styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -124,10 +121,16 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 25,
   },
-  inputText: {
+  inputContainer: {
     height: 50,
     borderBottomWidth: 1,
     borderBottomColor: '#56844B',
+    marginBottom: 10,
+  },
+  inputText: {
+    height: 50,
+    fontSize: 16,
+    color: '#56844B',
   },
   loginBtn: {
     backgroundColor: '#56844B',
@@ -135,13 +138,13 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 50,
     alignItems: 'center',
+    justifyContent: 'center',
     marginLeft: 35,
     marginRight: 35,
     marginTop: 100,
     marginBottom: 50,
   },
   btnText: {
-    padding: 15,
     color: '#ffffff',
     fontSize: 18,
     textAlign: 'center',

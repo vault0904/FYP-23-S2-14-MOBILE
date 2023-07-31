@@ -1,191 +1,207 @@
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { ScrollView, View,  Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { usernameValue } from '../Login';
 
-export default class ParentEditProfile extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: "",
-            username: "",
-            email: "",
-            contact: "",
-            subscription: "",
-            address: "",
-            oldPassword : "",   //to store old password
-            oldPasswordErrorMessage : "",   //old password error msg
-            password: "",  //to store new password
-            passwordErrorMessage: "",  //new password error msg
-            confirmPassword: "",      //to store new confirmed password
-            confirmPasswordErrorMessage: "",    //confirmed password error msg
-            successChangePassMessage: "",   //success change password msg
-            successUpdatePassMessage: "",   //success update profile msg
-            loading: false,    //manage loader
+const ParentEditProfile = () => {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [address, setAddress] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
+  const [successChangePassMessage, setSuccessChangePassMessage] = useState("");
+  const [successUpdateProfileMessage, setSuccessUpdateProfileMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showSuccessDetailsModal, setShowSuccessDetailsModal] = useState(false);
+  const [showSuccessPassModal, setShowSuccessPassModal] = useState(false);
+
+  // Display user data from userdata object
+  useEffect(() => {
+    const userID = usernameValue;
+
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
+      .then((response) => {
+        const userData = response.data;
+        console.log("user data: ", userData);
+        setName(userData.firstName + " " + userData.lastName);
+        setUsername(userData.parent_ID);
+        setEmail(userData.email);
+        setContact(userData.contactNo);
+        setAddress(userData.address);
+      })
+      .catch((error) => {
+        console.log('Error fetching data', error);
+      });
+  }, []);
+
+  const formValidationDetails = () => {
+    setSuccessUpdateProfileMessage("");
+    const userID = usernameValue;
+    const newDetails = {
+      parent_ID: userID,
+      newContact: contact,
+      newAddress: address,
+    };
+
+    console.log("new details: ", newDetails);
+    axios
+      .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateDetails", newDetails)
+      .then((response) => {
+        console.log("Response from server:", response.data);
+        setSuccessUpdateProfileMessage("Successfully updated profile");
+        setShowSuccessDetailsModal(true);
+      })
+      .catch((error) => {
+        console.log("Error during update profile", error);
+      });
+  };
+
+  const toggleSuccessPassModal = () => {
+    setShowSuccessPassModal(!showSuccessPassModal);
+    setSuccessChangePassMessage(""); // Clear the success message when showing the modal
+  };
+
+  const toggleSuccessDetailsModal = () => {
+    setShowSuccessDetailsModal(!showSuccessDetailsModal);
+    setSuccessUpdateProfileMessage(""); // Clear the success message when showing the modal
+  };
+
+  const formValidationPass = () => {
+    setSuccessChangePassMessage("");
+    const userID = usernameValue;
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
+      .then((response) => {
+        const DBPassword = response.data.password;
+        console.log("password from DB real time", DBPassword);
+
+        if (oldPassword !== DBPassword) {
+          console.log("old password: ", oldPassword, "old password from DB: ", DBPassword);
+          setOldPasswordErrorMessage("Old password is incorrect");
+          return;
         }
-    }
+        setOldPasswordErrorMessage("");
 
-    //display user data from userdata object
-    componentDidMount() {
-        const userID = usernameValue;
-      
-        axios
-          .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
-          .then((response) => {
-            const userData = response.data;
-            console.log("user data: ", userData);
-            this.setState({
-              name: userData.firstName + " " + userData.lastName,
-              username: userData.parent_ID,
-              email: userData.email,
-              contact: userData.contactNo,
-              subscription: userData.subscription,
-              address: userData.address,
-            });
-          })
-          .catch((error) => {
-            console.log('Error fetching data', error);
-          });
-      }
-      
-    //form to validate and change details
-    formValidationDetails = async () => {
-        this.setState({ successUpdatePassMessage: "" });
-        const userID = usernameValue;
-        const {
-            contact,
-            address,
-        } = this.state;
+        if (!password && !confirmPassword) {
+          console.log("password: ", password, "confirm password: ", confirmPassword);
+          setPasswordErrorMessage("Please enter new password");
+          setConfirmPasswordErrorMessage("Please enter new password");
+          return;
+        }
+        setPasswordErrorMessage("");
+        setConfirmPasswordErrorMessage("");
 
-        const newDetails = {
-            parent_ID: userID,
-            newContact : contact,
-            newAddress : address,
+        if (password !== confirmPassword) {
+          console.log("password: ", password, "confirm password: ", confirmPassword);
+          setConfirmPasswordErrorMessage("Password does not match");
+          return;
+        }
+        setConfirmPasswordErrorMessage("");
+
+        const newPass = {
+          parent_ID: userID,
+          password: confirmPassword,
         };
 
-        console.log("new details: ", newDetails);
         axios
-            .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateDetails", newDetails)
-            .then((response) => {
-                console.log("Response from server:", response.data);
-                this.setState({ successUpdatePassMessage: "Successfully updated profile" });
-            })
-            .catch((error) => {
-                console.log("Error during update profile", error);
-            }
-        );
-    }
-
-    //validate password function to change password
-    formValidationPass = async () => {
-        this.setState({ successChangePassMessage: "" });
-        const userID = usernameValue;
-        axios
-          .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
+          .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updatePass", newPass)
           .then((response) => {
-            const DBPassword = response.data.password;
-            console.log("password from DB real time", DBPassword);
-      
-            const {
-              oldPassword,
-              password,
-              confirmPassword,
-            } = this.state;
-      
-            if (oldPassword !== DBPassword) {
-              console.log("old password: ", oldPassword, "old password from DB: ", DBPassword);
-              this.setState({ oldPasswordErrorMessage: "Old password is incorrect" });
-              return;
-            }
-            this.setState({ oldPasswordErrorMessage: "" });
-      
-            if (!password && !confirmPassword) {
-              console.log("password: ", password, "confirm password: ", confirmPassword);
-              this.setState({ passwordErrorMessage: "Please enter new password", confirmPasswordErrorMessage: "Please enter new password" });
-              return;
-            }
-            this.setState({ passwordErrorMessage: "", confirmPasswordErrorMessage: "" });
-      
-            if (password !== confirmPassword) {
-              console.log("password: ", password, "confirm password: ", confirmPassword);
-              this.setState({ confirmPasswordErrorMessage: "Password does not match" });
-              return;
-            }
-            this.setState({ confirmPasswordErrorMessage: "" });
-      
-            const newPass = {
-              parent_ID: userID,
-              password: confirmPassword,
-            };
-      
-            axios
-              .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updatePass", newPass)
-              .then((response) => {
-                console.log("Response from server:", response.data);
-                this.setState({ successChangePassMessage: "Password changed successfully" });
-              })
-              .catch((error) => {
-                console.log("Error block in password", error);
-              });
+            console.log("Response from server:", response.data);
+            setSuccessChangePassMessage("Password changed successfully");
+            setShowSuccessPassModal(true);
           })
           .catch((error) => {
-            console.log("Error fetching data", error);
+            console.log("Error block in password", error);
           });
-      }
-      
-    //display
-    render() {
-        return  (
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-            <ScrollView style={styles.form}>
-                    {/*Profile Information*/}
-                    <View style={styles.profileView}>
-                        <Text style={styles.title}>Profile Information</Text>
-                        <Text style={styles.label}>Name</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.name} onChangeText={name => this.setState({name})} editable= {false}/>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.email} onChangeText={email => this.setState({email})} editable = {false}/>
-                        <Text style={styles.label}>Contact</Text>
-                        <TextInput style={styles.input} value={this.state.contact} onChangeText={contact => this.setState({contact})}/>
-                        <Text style={styles.label}>Address</Text>
-                        <TextInput style={styles.input} value={this.state.address} onChangeText={address => this.setState({address})}/>
-                    </View>
-                    <TouchableOpacity
-                        onPress={() => this.formValidationDetails()}
-                        style={styles.btn}
-                    >
-                        <Text style={styles.btnText}>Change Details</Text>
-                        {this.state.successUpdatePassMessage.length > 0 && <Text style={styles.textSuccess}>{this.state.successUpdatePassMessage}</Text>}
-                    </TouchableOpacity>
-                    {/*Password information*/}
-                    <View>
-                        <Text style={styles.title}>Account Information</Text>
-                        <Text style={styles.label}>Username</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.username} onChangeText={username => this.setState({username})} editable={false}/>
-                        <Text style={styles.label}>Old Password</Text>
-                        <TextInput style = {styles.input} value={this.state.oldPassword} secureTextEntry={true} onChangeText={oldPassword => this.setState({oldPassword})}/>
-                        {this.state.oldPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.oldPasswordErrorMessage}</Text>}
+      })
+      .catch((error) => {
+        console.log("Error fetching data", error);
+      });
+  };
 
-                        <Text style={styles.label}>New Password</Text>
-                        <TextInput style={styles.input} value={this.state.password} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
-                        {this.state.passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.passwordErrorMessage}</Text>}
-                        <Text style={styles.label}>Confirm New Password</Text>
-                        <TextInput style={styles.input} value={this.state.confirmPassword} secureTextEntry={true} onChangeText={confirmPassword => this.setState({confirmPassword})}/>
-                        {this.state.confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.confirmPasswordErrorMessage}</Text>}
-                    </View>
-                    <TouchableOpacity
-                        onPress={() => this.formValidationPass()}
-                        style={styles.btn}
-                    >
-                        <Text style={styles.btnText}>Change Password</Text>
-                        {this.state.successChangePassMessage.length > 0 && <Text style={styles.textSuccess}>{this.state.successChangePassMessage}</Text>}
-                    </TouchableOpacity>
-                </ScrollView>
-            </View>
-        )
-    }
-}
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 130 : 0}
+    >
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ScrollView style={styles.form}>
+          {/*Profile Information*/}
+          <View style={styles.profileView}>
+            <Text style={styles.title}>Profile Information</Text>
+            <Text style={styles.label}>Name</Text>
+            <TextInput style={styles.uneditInput} value={name} onChangeText={setName} editable={false} />
+            <Text style={styles.label}>Email</Text>
+            <TextInput style={styles.uneditInput} value={email} onChangeText={setEmail} editable={false} />
+            <Text style={styles.label}>Contact</Text>
+            <TextInput style={styles.input} value={contact} onChangeText={setContact} />
+            <Text style={styles.label}>Address</Text>
+            <TextInput style={styles.input} value={address} onChangeText={setAddress} />
+          </View>
+          <TouchableOpacity onPress={formValidationDetails} style={styles.btn}>
+            <Text style={styles.btnText}>Change Details</Text>
+          </TouchableOpacity>
+          {/*Password information*/}
+          <View>
+            <Text style={styles.title}>Account Information</Text>
+            <Text style={styles.label}>Username</Text>
+            <TextInput style={styles.uneditInput} value={username} onChangeText={setUsername} editable={false} />
+            <Text style={styles.label}>Old Password</Text>
+            <TextInput style={styles.input} value={oldPassword} secureTextEntry={true} onChangeText={setOldPassword} />
+            {oldPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{oldPasswordErrorMessage}</Text>}
+            <Text style={styles.label}>New Password</Text>
+            <TextInput style={styles.input} value={password} secureTextEntry={true} onChangeText={setPassword} />
+            {passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{passwordErrorMessage}</Text>}
+            <Text style={styles.label}>Confirm New Password</Text>
+            <TextInput style={styles.input} value={confirmPassword} secureTextEntry={true} onChangeText={setConfirmPassword} />
+            {confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{confirmPasswordErrorMessage}</Text>}
+          </View>
+          <TouchableOpacity onPress={formValidationPass} style={styles.btn}>
+            <Text style={styles.btnText}>Change Password</Text>
+          </TouchableOpacity>
+        </ScrollView>
 
+        {/* Show success details Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showSuccessDetailsModal}
+          onRequestClose={toggleSuccessDetailsModal}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{successUpdateProfileMessage}</Text>
+            <TouchableOpacity onPress={toggleSuccessDetailsModal} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+
+        {/* Show success pass Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showSuccessPassModal}
+          onRequestClose={toggleSuccessPassModal}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{successChangePassMessage}</Text>
+            <TouchableOpacity onPress={toggleSuccessPassModal} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
 
 //css styles
 const styles = StyleSheet.create({
@@ -227,7 +243,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         height:50,
         textAlign: 'auto',
-        marginTop: 50,
+        marginTop: 30,
     },
     btnText:{
         padding: 12,
@@ -241,5 +257,34 @@ const styles = StyleSheet.create({
     },
     textSuccess: {
         color: "#28a745"
-    }
-});
+    },
+    modalView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      },
+      modalText: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        padding: 20,
+        backgroundColor: '#56844B',
+        borderRadius: 8,
+        margin: 20,
+      },
+      modalButton: {
+        backgroundColor: '#56844B',
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+      },
+      modalButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+      },
+    });
+
+export default ParentEditProfile;

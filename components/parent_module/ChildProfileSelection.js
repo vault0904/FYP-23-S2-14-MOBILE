@@ -1,13 +1,10 @@
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/child.jpg'
 import React, { useState, useEffect, useLayoutEffect} from "react";
 import { usernameValue } from '../Login';
 import axios from 'axios';
 import { useIsFocused } from "@react-navigation/native";
 
-
-//export let childID = '';
 
 const ChildProfileSelection = ({ navigation }) => {
   const [childData, setChildData] = useState([]);
@@ -15,7 +12,7 @@ const ChildProfileSelection = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   const fetchData = () => {
-    //axios to get child data
+    //axios to get child for the parent
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/child/${username}`)
       .then((response) => {
@@ -24,6 +21,7 @@ const ChildProfileSelection = ({ navigation }) => {
         setChildData(recData);
         //childID = childData.child_ID;
         //console.log("childID" , childID);
+        console.log("child data", recData);
       })
       .catch((error) => {
         console.log('Error fetching child data:', error);
@@ -48,8 +46,6 @@ const ChildProfileSelection = ({ navigation }) => {
     );
   }
 
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -71,12 +67,14 @@ const ChildProfileSelection = ({ navigation }) => {
               >
                 <Card style={styles.cardDisplay}>
                   <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                    <Avatar.Image source={{ uri: child.image }} size={80} />
+                    <Avatar.Image 
+                    source={child.imageURI ? { uri: child.imageURI } : require('../common/avatars/child.jpg')}
+                    size={80} />
                     <View style={{ marginLeft: 20, marginTop: 10 }}>
                       <Title style={styles.title}>
                         {child.firstName} {child.lastName}
                       </Title>
-                      <Caption style={styles.caption}>{child.grade}</Caption>
+                      {/*<Caption style={styles.caption}>{child.grade}</Caption> */}
                     </View>
                   </View>
                 </Card>

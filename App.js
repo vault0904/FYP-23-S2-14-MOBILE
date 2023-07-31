@@ -28,6 +28,7 @@ const ScreenNav = ({ route }) => {
   }
 };
 
+//default navigator 
 export const AppNavigator = () => {
   return (
     <NavigationContainer>

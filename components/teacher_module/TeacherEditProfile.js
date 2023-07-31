@@ -1,100 +1,208 @@
-import React from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import axios from 'axios';
+import { usernameValue } from '../Login';
 
-export default class TeacherEditProfile extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: "Loden GreatStorm",
-            username: "gvps_greatstorm",
-            email: "lgreatstorm@moe.edu.sg",
-            password: "",  //to store password
-            passwordErrorMessage: "",  //password error msg
-            confirmPassword: "",      //to store password
-            confirmPasswordErrorMessage: "",    //confirm password error msg
-            loading: false,    //manage loader
-        }
-    }
-    /* Authenticate User */
-    formValidation = async () => {
-        const {navigate} = this.props.navigation;
-        this.setState({ loading: true })
-        let errorFlag = false
+const TeacherEditProfile = () => {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [address, setAddress] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
+  const [successChangePassMessage, setSuccessChangePassMessage] = useState("");
+  const [successUpdateProfileMessage, setSuccessUpdateProfileMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showSuccessDetailsModal, setShowSuccessDetailsModal] = useState(false);
+  const [showSuccessPassModal, setShowSuccessPassModal] = useState(false);
 
-        /*
-        if (this.state.password.length == 0) {
-            errorFlag = true;
-            this.setState({ passwordErrorMessage: "Password is required field"});
-        } else if (this.state.password.length < 8 ||  this.state.password.length > 20) {
-            errorFlag = true;
-            this.setState({ passwordErrorMessage: "Password should be min 8 char and max 20 char"});
-        } else if (this.state.password !==  this.state.confirmPassword ) {
-            errorFlag = true;
-            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
-        }
-        
-        if (this.state.password.length == 0) {
-            errorFlag = true;
-            this.setState({ passwordErrorMessage: "Password is required field"});
-        } else if (this.state.confirmPassword.length < 8 ||  this.state.confirmPassword.length > 20) {
-            errorFlag = true;
-            this.setState({ confirmPasswordErrorMessage: "Password should be min 8 char and max 20 char"});
-        } else if (this.state.password !==  this.state.confirmPassword ) {
-            errorFlag = true;
-            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
-        }
-        */
+  // Display user data from userdata object
+  useEffect(() => {
+    const userID = usernameValue;
 
-        // input validation to check if new password and confirm password matches
-        if (this.state.password !==  this.state.confirmPassword ) {
-            errorFlag = true;
-            this.setState({ passwordErrorMessage: "Passwoad and confirm password should be same."});
-        }
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${userID}`)
+      .then((response) => {
+        const userData = response.data;
+        console.log("user data: ", userData);
+        setName(userData.firstName + " " + userData.lastName);
+        setUsername(userData.teacher_ID);
+        setEmail(userData.email);
+        setAddress(userData.address);
+        setContact(userData.contactNo);
+      })
+      .catch((error) => {
+        console.log('Error fetching data', error);
+      });
+  }, []);
 
-        if (errorFlag) {
-            console.log("errorFlag");
-        } else {
-            this.setState({ loading: false });
-            navigate('TeacherProfile');
-        }
-    
-    }
-    render() {
-        return  (
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <ScrollView style={styles.form}>
-                    {/*Profile Information*/}
-                    <View style={styles.profileView}>
-                        <Text style={styles.title}>Profile Information</Text>
-                        <Text style={styles.label}>Name</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.name} onChangeText={name => this.setState({name})} editable={false}/>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.email} onChangeText={email => this.setState({email})} editable={false}/>
-                    </View>
-                    {/*Account Information*/}
-                    <View>
-                        <Text style={styles.title}>Account Information</Text>
-                        <Text style={styles.label}>Username</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.username} onChangeText={username => this.setState({username})} editable={false}/>
-                        <Text style={styles.label}>New Password</Text>
-                        <TextInput style={styles.input} value={this.state.password} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
-                        {this.state.passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.passwordErrorMessage}</Text>}
-                        <Text style={styles.label}>Confirm New Password</Text>
-                        <TextInput style={styles.input} value={this.state.confirmPassword} secureTextEntry={true} onChangeText={confirmPassword => this.setState({confirmPassword})}/>
-                        {this.state.confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.confirmPasswordErrorMessage}</Text>}
-                    </View>
-                    <TouchableOpacity
-                        onPress={() => this.formValidation()}
-                        style={styles.btn}
-                    >
-                        <Text style={styles.btnText}>Save Changes</Text>
-                    </TouchableOpacity>
-                </ScrollView>
-            </View>
-        )
-    }
-}
+  const formValidationDetails = async () => {
+    setSuccessUpdateProfileMessage("");
+    const userID = usernameValue;
+    const newDetails = {
+      teacher_ID: userID,
+      newContact : contact,
+      newAddress: address,
+    };
 
+    console.log("new details: ", newDetails);
+    axios
+      .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updateDetails", newDetails)
+      .then((response) => {
+        console.log("Response from server:", response.data);
+        setSuccessUpdateProfileMessage("Successfully updated profile");
+        setShowSuccessDetailsModal(true);
+      })
+      .catch((error) => {
+        console.log("Error during update profile", error);
+      });
+  };
+
+  const toggleSuccessPassModal = () => {
+    setShowSuccessPassModal(!showSuccessPassModal);
+    setSuccessChangePassMessage(""); // Clear the success message when showing the modal
+  };
+
+  const toggleSuccessDetailsModal = () => {
+    setShowSuccessDetailsModal(!showSuccessDetailsModal);
+    setSuccessUpdateProfileMessage(""); // Clear the success message when showing the modal
+  };
+
+  const formValidationPass = async () => {
+    setSuccessChangePassMessage("");
+    const userID = usernameValue;
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${userID}`)
+      .then((response) => {
+        const DBPassword = response.data.password;
+        console.log("password from DB real time", DBPassword);
+
+        if (oldPassword !== DBPassword) {
+          console.log("old password: ", oldPassword, "old password from DB: ", DBPassword);
+          setOldPasswordErrorMessage("Old password is incorrect");
+          return;
+        }
+        setOldPasswordErrorMessage("");
+
+        if (!password && !confirmPassword) {
+          console.log("password: ", password, "confirm password: ", confirmPassword);
+          setPasswordErrorMessage("Please enter new password");
+          setConfirmPasswordErrorMessage("Please enter new password");
+          return;
+        }
+        setPasswordErrorMessage("");
+        setConfirmPasswordErrorMessage("");
+
+        if (password !== confirmPassword) {
+          console.log("password: ", password, "confirm password: ", confirmPassword);
+          setConfirmPasswordErrorMessage("Password does not match");
+          return;
+        }
+        setConfirmPasswordErrorMessage("");
+
+        const newPass = {
+          teacher_ID: userID,
+          password: confirmPassword,
+        };
+
+        axios
+          .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updatePass", newPass)
+          .then((response) => {
+            console.log("Response from server:", response.data);
+            setSuccessChangePassMessage("Password changed successfully");
+            setShowSuccessPassModal(true);
+          })
+          .catch((error) => {
+            console.log("Error block in password", error);
+          });
+      })
+      .catch((error) => {
+        console.log("Error fetching data", error);
+      });
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust the value as needed for your layout
+    >
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ScrollView style={styles.form}>
+          {/*Profile Information*/}
+          <View style={styles.profileView}>
+            <Text style={styles.title}>Profile Information</Text>
+            <Text style={styles.label}>Name</Text>
+            <TextInput style={styles.uneditInput} value={name} onChangeText={setName} editable={false} />
+            <Text style={styles.label}>Email</Text>
+            <TextInput style={styles.uneditInput} value={email} onChangeText={setEmail} editable={false} />
+            <Text style={styles.label}>Contact</Text>
+            <TextInput style={styles.input} value={contact} onChangeText={setContact} />
+            <Text style={styles.label}>Address</Text>
+            <TextInput style={styles.input} value={address} onChangeText={setAddress} />
+          </View>
+          <TouchableOpacity onPress={formValidationDetails} style={styles.btn}>
+            <Text style={styles.btnText}>Change Details</Text>
+          </TouchableOpacity>
+          {/*Password information*/}
+          <View>
+            <Text style={styles.title}>Account Information</Text>
+            <Text style={styles.label}>Username</Text>
+            <TextInput style={styles.uneditInput} value={username} onChangeText={setUsername} editable={false} />
+            <Text style={styles.label}>Old Password</Text>
+            <TextInput style={styles.input} value={oldPassword} secureTextEntry={true} onChangeText={setOldPassword} />
+            {oldPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{oldPasswordErrorMessage}</Text>}
+
+            <Text style={styles.label}>New Password</Text>
+            <TextInput style={styles.input} value={password} secureTextEntry={true} onChangeText={setPassword} />
+            {passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{passwordErrorMessage}</Text>}
+            <Text style={styles.label}>Confirm New Password</Text>
+            <TextInput style={styles.input} value={confirmPassword} secureTextEntry={true} onChangeText={setConfirmPassword} />
+            {confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{confirmPasswordErrorMessage}</Text>}
+          </View>
+          <TouchableOpacity onPress={formValidationPass} style={styles.btn}>
+            <Text style={styles.btnText}>Change Password</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+        {/* Show success details Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showSuccessDetailsModal}
+          onRequestClose={toggleSuccessDetailsModal}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{successUpdateProfileMessage}</Text>
+            <TouchableOpacity onPress={toggleSuccessDetailsModal} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+
+        {/* Show success pass Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={showSuccessPassModal}
+          onRequestClose={toggleSuccessPassModal}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{successChangePassMessage}</Text>
+            <TouchableOpacity onPress={toggleSuccessPassModal} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
 const styles = StyleSheet.create({
     title: {
         color: 'grey',
@@ -134,7 +242,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         height:50,
         textAlign: 'auto',
-        marginTop: 80,
+        marginTop: 30,
     },
     btnText:{
         padding: 12,
@@ -145,5 +253,37 @@ const styles = StyleSheet.create({
     },
     textDanger: {
         color: "#dc3545"
-    }
-})
+    },
+    textSuccess: {
+        color: "#28a745"
+    },
+    modalView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      },
+      modalText: {
+        fontSize: 18,
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        padding: 20,
+        backgroundColor: '#56844B',
+        borderRadius: 8,
+        margin: 20,
+      },
+      modalButton: {
+        backgroundColor: '#56844B',
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+      },
+      modalButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+      },
+    });
+
+export default TeacherEditProfile;

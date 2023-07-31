@@ -13,7 +13,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Announcements from '../common/AnnouncementPage';
 //import the userLastName from login
 import {userLastName} from '../Login';
-{/* For stack navigation between child tabs and child profile */}
+
 const AnnouncementStack = createNativeStackNavigator();
 
 {/* For stack navigation between profile and edit profile page */}

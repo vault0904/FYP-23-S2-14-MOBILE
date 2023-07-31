@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, SafeAreaView, TextInput, ScrollView} from 'react-native';
+import { StyleSheet, View, SafeAreaView, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
-import Logo from '../common/avatars/child.jpg';
 import QRCode from 'react-native-qrcode-svg';
 import React, { useState, useEffect, useLayoutEffect} from "react";
 import axios from 'axios';
 import {useRoute} from "@react-navigation/native";
 import { useIsFocused } from "@react-navigation/native";
+import * as ImagePicker from 'expo-image-picker';
 
 
 const ChildProfile = () => {
@@ -57,6 +57,92 @@ const ChildProfile = () => {
       const secretKey = "fypPickupAPP";
       const qrData = thisChildData.child_ID + "|" +secretKey;
 
+      const fileUpload = async (uri) => {
+        if (uri) {
+          try {
+            const response = await axios.get(uri, { responseType: 'blob' });
+            const blob = response.data;
+            //const response = await fetch(uri);
+            //const blob = await response.blob();
+            const folName = "/child";
+            const reader = new FileReader(); // Fix the variable name here
+            reader.onloadend = () => {
+              const base64String = reader.result.split(',')[1];
+              const fNameBef = uri.split("/ImagePicker/")[1];
+              const fName = fNameBef; // Use fName instead of name
+              console.log("fname" , fName);
+              const fType = blob.type; // Use fType instead of type
+      
+              axios
+                .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
+                  file: base64String,
+                  name: fName, // Use fName here
+                  folderName: folName,
+                  type: fType, // Use fType here
+                })
+                .then((res) => {
+                  const uploadedURI = res.data.imageURL;
+                  console.log(uploadedURI);
+                  const sendData = {
+                    userID : thisChild,
+                    newImageURI : uploadedURI,
+                  };
+                  console.log(sendData);
+                  axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/child/updateImageURI', sendData)
+                  .then((response) => {
+                    console.log(response.data);
+                    setThisData((prevUserData) => ({
+                      ...prevUserData,
+                      imageURI: uploadedURI,
+                    }));
+                    alert ('File uploaded successfully!');
+                  })
+                  .catch((error) => {
+                    console.error("Error updating user image: ", error);
+                    alert("An error occurred while changeing image!");
+                  })
+                })
+                .catch((err) => {
+                  alert('Error uploading file');
+                  console.log(err);
+                });
+            };
+            reader.readAsDataURL(blob);
+          } catch (error) {
+            alert('Error while reading image:', error);
+          }
+        } else {
+          alert('FILE CANNOT BE EMPTY');
+        }
+      };
+    
+      const handleChooseProfilePicture = async () => {
+        try {
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+          });
+    
+          if (!result.canceled) {
+            console.log('Selected image URI:', result.assets[0].uri); // Updated key to access the selected image URI
+            // You can set the selected image URI to state or do further processing here
+            // For example: setProfilePicture(result.assets[0].uri);
+            fileUpload(result.assets[0].uri);
+    
+          } else {
+            console.log('Image picker canceled');
+          }
+        } catch (error) {
+          console.log('Error while picking image:', error);
+        }
+      };    
+
+
+    //if user do not have an image, display default image
+    const imageSource = thisChildData.imageURI ? { uri: thisChildData.imageURI } : require('../common/avatars/child.jpg');
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -66,15 +152,16 @@ const ChildProfile = () => {
           {/* Top Profile Card */}
           <Card style={styles.cardDisplay}>
               <View style={{flexDirection: 'row', marginTop: 15}}>
-                <Avatar.Image 
-                  source={Logo}
-                  size={80}
-                />
-
+                  <TouchableOpacity onPress={handleChooseProfilePicture}>
+                  <Avatar.Image 
+                    source={imageSource}
+                    size={80}
+                  />
+                </TouchableOpacity>
                 {/* child name & level */}
                 <View style={{marginLeft: 20, marginTop: 10}}>
-                    <Title style={styles.title}>{thisChildData.firstName} {thisChildData.lastName}</Title>
-                    <Caption style={styles.caption}>{thisChildData.grade}</Caption>
+                    <Title style={styles.title}>{thisChildData.childFirstName} {thisChildData.childLastName}</Title>
+                    {/*<Caption style={styles.caption}>{thisChildData.grade}</Caption>*/}
                 </View>
               </View>
           </Card>
@@ -98,20 +185,20 @@ const ChildProfile = () => {
             </View>
 
             <View style={styles.profileContainer}>
-              <Text style={styles.profileTag}>Form Class</Text>
+              <Text style={styles.profileTag}>Address</Text>
               <TextInput 
                 style={styles.profileText} 
-                value = {thisChildData.formClass}
+                value = {thisChildData.address}
                 placeholderTextColor='#56844B'
                 editable = {false}
               />
             </View>
 
             <View style={styles.profileContainer}>
-              <Text style={styles.profileTag}>Dismissal gate</Text>
+              <Text style={styles.profileTag}>Form Class</Text>
               <TextInput 
                 style={styles.profileText} 
-                value = 'Temporary' 
+                value = {thisChildData.class_Name}
                 placeholderTextColor='#56844B'
                 editable = {false}
               />
@@ -131,7 +218,7 @@ const ChildProfile = () => {
               <Text style={styles.profileTag}>Teacher Email</Text>
               <TextInput 
                 style={styles.profileText} 
-                value = {thisChildData.teacherEmail}
+                value = {thisChildData.email}
                 placeholderTextColor='#56844B'
                 editable = {false}
               />

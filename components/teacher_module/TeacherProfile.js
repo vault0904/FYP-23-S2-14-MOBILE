@@ -1,28 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect, useLayoutEffect} from 'react';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
+import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
+import Logo from '../common/avatars/child.jpg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, { useState, useEffect, useLayoutEffect} from 'react';
 import axios from 'axios';
-//import username from login
-import { usernameValue } from '../Login';
+import { usernameValue} from '../Login';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 
-//parent profile
-const ParentProfile = ({ navigation }) => {
-  //userData stores all the data of user from database
-  const [userData, setUserData] = useState(null);
-  //const [file, setFile] = useState(null);
-  //username is equal to the username from login
-  const username = usernameValue;
-  //console.log ("username from context", username);
-  const iSFocused = useIsFocused();
+//add in contactNO to teacher database later
 
+//teacher profile
+const TeacherProfile = ({navigation}) => {
+  const [userData, setUserData] = useState(null);
+
+  const username = usernameValue;
+
+  const iSFocused = useIsFocused();
 
   const fetchData = () => {
     axios
-      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${username}`)
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${username}`)
       .then((response) => {
         const userData = response.data;
         console.log('User data:', userData);
@@ -32,7 +31,6 @@ const ParentProfile = ({ navigation }) => {
         console.log('Error fetching data', error);
       });
   };
-
 
   useEffect(() => {
     fetchData();
@@ -52,7 +50,7 @@ const ParentProfile = ({ navigation }) => {
     );
   }
 
-  //file upload function
+  //upload picture function
   const fileUpload = async (uri) => {
     if (uri) {
       try {
@@ -60,7 +58,7 @@ const ParentProfile = ({ navigation }) => {
         const blob = response.data;
         //const response = await fetch(uri);
         //const blob = await response.blob();
-        const folName = "/parent";
+        const folName = "/teacher";
         const reader = new FileReader(); // Fix the variable name here
         reader.onloadend = () => {
           const base64String = reader.result.split(',')[1];
@@ -84,7 +82,7 @@ const ParentProfile = ({ navigation }) => {
                 newImageURI : uploadedURI,
               };
               console.log(sendData);
-              axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateImageURI', sendData)
+              axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updateImageURI', sendData)
               .then((response) => {
                 console.log(response.data);
                 setUserData((prevUserData) => ({
@@ -112,7 +110,7 @@ const ParentProfile = ({ navigation }) => {
     }
   };
 
-  //image picker to select image
+  //image picking function
   const handleChooseProfilePicture = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -141,6 +139,7 @@ const ParentProfile = ({ navigation }) => {
   //if user do not have an image, display default image
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/avatars/child.jpg');
 
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -156,7 +155,7 @@ const ParentProfile = ({ navigation }) => {
             </TouchableOpacity>
             <View style={{ marginLeft: 20 }}>
               <Title style={styles.title}>{userData.firstName + ' ' + userData.lastName}</Title>
-              <Caption style={styles.caption}>Parent</Caption>
+              <Caption style={styles.caption}>Teacher</Caption>
             </View>
           </View>
         </Card>
@@ -167,8 +166,9 @@ const ParentProfile = ({ navigation }) => {
                 Profile Information
             </Text>
             <View>
-              <TouchableOpacity key='edit' onPress={() => navigation.navigate('ParentEditProfile')}>
-                <Icon name="pencil" size={20} color="#56844B" style={{ marginRight: 10 }} />
+              <TouchableOpacity key='edit'
+              onPress={() => navigation.navigate('TeacherEditProfile')}>
+                <Icon name="pencil" size={20} color="#56844B"/>
               </TouchableOpacity> 
             </View>
         </View>
@@ -178,7 +178,7 @@ const ParentProfile = ({ navigation }) => {
             <Text style={styles.profileTag}>Username</Text>
             <TextInput 
               style={styles.profileText} 
-              value = {userData.parent_ID}
+              value = {userData.teacher_ID}
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -204,39 +204,38 @@ const ParentProfile = ({ navigation }) => {
             />
           </View>
 
-          <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Subscription</Text>
-            <TextInput 
-              style={styles.profileText} 
-              value = {userData.subscription}
-              placeholderTextColor='#56844B'
-              editable = {false}
-            />
-          </View>
-
+          
           <View style={styles.profileContainer}>
             <Text style={styles.profileTag}>Address</Text>
             <TextInput 
               style={styles.profileText} 
-              multiline
-              numberOfLines={3}
               value = {userData.address}
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.logoutBtn}>
+          <View style={styles.profileContainer}>
+            <Text style={styles.profileTag}>Form class</Text>
+            <TextInput 
+              style={styles.profileText} 
+              value = {userData.class_Name}
+              placeholderTextColor='#56844B'
+              editable = {false}
+            />
+          </View>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')} style={styles.logoutBtn} >
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
-};
+}
 
-
-export default ParentProfile;
+export default TeacherProfile;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
@@ -324,11 +323,11 @@ const styles = StyleSheet.create({
     marginTop:50,
     marginBottom:50,
   },
-  btnText:{
+btnText:{
     padding: 15,
     color: '#FFFFFF',
     fontSize: 18,
     textAlign: 'center',
     fontWeight: 'bold'
-  },
+}
 });

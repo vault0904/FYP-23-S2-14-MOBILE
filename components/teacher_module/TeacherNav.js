@@ -8,6 +8,11 @@ import TeacherChat from './TeacherChat';
 import TeacherProfile from './TeacherProfile';
 import TeacherEditProfile from './TeacherEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {userLastName} from '../Login';
+import Announcements from '../common/AnnouncementPage';
+
+//announcement stack screen
+const AnnouncementStack = createNativeStackNavigator();
 
 {/* For stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
@@ -82,6 +87,43 @@ function PickUpStackScreen() {
 
 const Tab = createBottomTabNavigator();
 
+function AnnouncementStackScreen() {
+    //setting last name of user from login
+    const Lname = userLastName;
+    return (
+      <AnnouncementStack.Navigator 
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#56844B',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          headerBackTitleVisible: false
+        }}
+      >
+        {/* main page */}
+        <AnnouncementStack.Screen 
+          name="TeacherHome" 
+          component={TeacherHome}
+          options={{
+            title: "Welcome, "+ Lname
+          }}
+        />
+  
+        {/* page to route to from main */}
+        <AnnouncementStack.Screen 
+          name="AnnouncementPage" 
+          component={Announcements} 
+          options={{
+            title:"Announcements"
+          }}
+        />
+      </AnnouncementStack.Navigator>
+    );
+  }
+
 
 export default function TeacherNav() {
     return (
@@ -100,9 +142,10 @@ export default function TeacherNav() {
         }}
       >
         <Tab.Screen 
-            name="Hello, Teacher GREATSTORM" 
-            component={TeacherHome}
+            name="Hello" 
+            component={AnnouncementStackScreen}
             options={{
+                headerShown: false,
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="home" color={color} size={size} />

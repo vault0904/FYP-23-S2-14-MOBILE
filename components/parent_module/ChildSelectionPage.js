@@ -1,13 +1,50 @@
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/child.jpg'
-import React, { useState, useEffect } from "react";
-import { childID } from './ChildProfileSelection';
-
+import React, { useState, useEffect, useLayoutEffect} from "react";
+import { usernameValue } from '../Login';
 import axios from 'axios';
+import { useIsFocused } from "@react-navigation/native";
 
 const ChildSelection = ({navigation}) => {
+  const [childData, setChildData] = useState([]);
+  const username = usernameValue;
+  const isFocused = useIsFocused();
 
+  const fetchData = () => {
+    //axios to get child for the parent
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/child/${username}`)
+      .then((response) => {
+        const recData = response.data;
+        console.log('Response from server:', response.data);
+        setChildData(recData);
+        //childID = childData.child_ID;
+        //console.log("childID" , childID);
+        console.log("child data", recData);
+      })
+      .catch((error) => {
+        console.log('Error fetching child data:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isFocused)  { 
+      fetchData();
+    }
+  }, [isFocused]);
+  
+  if (!childData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -17,36 +54,38 @@ const ChildSelection = ({navigation}) => {
             <Text style={styles.subheader}>Please select a profile you would like to choose a pickup slot for</Text>
         </View>
         
-        <ScrollView>
-            <View>
-                {child.map((child) => {
-                    return(
-                        <TouchableOpacity
-                        onPress={() => navigation.navigate('PickupSelection')}
-                        style={styles.logoutBtn}
-                        key={child.id}
-                        >
-                            <Card style={styles.cardDisplay}>
-                                <View style={{flexDirection: 'row', marginTop: 15}}>
-                                <Avatar.Image 
-                                    source={child.image}
-                                    size={80}
-                                />
-                                <View style={{marginLeft: 20, marginTop: 10}}>
-                                    <Title style={styles.title}>{child.name}</Title>
-                                    <Caption style={styles.caption}>{child.level}</Caption>
-                                </View>
-                                </View>
-                            </Card>
-                    </TouchableOpacity>
-                    )
-                })}
-            </View>
-        </ScrollView> 
+        <View>
+          {childData.map((child) => {
+            return (
+              <TouchableOpacity
+                style={styles.logoutBtn}
+                key={child.child_ID}
+                onPress={() => {
+                  console.log('Pressed child_ID:', child.child_ID);
+                  navigation.navigate('PickupSelection', { thisChild: child.child_ID });
+                }}
+              >
+                <Card style={styles.cardDisplay}>
+                  <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                    <Avatar.Image 
+                    source={child.imageURI ? { uri: child.imageURI } : require('../common/avatars/child.jpg')}
+                    size={80} />
+                    <View style={{ marginLeft: 20, marginTop: 10 }}>
+                      <Title style={styles.title}>
+                        {child.firstName} {child.lastName}
+                      </Title>
+                      {/*<Caption style={styles.caption}>{child.grade}</Caption> */}
+                    </View>
+                  </View>
+                </Card>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
 export default ChildSelection;
 

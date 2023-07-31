@@ -1,17 +1,21 @@
-import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
-import { Text } from 'react-native-paper'
-import { SelectList } from 'react-native-dropdown-select-list'
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
+import React, { useState, useEffect, useLayoutEffect} from "react";
+import axios from 'axios';
+import { useIsFocused } from "@react-navigation/native";
 import { Button } from 'react-native'
-import React, { useState } from "react";
-import DropDownSelect from 'react-native-dropdown-select-list';
-import DatePicker from 'react-native-date-picker';
+import {useRoute} from "@react-navigation/native";
+import { SelectList } from 'react-native-dropdown-select-list'
 
 
+const PickupSelection = () => {
+  const route = useRoute();
+  const {thisChild} = route.params;
+  console.log("this child", thisChild);
+  const iSFocused = useIsFocused();
+  const[thisChildData, setThisData] = useState(null);
 
-function PickupSelection () {
-  const child = "BELL ZETTIFAR";
-
-  const [selected, setSelected] = React.useState("");
+ // const [selected, setSelected] = React.useState("");
   // const [date, setDate] = useState(new Date())
   // const [open, setOpen] = useState(false)
 
@@ -39,7 +43,7 @@ function PickupSelection () {
         so that we can get the child's name based on profile chosen */}
 
         <View>
-          <Text style={styles.childHeader}>Pickup Selection for {child}</Text>
+          <Text style={styles.childHeader}>Pickup Selection for rex</Text>
         </View>
 
         {/* pickup date selection */}
@@ -105,7 +109,7 @@ function PickupSelection () {
           {/* drop down for timing selection */}
           <View style={styles.dropdownContainer}>
             <SelectList 
-            setSelected={(val) => setSelected(val)} 
+            //setSelected={(val) => setSelected(val)} 
             data={data} 
             save="value"
             />
