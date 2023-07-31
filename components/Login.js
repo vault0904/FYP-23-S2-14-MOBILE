@@ -10,7 +10,7 @@ export let userLastName = '';
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('event_facilitator'); // Default user type is set to "parent"
+  const [userType, setUserType] = useState('driver'); // Default user type is set to "parent"
 
   // Login function
   const handleLogin = () => {
@@ -20,7 +20,7 @@ const Login = ({ navigation }) => {
 
     //create user data object
     const userData = {
-      username: username,
+      username: username, 
       password: password,
       userType: userType,
     };

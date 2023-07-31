@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
@@ -140,7 +140,7 @@ const FacilProfile = ({navigation}) => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
         {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
@@ -222,7 +222,7 @@ const FacilProfile = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

@@ -1,9 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
+import {
+  Linking
+} from 'react-native';
+import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
+
 //import username from login
 import { usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
@@ -18,7 +22,6 @@ const ParentProfile = ({ navigation }) => {
   const username = usernameValue;
   //console.log ("username from context", username);
   const iSFocused = useIsFocused();
-
 
   const fetchData = () => {
     axios
@@ -142,7 +145,7 @@ const ParentProfile = ({ navigation }) => {
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/avatars/child.jpg');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
         {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
@@ -204,6 +207,7 @@ const ParentProfile = ({ navigation }) => {
             />
           </View>
 
+
           <View style={styles.profileContainer}>
             <Text style={styles.profileTag}>Subscription</Text>
             <TextInput 
@@ -226,12 +230,27 @@ const ParentProfile = ({ navigation }) => {
             />
           </View>
 
+          <View style={styles.buttonGroupContainer}>
+            {/* visit us button */}
+            <TouchableOpacity onPress={() => Linking.openURL("https://xinyi0247.wixsite.com/marsupium")} style={styles.visitUsButton}>
+              <Text style={styles.btnText1}>Visit Us</Text>
+            </TouchableOpacity>
+
+            {/* subsribe button */}
+            <TouchableOpacity onPress={() =>navigation.navigate('Login')} style={styles.subscribeButton}>
+              <Text style={styles.btnText1}>Subscribe</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* logout button */}
           <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.logoutBtn}>
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
+
+
         </View>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -244,11 +263,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardDisplay: {
-    paddingBottom: 25,
+    paddingBottom: 15,
     paddingLeft: 15,
     paddingRight: 130,
     backgroundColor: '#56844B',
-    paddingTop: 10,
+    paddingTop: 15,
   },
   profileInfo: {
     color: '#56844B',
@@ -315,14 +334,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 100,
   },
+  buttonGroupContainer:{
+    marginTop: 30,
+    marginVertical: 14,
+    flexDirection: 'row',
+  },
+  visitUsButton: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 10,
+    paddingHorizontal: 20, 
+    marginRight: 10
+  },
+  subscribeButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    marginLeft: 10
+  },
+  btnText1:{
+    padding: 5,
+    color: '#FFFFFF',
+    fontSize: 18,
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
   logoutBtn:{
     backgroundColor: '#FFA500',
     marginVertical: 14,
-    borderRadius:10,
-    height:50,
+    borderRadius: 10,
+    height: 50,
     alignItems:'center',
-    marginTop:50,
-    marginBottom:50,
+    marginTop: 10,
+    marginBottom: 50,
   },
   btnText:{
     padding: 15,

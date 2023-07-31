@@ -43,7 +43,7 @@ const ParentHome = ({navigation}) => {
         <View style={styles.upperRow}>
             
             {/* header */}
-            <Text style={styles.header}>Announcements</Text>
+            <Text style={styles.header}>News & Notices</Text>
             <TouchableOpacity key='View More'
                 onPress={() => navigation.navigate('AnnouncementPage')}
             >

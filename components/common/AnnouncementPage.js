@@ -22,7 +22,7 @@ const Announcements = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.upperRow}>
-        <Text style={styles.header}>Announcements</Text>
+        <Text style={styles.header}>News & Notices</Text>
       </View>
 
       {/* announcement list */}
