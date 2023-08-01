@@ -1,8 +1,10 @@
+//importing libaries
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableWithoutFeedback, Keyboard,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
 import axios from 'axios';
 
-//global variable
+
+//global variables
 export let usernameValue = '';
 export let userLastName = '';
 export let userSchoolID = '';
@@ -16,6 +18,7 @@ const Login = ({ navigation }) => {
 
   // Login function
   const handleLogin = () => {
+    //to test in console to see what was being received
     console.log('Username: ', username);
     console.log('Password: ', password);
     usernameValue = username;
@@ -24,7 +27,6 @@ const Login = ({ navigation }) => {
     const userData = {
       username: username,
       password: password,
-      //userType: userType,
     };
 
     //using axios request for different user type
@@ -38,7 +40,6 @@ const Login = ({ navigation }) => {
             const userSchool = response.data.schoolID;
             userLastName = userLName;
             userSchoolID = userSchool;
-            console.log("userschoolID", userSchool);
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
@@ -103,6 +104,7 @@ const Login = ({ navigation }) => {
     }
   };
 
+  //function to hide keyboard
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
@@ -146,7 +148,6 @@ const Login = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
-
 export default Login;
 
 // Styling

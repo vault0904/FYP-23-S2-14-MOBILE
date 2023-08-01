@@ -1,3 +1,4 @@
+//import libaries
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import axios from 'axios';
@@ -27,6 +28,7 @@ const TeacherHome = ({navigation}) => {
         });
     }, []);
 
+    //display
     return(
             <View style={styles.container}>
                 <View style={styles.upperRow}>
@@ -39,8 +41,6 @@ const TeacherHome = ({navigation}) => {
                         <Text style={styles.btnText}>View More</Text>
                     </TouchableOpacity> 
                 </View>
-
-                {/* NEXT STEP: add code to limit announcements to only 3 */}
                 <View style={styles.list}>
                     <FlatList 
                     data={announcements}
@@ -58,6 +58,7 @@ const TeacherHome = ({navigation}) => {
 
 export default TeacherHome;
 
+//styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

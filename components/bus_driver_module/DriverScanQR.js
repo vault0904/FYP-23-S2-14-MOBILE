@@ -1,3 +1,4 @@
+//import libaries
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';

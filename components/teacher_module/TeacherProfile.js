@@ -1,3 +1,4 @@
+//import libaries
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
@@ -9,16 +10,12 @@ import { usernameValue} from '../Login';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 
-//add in contactNO to teacher database later
-
 //teacher profile
 const TeacherProfile = ({navigation}) => {
   const [userData, setUserData] = useState(null);
-
   const username = usernameValue;
-
   const iSFocused = useIsFocused();
-
+  //fetch data 
   const fetchData = () => {
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${username}`)
@@ -56,23 +53,23 @@ const TeacherProfile = ({navigation}) => {
       try {
         const response = await axios.get(uri, { responseType: 'blob' });
         const blob = response.data;
-        //const response = await fetch(uri);
-        //const blob = await response.blob();
+        //set s3 folder name
         const folName = "/teacher";
-        const reader = new FileReader(); // Fix the variable name here
+        const reader = new FileReader();
         reader.onloadend = () => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
-          const fName = fNameBef; // Use fName instead of name
+          const fName = fNameBef; 
           console.log("fname" , fName);
-          const fType = blob.type; // Use fType instead of type
-  
+          const fType = blob.type; 
+          
+          //upload file to s3 bucket
           axios
             .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
               file: base64String,
-              name: fName, // Use fName here
+              name: fName,
               folderName: folName,
-              type: fType, // Use fType here
+              type: fType,
             })
             .then((res) => {
               const uploadedURI = res.data.imageURL;
@@ -82,6 +79,7 @@ const TeacherProfile = ({navigation}) => {
                 newImageURI : uploadedURI,
               };
               console.log(sendData);
+              //update profile picture URI in user database
               axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updateImageURI', sendData)
               .then((response) => {
                 console.log(response.data);
@@ -93,7 +91,7 @@ const TeacherProfile = ({navigation}) => {
               })
               .catch((error) => {
                 console.error("Error updating user image: ", error);
-                alert("An error occurred while changeing image!");
+                alert("An error occurred while changing image!");
               })
             })
             .catch((err) => {
@@ -121,11 +119,8 @@ const TeacherProfile = ({navigation}) => {
       });
 
       if (!result.canceled) {
-        console.log('Selected image URI:', result.assets[0].uri); // Updated key to access the selected image URI
-        // You can set the selected image URI to state or do further processing here
-        // For example: setProfilePicture(result.assets[0].uri);
+        console.log('Selected image URI:', result.assets[0].uri);
         fileUpload(result.assets[0].uri);
-
       } else {
         console.log('Image picker canceled');
       }
@@ -134,12 +129,10 @@ const TeacherProfile = ({navigation}) => {
     }
   };
 
-
-
   //if user do not have an image, display default image
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
-
+  //display
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -204,7 +197,6 @@ const TeacherProfile = ({navigation}) => {
             />
           </View>
 
-          
           <View style={styles.profileContainer}>
             <Text style={styles.profileTag}>Address</Text>
             <TextInput 

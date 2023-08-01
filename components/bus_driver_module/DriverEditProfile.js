@@ -1,8 +1,10 @@
+//import libaries
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { usernameValue } from '../Login';
 
+//data objects
 const DriverEditProfile = () => {
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
@@ -26,7 +28,7 @@ const DriverEditProfile = () => {
     // Display user data from userdata object
     useEffect(() => {
         const userID = usernameValue;
-
+        //axios request to get user data
         axios
         .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/${userID}`)
         .then((response) => {
@@ -40,12 +42,12 @@ const DriverEditProfile = () => {
             setCompany(userData.vendor_Name);
             setLicense(userData.license);
         })
-
         .catch((error) => {
             console.log('Error fetching data', error);
         });
     }, []);
 
+    //data object for new update details
     const formValidationDetails = () => {
         setSuccessUpdateProfileMessage("");
         const userID = usernameValue;
@@ -54,8 +56,8 @@ const DriverEditProfile = () => {
         newContact: contact,
         newAddress: address,
         };
-
         console.log("new details: ", newDetails);
+        //axios request to update new details in database
         axios
         .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updateDetails", newDetails)
         .then((response) => {
@@ -68,19 +70,23 @@ const DriverEditProfile = () => {
         });
     };
 
+    //reset message
     const toggleSuccessPassModal = () => {
         setShowSuccessPassModal(!showSuccessPassModal);
-        setSuccessChangePassMessage(""); // Clear the success message when showing the modal
+        setSuccessChangePassMessage("");
     };
 
+    //reset message
     const toggleSuccessDetailsModal = () => {
         setShowSuccessDetailsModal(!showSuccessDetailsModal);
-        setSuccessUpdateProfileMessage(""); // Clear the success message when showing the modal
+        setSuccessUpdateProfileMessage("");
     };
 
+    //update password
     const formValidationPass = () => {
         setSuccessChangePassMessage("");
         const userID = usernameValue;
+        //constantly grabbing latest password from database
         axios
         .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/${userID}`)
         .then((response) => {
@@ -115,6 +121,7 @@ const DriverEditProfile = () => {
             password: confirmPassword,
             };
 
+            //insert/update new password in user database
             axios
             .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updatePass", newPass)
             .then((response) => {
@@ -131,6 +138,7 @@ const DriverEditProfile = () => {
         });
     };
 
+    //display
     return (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -174,7 +182,7 @@ const DriverEditProfile = () => {
               </TouchableOpacity>
             </ScrollView>
     
-            {/* Show success details Modal */}
+            {/* Show success details message */}
             <Modal
               animationType="slide"
               transparent={true}
@@ -189,7 +197,7 @@ const DriverEditProfile = () => {
               </View>
             </Modal>
     
-            {/* Show success pass Modal */}
+            {/* Show success pass message */}
             <Modal
               animationType="slide"
               transparent={true}

@@ -1,3 +1,4 @@
+//import libaries
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
@@ -17,6 +18,7 @@ const FacilProfile = ({navigation}) => {
   //console.log ("username from context", username);
   const iSFocused = useIsFocused();
 
+  //fetch user data from database
   const fetchData = () => {
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/faci/${username}`)
@@ -29,7 +31,6 @@ const FacilProfile = ({navigation}) => {
         console.log('Error fetching data', error);
       });
   };
-
 
   useEffect(() => {
     fetchData();
@@ -55,23 +56,23 @@ const FacilProfile = ({navigation}) => {
       try {
         const response = await axios.get(uri, { responseType: 'blob' });
         const blob = response.data;
-        //const response = await fetch(uri);
-        //const blob = await response.blob();
+        //set s3 folder
         const folName = "/eventFaci";
-        const reader = new FileReader(); // Fix the variable name here
+        const reader = new FileReader();
         reader.onloadend = () => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
-          const fName = fNameBef; // Use fName instead of name
+          const fName = fNameBef;
           console.log("fname" , fName);
-          const fType = blob.type; // Use fType instead of type
+          const fType = blob.type;
   
+          //upload to s3
           axios
             .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
               file: base64String,
-              name: fName, // Use fName here
+              name: fName,
               folderName: folName,
-              type: fType, // Use fType here
+              type: fType,
             })
             .then((res) => {
               const uploadedURI = res.data.imageURL;
@@ -81,6 +82,7 @@ const FacilProfile = ({navigation}) => {
                 newImageURI : uploadedURI,
               };
               console.log(sendData);
+              //update/insert new image URI in user database
               axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/faci/updateImageURI', sendData)
               .then((response) => {
                 console.log(response.data);
@@ -120,11 +122,8 @@ const FacilProfile = ({navigation}) => {
       });
 
       if (!result.canceled) {
-        console.log('Selected image URI:', result.assets[0].uri); // Updated key to access the selected image URI
-        // You can set the selected image URI to state or do further processing here
-        // For example: setProfilePicture(result.assets[0].uri);
+        console.log('Selected image URI:', result.assets[0].uri);
         fileUpload(result.assets[0].uri);
-
       } else {
         console.log('Image picker canceled');
       }
@@ -133,19 +132,16 @@ const FacilProfile = ({navigation}) => {
     }
   };
 
-
-
   //if user do not have an image, display default image
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
-
+  //display
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
         {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {/* Add TouchableOpacity to make the image clickable */}
             <TouchableOpacity onPress={handleChooseProfilePicture}>
               <Avatar.Image 
                 source={imageSource}

@@ -1,3 +1,4 @@
+//import libaries
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import axios from 'axios';
@@ -7,7 +8,6 @@ const Item = ({message}) => (
         <Text style={styles.title}>{message}</Text>
     </View>
 );
-
 
 const FacilHome = ({navigation}) => {
     const [announcements, setAnnouncements] = useState([]);
@@ -26,10 +26,10 @@ const FacilHome = ({navigation}) => {
         });
     }, []);
 
+    //display
     return (
         <View style={styles.container}>
             <View style={styles.upperRow}>
-            
                 {/* header */}
                 <Text style={styles.header}>News & Notices</Text>
                 <TouchableOpacity key='View More'
@@ -38,7 +38,6 @@ const FacilHome = ({navigation}) => {
                     <Text style={styles.btnText}>View More</Text>
                 </TouchableOpacity> 
                 </View>
-                {/* NEXT STEP: add code to limit announcements to only 3 */}
                 <View style={styles.list}>
                     <FlatList 
                     data={announcements}
@@ -54,6 +53,7 @@ const FacilHome = ({navigation}) => {
 
 export default FacilHome;
 
+//styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -1,3 +1,4 @@
+//import libaries
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
@@ -53,32 +54,34 @@ const ChildProfile = () => {
           </View>
         );
       }
+
       //generate QR code
       const secretKey = "fypPickupAPP";
       const qrData = thisChildData.child_ID + "|" +secretKey;
 
+      //file upload funciton
       const fileUpload = async (uri) => {
         if (uri) {
           try {
             const response = await axios.get(uri, { responseType: 'blob' });
             const blob = response.data;
-            //const response = await fetch(uri);
-            //const blob = await response.blob();
+            //set s3 folder name
             const folName = "/child";
-            const reader = new FileReader(); // Fix the variable name here
+            const reader = new FileReader();
             reader.onloadend = () => {
               const base64String = reader.result.split(',')[1];
               const fNameBef = uri.split("/ImagePicker/")[1];
-              const fName = fNameBef; // Use fName instead of name
+              const fName = fNameBef;
               console.log("fname" , fName);
-              const fType = blob.type; // Use fType instead of type
-      
+              const fType = blob.type;
+              
+              //upload file to s3
               axios
                 .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
                   file: base64String,
-                  name: fName, // Use fName here
+                  name: fName,
                   folderName: folName,
-                  type: fType, // Use fType here
+                  type: fType,
                 })
                 .then((res) => {
                   const uploadedURI = res.data.imageURL;
@@ -88,6 +91,7 @@ const ChildProfile = () => {
                     newImageURI : uploadedURI,
                   };
                   console.log(sendData);
+                  //insert profile URI in user database
                   axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/child/updateImageURI', sendData)
                   .then((response) => {
                     console.log(response.data);
@@ -116,6 +120,7 @@ const ChildProfile = () => {
         }
       };
     
+      //image picker to select profile picture
       const handleChooseProfilePicture = async () => {
         try {
           const result = await ImagePicker.launchImageLibraryAsync({
@@ -126,9 +131,7 @@ const ChildProfile = () => {
           });
     
           if (!result.canceled) {
-            console.log('Selected image URI:', result.assets[0].uri); // Updated key to access the selected image URI
-            // You can set the selected image URI to state or do further processing here
-            // For example: setProfilePicture(result.assets[0].uri);
+            console.log('Selected image URI:', result.assets[0].uri);
             fileUpload(result.assets[0].uri);
     
           } else {
@@ -139,15 +142,13 @@ const ChildProfile = () => {
         }
       };    
 
-
     //if user do not have an image, display default image
     const imageSource = thisChildData.imageURI ? { uri: thisChildData.imageURI } : require('../common/picture/default.jpg');
 
-
+  //display
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        
         <View style={styles.userInfoSection}>
           {/* Top Profile Card */}
           <Card style={styles.cardDisplay}>
@@ -158,7 +159,6 @@ const ChildProfile = () => {
                     size={80}
                   />
                 </TouchableOpacity>
-                {/* child name & level */}
                 <View style={{marginLeft: 20, marginTop: 10}}>
                     <Title style={styles.title}>{thisChildData.childFirstName} {thisChildData.childLastName}</Title>
                     {/*<Caption style={styles.caption}>{thisChildData.grade}</Caption>*/}
@@ -223,18 +223,16 @@ const ChildProfile = () => {
                 editable = {false}
               />
             </View>
-          </View>
 
-              {/* Displaying QR code */}
+          </View>
+              {/* Display QR code */}
               <View style={styles.qrContainer}>
-                {/* Move QRCode component here */}
                 {thisChildData && (
                   <QRCode
                     value={qrData}
                     color={'#56844B'}
                     backgroundColor={'white'}
                     size={160}
-                    // logo={require('../../../embed_logo_file_path')} // or logo={{uri: base64logo}}
                     logoMargin={2}
                     logoSize={20}
                     logoBorderRadius={10}
@@ -243,7 +241,6 @@ const ChildProfile = () => {
                 )}
               </View>
             </View>
-          
           </ScrollView>
         </SafeAreaView>
       );
@@ -255,9 +252,6 @@ export default ChildProfile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   cardDisplay: {
     paddingBottom: 25,

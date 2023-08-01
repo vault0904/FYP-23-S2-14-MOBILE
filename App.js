@@ -1,3 +1,4 @@
+//importing libaries
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,10 +11,9 @@ import DriverNav from './components/bus_driver_module/DriverNav';
 //creating a stack navigator
 const Stack = createStackNavigator();
 
-//creating a route for the user type
+//navigator based on usertype
 const ScreenNav = ({ route }) => {
   const {userType} = route.params;
-  //console.log("User Type:", userType);
   if (userType === 'parent') {
     return <ParentNav />;
   } else if (userType === 'teacher') {
@@ -23,8 +23,7 @@ const ScreenNav = ({ route }) => {
   } else if (userType === 'event_facilitator') {
     return <FacilNav />;
   } else {
-    // Display error message or fallback component
-    return <p>Invalid login, please try again</p>;
+    return <p>Invalid User Type</p>;
   }
 };
 

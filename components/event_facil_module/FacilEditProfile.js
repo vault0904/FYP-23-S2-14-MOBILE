@@ -1,9 +1,10 @@
+//import libaries
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { usernameValue } from '../Login';
 
-
+//data objects
 const FacilEditProfile = () => {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -25,7 +26,7 @@ const FacilEditProfile = () => {
   // Display user data from userdata object
   useEffect(() => {
     const userID = usernameValue;
-
+    //grab user data from database
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/faci/${userID}`)
       .then((response) => {
@@ -42,6 +43,7 @@ const FacilEditProfile = () => {
       });
   }, []);    
 
+  //data object for new details
   const formValidationDetails = () => {
     setSuccessUpdateProfileMessage("");
     const userID = usernameValue;
@@ -50,8 +52,8 @@ const FacilEditProfile = () => {
       newContact: contact,
       newAddress: address,
     };
-
     console.log("new details: ", newDetails);
+    //update new user details in database
     axios
       .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/faci/updateDetails", newDetails)
       .then((response) => {
@@ -64,19 +66,22 @@ const FacilEditProfile = () => {
       });
   };
 
+  //reset message
   const toggleSuccessPassModal = () => {
     setShowSuccessPassModal(!showSuccessPassModal);
-    setSuccessChangePassMessage(""); // Clear the success message when showing the modal
+    setSuccessChangePassMessage("");
   };
 
   const toggleSuccessDetailsModal = () => {
     setShowSuccessDetailsModal(!showSuccessDetailsModal);
-    setSuccessUpdateProfileMessage(""); // Clear the success message when showing the modal
+    setSuccessUpdateProfileMessage("");
   };
 
+  //update password
   const formValidationPass = () => {
     setSuccessChangePassMessage("");
     const userID = usernameValue;
+    //constantly grabbing latest user password
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/faci/${userID}`)
       .then((response) => {
@@ -111,6 +116,7 @@ const FacilEditProfile = () => {
           password: confirmPassword,
         };
 
+        //insert/update password in user database
         axios
           .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/faci/updatePass", newPass)
           .then((response) => {
@@ -127,6 +133,7 @@ const FacilEditProfile = () => {
       });
   };
 
+  //display
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -214,7 +221,7 @@ const FacilEditProfile = () => {
           </TouchableOpacity>
         </ScrollView>
       </View>
-      {/* Show success details Modal */}
+      {/* Show success details message */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -229,7 +236,7 @@ const FacilEditProfile = () => {
         </View>
       </Modal>
   
-      {/* Show success pass Modal */}
+      {/* Show success pass message */}
       <Modal
         animationType="slide"
         transparent={true}

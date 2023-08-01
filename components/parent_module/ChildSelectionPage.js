@@ -1,3 +1,4 @@
+//import libaries
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import React, { useState, useEffect, useLayoutEffect} from "react";
@@ -16,10 +17,7 @@ const ChildSelection = ({navigation}) => {
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/child/${username}`)
       .then((response) => {
         const recData = response.data;
-        console.log('Response from server:', response.data);
         setChildData(recData);
-        //childID = childData.child_ID;
-        //console.log("childID" , childID);
         console.log("child data", recData);
       })
       .catch((error) => {
@@ -44,7 +42,8 @@ const ChildSelection = ({navigation}) => {
       </View>
     );
   }
-  
+
+  //display
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>

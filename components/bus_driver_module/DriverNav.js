@@ -1,3 +1,4 @@
+//import libaries
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -122,7 +123,6 @@ function AnnouncementStackScreen() {
   }
 
 const Tab = createBottomTabNavigator();
-
 
 export default function DriverNav() {
     return (

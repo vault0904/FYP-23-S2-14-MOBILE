@@ -1,3 +1,4 @@
+//import libaries
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -84,12 +85,9 @@ function AnnouncementStackScreen() {
       </AnnouncementStack.Navigator>
     );
   }
-
-
 {/* For tab navigation the four pages below */}
 
 const Tab = createBottomTabNavigator();
-
 
 export default function FacilNav() {
     return (

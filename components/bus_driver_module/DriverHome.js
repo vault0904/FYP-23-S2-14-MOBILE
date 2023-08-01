@@ -1,3 +1,4 @@
+//import new libaries
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import axios from 'axios';
@@ -8,6 +9,7 @@ const Item = ({message}) => (
       <Text style={styles.title}>{message}</Text>
   </View>
 );
+
 const DriverHome = ({ navigation }) => {
   const pickupDetails = {
     time: '1:15pm',
@@ -37,6 +39,7 @@ const DriverHome = ({ navigation }) => {
       });
   }, []);
 
+  //display
   return(
     <View style={styles.container}>
     <View style={styles.upperRow}>
@@ -50,7 +53,6 @@ const DriverHome = ({ navigation }) => {
         </TouchableOpacity> 
     </View>
 
-    {/* NEXT STEP: add code to limit announcements to only 3 */}
     <View style={styles.list}>
         <FlatList 
         data={announcements}
@@ -84,6 +86,8 @@ const DriverHome = ({ navigation }) => {
 }
 
 export default DriverHome;
+
+//styling
 const styles = StyleSheet.create({
   container: {
       flex: 1, 
