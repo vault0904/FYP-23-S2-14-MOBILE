@@ -8,7 +8,7 @@ import DriverChat from './DriverChat';
 import DriverProfile from './DriverProfile';
 import DriverEditProfile from './DriverEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Announcements from '../common/AnnouncementPage';
+import DriverAnnouncements from '../common/DriverAnnouncements';
 //import the userLastName from login
 import {userLastName} from '../Login';
 
@@ -111,8 +111,8 @@ function AnnouncementStackScreen() {
   
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
-          name="AnnouncementPage" 
-          component={Announcements} 
+          name="DriverAnnouncementPage" 
+          component={DriverAnnouncements} 
           options={{
             title:"Announcements"
           }}

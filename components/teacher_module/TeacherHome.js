@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import axios from 'axios';
+import { userSchoolID } from '../Login';
 
 const Item = ({message}) => (
     <View style={styles.item}>
@@ -10,11 +11,12 @@ const Item = ({message}) => (
 
 const TeacherHome = ({navigation}) => {
     const [announcements, setAnnouncements] = useState([]);
+    const thisSchool = userSchoolID;
 
     //grab and fetch the latest 3 announcements from database
     useEffect(() => {
         axios
-        .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/announcements/3')
+        .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/announcements/3/${thisSchool}`)
         .then((response) => {
             console.log('Response from server:', response.data);
             const receivedAnn = response.data;
@@ -30,9 +32,9 @@ const TeacherHome = ({navigation}) => {
                 <View style={styles.upperRow}>
                     
                     {/* header */}
-                    <Text style={styles.header}>Announcements</Text>
+                    <Text style={styles.header}>News & Notices</Text>
                     <TouchableOpacity key='View More'
-                        onPress={() => navigation.navigate('AnnouncementPage')}
+                        onPress={() => navigation.navigate('TeacherAnnouncementPage')}
                     >
                         <Text style={styles.btnText}>View More</Text>
                     </TouchableOpacity> 

@@ -463,37 +463,92 @@ app.get('/api/thischild/:childID', (req, res) => {
 });
 
 
-app.post('/api/login', (req, res) => {
-  const { username, password, userType } = req.body;
-  let table;
-  let user_ID_column;
-
-  // Determine the table and user_ID column based on the userType
-  switch (userType) {
-    case 'parent':
-      table = 'parent';
-      user_ID_column = 'parent_ID';
-      break;
-    case 'teacher':
-      table = 'teacher';
-      user_ID_column = 'teacher_ID';
-      break;
-    case 'driver':
-      table = 'driver';
-      user_ID_column = 'driver_ID';
-      break;
-    case 'event_facilitator':
-      table = 'event_facilitator';
-      user_ID_column = 'event_facilitator_ID';
-      break;
-    default:
-      table = 'system_admin';
-      user_ID_column = 'user_ID';
-      break;
-  }
+//api login for parent
+app.post('/api/parent/login', (req, res) => {
+  const { username, password } = req.body;
 
   // Perform authentication logic and retrieve the firstName
-  db.query(`SELECT ${user_ID_column} AS user_ID, password, lastName FROM ${table} WHERE BINARY ${user_ID_column} = ? AND BINARY password = ?`, [username, password], (err, results) => {
+  db.query(`SELECT parent_ID, password, lastName, school_ID FROM parent WHERE BINARY parent_ID = ? AND BINARY password = ? `, [username, password], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('results: ', results);
+
+    if (results.length > 0) {
+      // User is authenticated
+      const LName = results[0].lastName;
+      const schoolID = results[0].school_ID;
+      res.json({ success: true, LName, schoolID});
+    } else {
+      // Authentication failed
+      res.json({ success: false, error: 'Invalid username or password' });
+    }
+  });
+}); 
+
+
+//api login for teacher
+app.post('/api/teacher/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Perform authentication logic and retrieve the firstName
+  db.query(`SELECT teacher_ID, password, lastName, school_ID FROM teacher WHERE BINARY teacher_ID = ? AND BINARY password = ? `, [username, password], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('results: ', results);
+
+    if (results.length > 0) {
+      // User is authenticated
+      const LName = results[0].lastName;
+      const schoolID = results[0].school_ID;
+      res.json({ success: true, LName, schoolID});
+    } else {
+      // Authentication failed
+      res.json({ success: false, error: 'Invalid username or password' });
+    }
+  });
+}); 
+
+
+//api login for driver
+app.post('/api/driver/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Perform authentication logic and retrieve the firstName
+  db.query(`SELECT driver_ID, password, lastName, vendor_ID FROM driver WHERE BINARY driver_ID = ? AND BINARY password = ? `, [username, password], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('results: ', results);
+
+    if (results.length > 0) {
+      // User is authenticated
+      const LName = results[0].lastName;
+      const vendorID = results[0].vendor_ID;
+      res.json({ success: true, LName, vendorID});
+    } else {
+      // Authentication failed
+      res.json({ success: false, error: 'Invalid username or password' });
+    }
+  });
+}); 
+
+//api login for driver
+app.post('/api/event_faci/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Perform authentication logic and retrieve the firstName
+  db.query(`SELECT event_facilitator_ID, password, lastName FROM event_facilitator WHERE BINARY event_facilitator_ID = ? AND BINARY password = ? `, [username, password], (err, results) => {
     if (err) {
       console.error('Database query error:', err);
       res.status(500).json({ error: 'An error occurred' });
@@ -511,13 +566,164 @@ app.post('/api/login', (req, res) => {
       res.json({ success: false, error: 'Invalid username or password' });
     }
   });
+}); 
+
+//parent to get the latest 3 announcements
+app.get('/api/parent/announcements/3/:schoolID', (req, res) => {
+  const schoolID = req.params.schoolID;
+
+  // Query to fetch the latest 3 announcements based on dateTime in descending order,
+  // posted by school admins from the specified schoolID
+  db.query(`
+    SELECT a.*
+    FROM announcement AS a
+    JOIN school_admin AS sa ON a.schAdmin_ID = sa.schAdmin_ID
+    WHERE sa.school_ID = ?
+    ORDER BY a.lastUpdated DESC
+    LIMIT 3; `, [schoolID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('Announcements:', results);
+    res.json(results);
+  });
 });
+
+
+//parent to get the latest 10 announcements
+app.get('/api/parent/announcements/10/:schoolID', (req, res) => {
+  const schoolID = req.params.schoolID;
+
+  // Query to fetch the latest 3 announcements based on dateTime in descending order,
+  // posted by school admins from the specified schoolID
+  db.query(`
+    SELECT a.*
+    FROM announcement AS a
+    JOIN school_admin AS sa ON a.schAdmin_ID = sa.schAdmin_ID
+    WHERE sa.school_ID = ?
+    ORDER BY a.lastUpdated DESC
+    LIMIT 10; `, [schoolID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('Announcements:', results);
+    res.json(results);
+  });
+});
+
+//teacher to get the latest 3 announcements
+app.get('/api/teacher/announcements/3/:schoolID', (req, res) => {
+  const schoolID = req.params.schoolID;
+
+  // Query to fetch the latest 3 announcements based on dateTime in descending order,
+  // posted by school admins from the specified schoolID
+  db.query(`
+    SELECT a.*
+    FROM announcement AS a
+    JOIN school_admin AS sa ON a.schAdmin_ID = sa.schAdmin_ID
+    WHERE sa.school_ID = ?
+    ORDER BY a.lastUpdated DESC
+    LIMIT 3; `, [schoolID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('Announcements:', results);
+    res.json(results);
+  });
+});
+
+
+//teacher to get the latest 10 announcements
+app.get('/api/teacher/announcements/10/:schoolID', (req, res) => {
+  const schoolID = req.params.schoolID;
+
+  // Query to fetch the latest 3 announcements based on dateTime in descending order,
+  // posted by school admins from the specified schoolID
+  db.query(`
+    SELECT a.*
+    FROM announcement AS a
+    JOIN school_admin AS sa ON a.schAdmin_ID = sa.schAdmin_ID
+    WHERE sa.school_ID = ?
+    ORDER BY a.lastUpdated DESC
+    LIMIT 10; `, [schoolID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('Announcements:', results);
+    res.json(results);
+  });
+});
+
+
+//driver to get the latest 3 announcement
+app.get('/api/driver/announcements/3/:vendorID', (req, res) => {
+  const vendorID = req.params.vendorID;
+
+  // Query to fetch the latest 3 announcements based on dateTime in descending order,
+  // posted by school admins from the schools associated with the specified vendorID
+  db.query(`
+    SELECT a.*
+    FROM announcement AS a
+    JOIN school_admin AS sa ON a.schAdmin_ID = sa.schAdmin_ID
+    WHERE sa.school_ID IN (SELECT school_ID FROM school_vendor WHERE vendor_ID = ?)
+    ORDER BY a.lastUpdated DESC
+    LIMIT 3;
+  `, [vendorID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('Announcements:', results);
+    res.json(results);
+  });
+});
+
+
+
+//driver to get the latest 10 announcement
+app.get('/api/driver/announcements/10/:vendorID', (req, res) => {
+  const vendorID = req.params.vendorID;
+
+  // Query to fetch the latest 3 announcements based on dateTime in descending order,
+  // posted by school admins from the schools associated with the specified vendorID
+  db.query(`
+    SELECT a.*
+    FROM announcement AS a
+    JOIN school_admin AS sa ON a.schAdmin_ID = sa.schAdmin_ID
+    WHERE sa.school_ID IN (SELECT school_ID FROM school_vendor WHERE vendor_ID = ?)
+    ORDER BY a.lastUpdated DESC
+    LIMIT 10;
+  `, [vendorID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+
+    console.log('Announcements:', results);
+    res.json(results);
+  });
+});
+
 
 //api to get latest 3 announcements
 app.get('/api/announcements/3', (req, res) => {
   // Query to fetch the latest 3 announcements based on dateTime in descending order
-  db.query('SELECT * FROM announcement ORDER BY lastUpdated DESC LIMIT 3;', 
-  (err, results) => {
+  db.query('SELECT * FROM announcement ORDER BY datePosted DESC LIMIT 3', (err, results) => {
     if (err) {
       console.error('Database query error:', err);
       res.status(500).json({ error: 'An error occurred' });
@@ -532,7 +738,7 @@ app.get('/api/announcements/3', (req, res) => {
 //api to get latest 10 announcements
 app.get('/api/announcements/10', (req, res) => {
   // Query to fetch the latest 10 announcements based on dateTime in descending order
-  db.query('SELECT * FROM announcement ORDER BY lastUpdated DESC LIMIT 10', (err, results) => {
+  db.query('SELECT * FROM announcement ORDER BY datePosted DESC LIMIT 10', (err, results) => {
     if (err) {
       console.error('Database query error:', err);
       res.status(500).json({ error: 'An error occurred' });

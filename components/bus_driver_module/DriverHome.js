@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import axios from 'axios';
+import { userVendorID } from '../Login';
 
 const Item = ({message}) => (
   <View style={styles.item}>
@@ -20,11 +21,12 @@ const DriverHome = ({ navigation }) => {
   const [address, setAddress] = useState(pickupDetails.address);
   const [bus_plate, setBusPlate] = useState(pickupDetails.bus_plate);
   const [announcements, setAnnouncements] = useState([]);
+  const thisVendor = userVendorID;
 
   // Grab and fetch the latest 3 announcements from the database
   useEffect(() => {
     axios
-      .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/announcements/3')
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/announcements/3/${thisVendor}`)
       .then((response) => {
         console.log('Response from server:', response.data);
         const receivedAnn = response.data;
@@ -40,9 +42,9 @@ const DriverHome = ({ navigation }) => {
     <View style={styles.upperRow}>
         
         {/* header */}
-        <Text style={styles.header}>Announcements</Text>
+        <Text style={styles.header}>News & Notices</Text>
         <TouchableOpacity key='View More'
-            onPress={() => navigation.navigate('AnnouncementPage')}
+            onPress={() => navigation.navigate('DriverAnnouncementPage')}
         >
             <Text style={styles.btnText}>View More</Text>
         </TouchableOpacity> 

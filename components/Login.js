@@ -5,12 +5,14 @@ import axios from 'axios';
 //global variable
 export let usernameValue = '';
 export let userLastName = '';
+export let userSchoolID = '';
+export let userVendorID = '';
 
 // login function for all user types
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('driver'); // Default user type is set to "parent"
+  const [userType, setUserType] = useState('parent'); // Default user type is set to "parent"
 
   // Login function
   const handleLogin = () => {
@@ -20,27 +22,85 @@ const Login = ({ navigation }) => {
 
     //create user data object
     const userData = {
-      username: username, 
+      username: username,
       password: password,
-      userType: userType,
+      //userType: userType,
     };
 
-    //using axios to send post request to server
-    axios
-      .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/login', userData)
-      .then((response) => {
-        console.log('Response from server:', response.data);
-        if (response.data.success) {
-          const userLName = response.data.LName;
-          userLastName = userLName;
-          navigation.navigate('ScreenNav', { userType });
-        } else {
-          console.log(response.data.error);
-        }
-      })
-      .catch((error) => {
-        console.log('Error during login', error);
-      });
+    //using axios request for different user type
+    if (userType === 'parent') {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/login', userData)
+        .then((response) => {
+          console.log("response for parent", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            const userSchool = response.data.schoolID;
+            userLastName = userLName;
+            userSchoolID = userSchool;
+            console.log("userschoolID", userSchool);
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+
+    } else if (userType === "teacher") {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/login', userData)
+        .then((response) => {
+          console.log("response for teacher", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            const userSchool = response.data.schoolID;
+            userLastName = userLName;
+            userSchoolID = userSchool;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+    } else if (userType === "driver") {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/login', userData)
+        .then((response) => {
+          console.log("response for driver", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            const userVendor = response.data.vendorID;
+            userLastName = userLName;
+            userVendorID = userVendor;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+    } else if (userType === "event_facilitator") {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/event_faci/login', userData)
+        .then((response) => {
+          console.log("response for parent", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            userLastName = userLName;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+    }
   };
 
   const dismissKeyboard = () => {

@@ -10,7 +10,7 @@ import ParentProfile from './ParentProfile';
 import ParentEditProfile from './ParentEditProfile';
 import ChildProfileSelection from './ChildProfileSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Announcements from '../common/AnnouncementPage';
+import ParentAnnouncements from '../common/ParentAnnouncementPage';
 //import the userLastName from login
 import {userLastName} from '../Login';
 
@@ -157,8 +157,8 @@ function AnnouncementStackScreen() {
   
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
-          name="AnnouncementPage" 
-          component={Announcements} 
+          name="ParentAnnouncementPage" 
+          component={ParentAnnouncements} 
           options={{
             title:"Announcements"
           }}

@@ -137,7 +137,7 @@ const DriverProfile = ({navigation}) => {
 
 
   //if user do not have an image, display default image
-  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/avatars/child.jpg');
+  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
 
   return (

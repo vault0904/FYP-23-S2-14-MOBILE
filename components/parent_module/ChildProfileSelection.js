@@ -68,7 +68,7 @@ const ChildProfileSelection = ({ navigation }) => {
                 <Card style={styles.cardDisplay}>
                   <View style={{ flexDirection: 'row', marginTop: 15 }}>
                     <Avatar.Image 
-                    source={child.imageURI ? { uri: child.imageURI } : require('../common/avatars/child.jpg')}
+                    source={child.imageURI ? { uri: child.imageURI } : require('../common/picture/default.jpg')}
                     size={80} />
                     <View style={{ marginLeft: 20, marginTop: 10 }}>
                       <Title style={styles.title}>

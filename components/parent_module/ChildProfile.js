@@ -141,7 +141,7 @@ const ChildProfile = () => {
 
 
     //if user do not have an image, display default image
-    const imageSource = thisChildData.imageURI ? { uri: thisChildData.imageURI } : require('../common/avatars/child.jpg');
+    const imageSource = thisChildData.imageURI ? { uri: thisChildData.imageURI } : require('../common/picture/default.jpg');
 
 
   return (

@@ -1,13 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
-import {
-  Linking
-} from 'react-native';
+import { Linking } from 'react-native';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
-
 //import username from login
 import { usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
@@ -142,7 +139,7 @@ const ParentProfile = ({ navigation }) => {
 
 
   //if user do not have an image, display default image
-  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/avatars/child.jpg');
+  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
   return (
     <ScrollView style={styles.container}>

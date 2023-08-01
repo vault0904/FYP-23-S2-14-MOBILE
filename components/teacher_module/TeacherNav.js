@@ -9,7 +9,7 @@ import TeacherProfile from './TeacherProfile';
 import TeacherEditProfile from './TeacherEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {userLastName} from '../Login';
-import Announcements from '../common/AnnouncementPage';
+import TeacherAnnouncements from '../common/TeacherAnnouncements';
 
 //announcement stack screen
 const AnnouncementStack = createNativeStackNavigator();
@@ -114,8 +114,8 @@ function AnnouncementStackScreen() {
   
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
-          name="AnnouncementPage" 
-          component={Announcements} 
+          name="TeacherAnnouncementPage" 
+          component={TeacherAnnouncements} 
           options={{
             title:"Announcements"
           }}

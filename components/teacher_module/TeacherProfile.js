@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
-import Logo from '../common/avatars/child.jpg';
+import Logo from '../common/picture/default.jpg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
 import axios from 'axios';
@@ -137,7 +137,7 @@ const TeacherProfile = ({navigation}) => {
 
 
   //if user do not have an image, display default image
-  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/avatars/child.jpg');
+  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
 
   return (

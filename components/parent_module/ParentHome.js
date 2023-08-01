@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import axios from 'axios';
+import { userSchoolID } from '../Login';
 
 const Item = ({message}) => (
     <View style={styles.item}>
@@ -23,11 +24,13 @@ const ParentHome = ({navigation}) => {
     const [gate, setGate] = useState(pickupDetails.gate);
     const [status, setStatus] = useState(pickupDetails.status);
     const [announcements, setAnnouncements] = useState([]);
+    const thisSchool = userSchoolID;
+    console.log("this parent school_ID is", thisSchool);
 
     //grab and fetch the latest 3 announcements from database
     useEffect(() => {
         axios
-        .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/announcements/3')
+        .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/announcements/3/${thisSchool}`)
         .then((response) => {
             console.log('Response from server:', response.data);
             const receivedAnn = response.data;
@@ -45,7 +48,7 @@ const ParentHome = ({navigation}) => {
             {/* header */}
             <Text style={styles.header}>News & Notices</Text>
             <TouchableOpacity key='View More'
-                onPress={() => navigation.navigate('AnnouncementPage')}
+                onPress={() => navigation.navigate('ParentAnnouncementPage')}
             >
                 <Text style={styles.btnText}>View More</Text>
             </TouchableOpacity> 
