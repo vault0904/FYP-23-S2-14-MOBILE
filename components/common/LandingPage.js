@@ -1,3 +1,4 @@
+//import libaries
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -58,6 +59,7 @@ const LandingPage = ({navigation}) => {
 
 export default LandingPage;
 
+//styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,8 +1,10 @@
+//import libaries
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { usernameValue } from '../Login';
 
+//data objects
 const ParentEditProfile = () => {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -25,6 +27,7 @@ const ParentEditProfile = () => {
   useEffect(() => {
     const userID = usernameValue;
 
+    //axio request to retrieve parent data
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
       .then((response) => {
@@ -41,6 +44,7 @@ const ParentEditProfile = () => {
       });
   }, []);
 
+  //data object for new details
   const formValidationDetails = () => {
     setSuccessUpdateProfileMessage("");
     const userID = usernameValue;
@@ -49,8 +53,8 @@ const ParentEditProfile = () => {
       newContact: contact,
       newAddress: address,
     };
-
     console.log("new details: ", newDetails);
+    //axios request to insert/update new details
     axios
       .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateDetails", newDetails)
       .then((response) => {
@@ -63,20 +67,23 @@ const ParentEditProfile = () => {
       });
   };
 
+  //reset message
   const toggleSuccessPassModal = () => {
     setShowSuccessPassModal(!showSuccessPassModal);
-    setSuccessChangePassMessage(""); // Clear the success message when showing the modal
+    setSuccessChangePassMessage(""); 
   };
 
   const toggleSuccessDetailsModal = () => {
     setShowSuccessDetailsModal(!showSuccessDetailsModal);
-    setSuccessUpdateProfileMessage(""); // Clear the success message when showing the modal
+    setSuccessUpdateProfileMessage("");
   };
 
+  //update password
   const formValidationPass = () => {
     setSuccessChangePassMessage("");
     const userID = usernameValue;
     axios
+    //constantly getting latest password for user from database
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
       .then((response) => {
         const DBPassword = response.data.password;
@@ -105,11 +112,13 @@ const ParentEditProfile = () => {
         }
         setConfirmPasswordErrorMessage("");
 
+        //new password object
         const newPass = {
           parent_ID: userID,
           password: confirmPassword,
         };
 
+        //send password update to user database
         axios
           .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updatePass", newPass)
           .then((response) => {
@@ -126,6 +135,7 @@ const ParentEditProfile = () => {
       });
   };
 
+  //display
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -169,7 +179,7 @@ const ParentEditProfile = () => {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Show success details Modal */}
+        {/* Show success details message */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -184,7 +194,7 @@ const ParentEditProfile = () => {
           </View>
         </Modal>
 
-        {/* Show success pass Modal */}
+        {/* Show success pass message */}
         <Modal
           animationType="slide"
           transparent={true}

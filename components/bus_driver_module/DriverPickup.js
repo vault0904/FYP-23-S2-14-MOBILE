@@ -1,3 +1,4 @@
+//import libaries
 import { StatusBar } from 'expo-status-bar';
 import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import { Card, ListItem, Button, Icon } from 'react-native-elements'
@@ -29,6 +30,7 @@ const DriverPickup = ({navigation}) => {
 
   const [time, setTime] = useState(pickupDetails.time);
 
+  //display
   return (
     <SafeAreaView style={styles.container}>
         <View>

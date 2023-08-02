@@ -1,3 +1,4 @@
+//import libaries
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Card } from 'react-native-paper';
@@ -19,6 +20,7 @@ const Announcements = () => {
       });
   }, []);
 
+  //display
   return (
     <ScrollView style={styles.container}>
       <View style={styles.upperRow}>
@@ -41,6 +43,7 @@ const Announcements = () => {
 
 export default Announcements;
 
+//styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

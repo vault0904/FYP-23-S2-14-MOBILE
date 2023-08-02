@@ -1,3 +1,4 @@
+//import libaries
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
 import { Linking } from 'react-native';
@@ -14,12 +15,11 @@ import * as ImagePicker from 'expo-image-picker';
 const ParentProfile = ({ navigation }) => {
   //userData stores all the data of user from database
   const [userData, setUserData] = useState(null);
-  //const [file, setFile] = useState(null);
   //username is equal to the username from login
   const username = usernameValue;
-  //console.log ("username from context", username);
   const iSFocused = useIsFocused();
 
+  //fetch parent data from database
   const fetchData = () => {
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${username}`)
@@ -32,7 +32,6 @@ const ParentProfile = ({ navigation }) => {
         console.log('Error fetching data', error);
       });
   };
-
 
   useEffect(() => {
     fetchData();
@@ -58,23 +57,23 @@ const ParentProfile = ({ navigation }) => {
       try {
         const response = await axios.get(uri, { responseType: 'blob' });
         const blob = response.data;
-        //const response = await fetch(uri);
-        //const blob = await response.blob();
+        //set s3 folder
         const folName = "/parent";
-        const reader = new FileReader(); // Fix the variable name here
+        const reader = new FileReader();
         reader.onloadend = () => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
-          const fName = fNameBef; // Use fName instead of name
+          const fName = fNameBef;
           console.log("fname" , fName);
-          const fType = blob.type; // Use fType instead of type
+          const fType = blob.type;
   
+          //upload file to s3
           axios
             .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
               file: base64String,
-              name: fName, // Use fName here
+              name: fName,
               folderName: folName,
-              type: fType, // Use fType here
+              type: fType,
             })
             .then((res) => {
               const uploadedURI = res.data.imageURL;
@@ -83,6 +82,7 @@ const ParentProfile = ({ navigation }) => {
                 userID : usernameValue,
                 newImageURI : uploadedURI,
               };
+              //insert/update image in user database
               console.log(sendData);
               axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateImageURI', sendData)
               .then((response) => {
@@ -123,11 +123,8 @@ const ParentProfile = ({ navigation }) => {
       });
 
       if (!result.canceled) {
-        console.log('Selected image URI:', result.assets[0].uri); // Updated key to access the selected image URI
-        // You can set the selected image URI to state or do further processing here
-        // For example: setProfilePicture(result.assets[0].uri);
+        console.log('Selected image URI:', result.assets[0].uri);
         fileUpload(result.assets[0].uri);
-
       } else {
         console.log('Image picker canceled');
       }
@@ -136,11 +133,10 @@ const ParentProfile = ({ navigation }) => {
     }
   };
 
-
-
   //if user do not have an image, display default image
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
+  //display
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -204,7 +200,6 @@ const ParentProfile = ({ navigation }) => {
             />
           </View>
 
-
           <View style={styles.profileContainer}>
             <Text style={styles.profileTag}>Subscription</Text>
             <TextInput 
@@ -244,13 +239,11 @@ const ParentProfile = ({ navigation }) => {
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
 
-
         </View>
       </View>
     </ScrollView>
   );
 };
-
 
 export default ParentProfile;
 

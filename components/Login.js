@@ -1,8 +1,10 @@
+//importing libaries
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableWithoutFeedback, Keyboard,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
 import axios from 'axios';
 
-//global variable
+
+//global variables
 export let usernameValue = '';
 export let userLastName = '';
 
@@ -14,6 +16,7 @@ const Login = ({ navigation }) => {
 
   // Login function
   const handleLogin = () => {
+    //to test in console to see what was being received
     console.log('Username: ', username);
     console.log('Password: ', password);
     usernameValue = username;
@@ -22,27 +25,84 @@ const Login = ({ navigation }) => {
     const userData = {
       username: username,
       password: password,
-      userType: userType,
     };
 
-    //using axios to send post request to server
-    axios
-      .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/login', userData)
-      .then((response) => {
-        console.log('Response from server:', response.data);
-        if (response.data.success) {
-          const userLName = response.data.LName;
-          userLastName = userLName;
-          navigation.navigate('ScreenNav', { userType });
-        } else {
-          console.log(response.data.error);
-        }
-      })
-      .catch((error) => {
-        console.log('Error during login', error);
-      });
+    //using axios request for different user type
+    if (userType === 'parent') {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/login', userData)
+        .then((response) => {
+          console.log("response for parent", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            const userSchool = response.data.schoolID;
+            userLastName = userLName;
+            userSchoolID = userSchool;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+
+    } else if (userType === "teacher") {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/login', userData)
+        .then((response) => {
+          console.log("response for teacher", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            const userSchool = response.data.schoolID;
+            userLastName = userLName;
+            userSchoolID = userSchool;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+    } else if (userType === "driver") {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/login', userData)
+        .then((response) => {
+          console.log("response for driver", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            const userVendor = response.data.vendorID;
+            userLastName = userLName;
+            userVendorID = userVendor;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+    } else if (userType === "event_facilitator") {
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/event_faci/login', userData)
+        .then((response) => {
+          console.log("response for parent", response.data);
+          if (response.data.success) {
+            const userLName = response.data.LName;
+            userLastName = userLName;
+            navigation.navigate('ScreenNav', {userType});
+          } else {
+            console.log(response.data.error);
+          }
+        })
+        .catch((error) => {
+          console.log("Error during login!", error);
+        });
+    }
   };
 
+  //function to hide keyboard
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
@@ -85,7 +145,6 @@ const Login = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
-
 export default Login;
 
 // Styling

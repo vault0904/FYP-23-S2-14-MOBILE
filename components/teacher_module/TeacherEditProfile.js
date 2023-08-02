@@ -1,8 +1,10 @@
+//import libaries
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { usernameValue } from '../Login';
 
+//data objects
 const TeacherEditProfile = () => {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -24,7 +26,6 @@ const TeacherEditProfile = () => {
   // Display user data from userdata object
   useEffect(() => {
     const userID = usernameValue;
-
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${userID}`)
       .then((response) => {
@@ -41,6 +42,7 @@ const TeacherEditProfile = () => {
       });
   }, []);
 
+  //data objects for new details
   const formValidationDetails = async () => {
     setSuccessUpdateProfileMessage("");
     const userID = usernameValue;
@@ -49,8 +51,9 @@ const TeacherEditProfile = () => {
       newContact : contact,
       newAddress: address,
     };
-
+    //test printing the new details
     console.log("new details: ", newDetails);
+    //sending axios request to insert/update new details
     axios
       .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updateDetails", newDetails)
       .then((response) => {
@@ -63,19 +66,22 @@ const TeacherEditProfile = () => {
       });
   };
 
+  //reset success message
   const toggleSuccessPassModal = () => {
     setShowSuccessPassModal(!showSuccessPassModal);
-    setSuccessChangePassMessage(""); // Clear the success message when showing the modal
+    setSuccessChangePassMessage("");
   };
 
   const toggleSuccessDetailsModal = () => {
     setShowSuccessDetailsModal(!showSuccessDetailsModal);
-    setSuccessUpdateProfileMessage(""); // Clear the success message when showing the modal
+    setSuccessUpdateProfileMessage("");
   };
 
+  //data object for new password
   const formValidationPass = async () => {
     setSuccessChangePassMessage("");
     const userID = usernameValue;
+    //sending axios request to constantly freshing the latest password
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${userID}`)
       .then((response) => {
@@ -105,11 +111,13 @@ const TeacherEditProfile = () => {
         }
         setConfirmPasswordErrorMessage("");
 
+        //new password details
         const newPass = {
           teacher_ID: userID,
           password: confirmPassword,
         };
 
+        //sending axios request to update paswsword
         axios
           .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updatePass", newPass)
           .then((response) => {
@@ -126,11 +134,12 @@ const TeacherEditProfile = () => {
       });
   };
 
+  //display
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Adjust the value as needed for your layout
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <ScrollView style={styles.form}>
@@ -170,7 +179,7 @@ const TeacherEditProfile = () => {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Show success details Modal */}
+        {/* Show success details message */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -185,7 +194,7 @@ const TeacherEditProfile = () => {
           </View>
         </Modal>
 
-        {/* Show success pass Modal */}
+        {/* Show success password message*/}
         <Modal
           animationType="slide"
           transparent={true}
@@ -203,6 +212,8 @@ const TeacherEditProfile = () => {
     </KeyboardAvoidingView>
   );
 };
+
+//styling
 const styles = StyleSheet.create({
     title: {
         color: 'grey',

@@ -1,3 +1,4 @@
+//import libaries
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import React, { useState, useEffect, useLayoutEffect} from "react";
