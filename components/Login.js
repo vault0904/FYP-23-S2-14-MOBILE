@@ -2,23 +2,38 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableWithoutFeedback, Keyboard,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
 import axios from 'axios';
+import { useRoute } from '@react-navigation/native';
 
 
 //global variables
 export let usernameValue = '';
 export let userLastName = '';
+export let userSchoolID = '';
+export let userVendorID = '';
+export let parentSub = '';
 
 // login function for all user types
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('parent'); // Default user type is set to "parent"
+
+  //grab the user type
+  const route = useRoute();
+  const routeCheck = route.params?.userType;
+  const userType = routeCheck || null;
+
+  if (!userType) {
+    console.log("Type undefined, navigating back to landing page!")
+    navigation.navigate('Landing');
+    return null;
+  }
 
   // Login function
   const handleLogin = () => {
     //to test in console to see what was being received
     console.log('Username: ', username);
     console.log('Password: ', password);
+    console.log("Type received from landing :", userType );
     usernameValue = username;
 
     //create user data object
@@ -36,8 +51,10 @@ const Login = ({ navigation }) => {
           if (response.data.success) {
             const userLName = response.data.LName;
             const userSchool = response.data.schoolID;
+            const subtier = response.data.subTier;
             userLastName = userLName;
             userSchoolID = userSchool;
+            parentSub = subtier;
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);

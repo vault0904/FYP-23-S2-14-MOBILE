@@ -3,7 +3,13 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+//pass usertype to login page
 const LandingPage = ({navigation}) => {
+  const typeHandler = (type) => {
+    if (type) {
+      navigation.navigate('Login', {userType: type});
+    }
+  };
 
   return (
     <View>
@@ -16,7 +22,7 @@ const LandingPage = ({navigation}) => {
 
        {/* button for parents */}
        <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => typeHandler('parent')}>
           <View style={styles.buttonText}>
             <Text style={styles.buttonHeader}>PARENT</Text>
             <Text style={styles.buttonCaption}>Parents/guardian of the child</Text>
@@ -26,7 +32,7 @@ const LandingPage = ({navigation}) => {
 
        {/* button for teachers */}
        <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => typeHandler('teacher')}>
           <View style={styles.buttonText}>
             <Text style={styles.buttonHeader}>TEACHER</Text>
             <Text style={styles.buttonCaption}>Teachers in-charge of dismissal</Text>
@@ -36,7 +42,7 @@ const LandingPage = ({navigation}) => {
 
        {/* button for drivers */}
        <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => typeHandler('driver')}>
           <View style={styles.buttonText}>
             <Text style={styles.buttonHeader}>DRIVER</Text>
             <Text style={styles.buttonCaption}>Bus driver for child pickup</Text>
@@ -46,7 +52,7 @@ const LandingPage = ({navigation}) => {
 
        {/* button for event facilitators */}
        <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => typeHandler('event_facilitator')}>
           <View style={styles.buttonText}>
             <Text style={styles.buttonHeader}>EVENT FACILITATOR</Text>
             <Text style={styles.buttonCaption}>Faciliator for school events</Text>

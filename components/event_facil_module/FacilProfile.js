@@ -211,7 +211,7 @@ const FacilProfile = ({navigation}) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => navigation.navigate('Landing')}
             style={styles.logoutBtn}
           >
             <Text style={styles.btnText}>Logout</Text>

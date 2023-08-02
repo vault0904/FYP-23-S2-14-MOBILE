@@ -33,7 +33,7 @@ export const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
+      <Stack.Screen
           name="Landing"
           component={LandingPage}
           options={{

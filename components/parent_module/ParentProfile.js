@@ -235,7 +235,7 @@ const ParentProfile = ({ navigation }) => {
           </View>
 
           {/* logout button */}
-          <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.logoutBtn}>
+          <TouchableOpacity onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn}>
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
 

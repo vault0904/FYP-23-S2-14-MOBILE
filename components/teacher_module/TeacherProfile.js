@@ -218,7 +218,7 @@ const TeacherProfile = ({navigation}) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate('Login')} style={styles.logoutBtn} >
+            onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn} >
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
         </View>
