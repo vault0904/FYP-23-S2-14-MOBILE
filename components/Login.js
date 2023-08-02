@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 50,
     color: '#56844B',
+    width: '100%',
   },
   titleContainer: {
     marginTop: 100,
