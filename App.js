@@ -6,6 +6,7 @@ import TeacherNav from './components/teacher_module/TeacherNav';
 import ParentNav from './components/parent_module/ParentNav';
 import FacilNav from './components/event_facil_module/FacilNav';
 import DriverNav from './components/bus_driver_module/DriverNav';
+import LandingPage from './components/common/LandingPage';
 
 //creating a stack navigator
 const Stack = createStackNavigator();
@@ -34,10 +35,21 @@ export const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Landing"
+          component={LandingPage}
+          options={{
+            title: "",
+            headerStyle: {
+              backgroundColor: "#56844B"
+            }
+          }}
+        />
+        <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{
             title: "",
+            headerShown: false,
             headerStyle: {
               backgroundColor: "#56844B"
             }

@@ -60,7 +60,6 @@ const DriverPickup = ({navigation}) => {
                                 <Text style={styles.time}>{u.time}</Text>
                             </View>
                             <View style={{justifyContent: 'flex-end', flex: '1'}}>
-                                <Text style={styles.otp}>{u.otp}</Text>
                                 <TouchableOpacity key='dropped-off' style={styles.droppedOffBtn}>
                                 <Text style={styles.droppedOffText}>Picked up</Text>
                                 </TouchableOpacity> 

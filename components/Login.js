@@ -5,8 +5,6 @@ import axios from 'axios';
 //global variable
 export let usernameValue = '';
 export let userLastName = '';
-export let userSchoolID = '';
-export let userVendorID = '';
 
 // login function for all user types
 const Login = ({ navigation }) => {
@@ -24,83 +22,25 @@ const Login = ({ navigation }) => {
     const userData = {
       username: username,
       password: password,
-      //userType: userType,
+      userType: userType,
     };
 
-    //using axios request for different user type
-    if (userType === 'parent') {
-      axios
-        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/login', userData)
-        .then((response) => {
-          console.log("response for parent", response.data);
-          if (response.data.success) {
-            const userLName = response.data.LName;
-            const userSchool = response.data.schoolID;
-            userLastName = userLName;
-            userSchoolID = userSchool;
-            console.log("userschoolID", userSchool);
-            navigation.navigate('ScreenNav', {userType});
-          } else {
-            console.log(response.data.error);
-          }
-        })
-        .catch((error) => {
-          console.log("Error during login!", error);
-        });
-
-    } else if (userType === "teacher") {
-      axios
-        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/login', userData)
-        .then((response) => {
-          console.log("response for teacher", response.data);
-          if (response.data.success) {
-            const userLName = response.data.LName;
-            const userSchool = response.data.schoolID;
-            userLastName = userLName;
-            userSchoolID = userSchool;
-            navigation.navigate('ScreenNav', {userType});
-          } else {
-            console.log(response.data.error);
-          }
-        })
-        .catch((error) => {
-          console.log("Error during login!", error);
-        });
-    } else if (userType === "driver") {
-      axios
-        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/login', userData)
-        .then((response) => {
-          console.log("response for driver", response.data);
-          if (response.data.success) {
-            const userLName = response.data.LName;
-            const userVendor = response.data.vendorID;
-            userLastName = userLName;
-            userVendorID = userVendor;
-            navigation.navigate('ScreenNav', {userType});
-          } else {
-            console.log(response.data.error);
-          }
-        })
-        .catch((error) => {
-          console.log("Error during login!", error);
-        });
-    } else if (userType === "event_facilitator") {
-      axios
-        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/event_faci/login', userData)
-        .then((response) => {
-          console.log("response for parent", response.data);
-          if (response.data.success) {
-            const userLName = response.data.LName;
-            userLastName = userLName;
-            navigation.navigate('ScreenNav', {userType});
-          } else {
-            console.log(response.data.error);
-          }
-        })
-        .catch((error) => {
-          console.log("Error during login!", error);
-        });
-    }
+    //using axios to send post request to server
+    axios
+      .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/login', userData)
+      .then((response) => {
+        console.log('Response from server:', response.data);
+        if (response.data.success) {
+          const userLName = response.data.LName;
+          userLastName = userLName;
+          navigation.navigate('ScreenNav', { userType });
+        } else {
+          console.log(response.data.error);
+        }
+      })
+      .catch((error) => {
+        console.log('Error during login', error);
+      });
   };
 
   const dismissKeyboard = () => {
@@ -112,8 +52,7 @@ const Login = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView style={styles.container} behavior="position" keyboardVerticalOffset={0}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>MARSU-</Text>
-          <Text style={styles.title}>PIUM-</Text>
+          <Text style={styles.title}>MARSUPIUM</Text>
         </View>
         <View>
           <Text style={styles.subTitleContainer}>Welcome back.</Text>
@@ -159,13 +98,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    fontSize: 70,
+    fontSize: 50,
     color: '#56844B',
-    width: '80%',
   },
   titleContainer: {
     marginTop: 100,
-    marginLeft: 35,
+    marginHorizontal: 35,
   },
   subTitleContainer: {
     color: '#56844B',
