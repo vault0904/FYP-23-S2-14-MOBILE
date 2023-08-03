@@ -9,6 +9,7 @@ import axios from 'axios';
 //import username from login
 import { usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
+import { parentSub } from '../Login';
 import * as ImagePicker from 'expo-image-picker';
 
 //parent profile
@@ -18,6 +19,8 @@ const ParentProfile = ({ navigation }) => {
   //username is equal to the username from login
   const username = usernameValue;
   const iSFocused = useIsFocused();
+  const thisSub = parentSub;
+  //const thisSub = 'Basic'
 
   //fetch parent data from database
   const fetchData = () => {
@@ -50,6 +53,16 @@ const ParentProfile = ({ navigation }) => {
       </View>
     );
   }
+
+  const navigateType = () => {
+    if (thisSub === 'Basic') {
+      navigation.navigate('BaiscSubPage');
+    } else if (thisSub === 'Premium') {
+      navigation.navigate('PremSubPage');
+    } else {
+      alert("Invalid subscription");
+    }
+  };
 
   //file upload function
   const fileUpload = async (uri) => {
@@ -229,7 +242,7 @@ const ParentProfile = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* subsribe button */}
-            <TouchableOpacity onPress={() =>navigation.navigate('PremiumSubscriptionPage')} style={styles.subscribeButton}>
+            <TouchableOpacity onPress={navigateType} style={styles.subscribeButton}>
               <Text style={styles.btnText1}>Subscription</Text>
             </TouchableOpacity>
           </View>

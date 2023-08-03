@@ -9,7 +9,7 @@ import { SelectList } from 'react-native-dropdown-select-list'
 // subscription page
 const BasicSubscription = ({navigation}) => {
     const date = "01/01/24"
-    const subscription = 'Basic'
+    const subscription = 'This is Basic page'
 
     const cardType = [
       // disabled param : to show the timeslot is fully booked

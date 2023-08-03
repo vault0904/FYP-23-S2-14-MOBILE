@@ -7,7 +7,7 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 // subscription page
 const PremiumSubscription = ({navigation}) => {
     const date = "01/01/24"
-    const subscription = 'Premium'
+    const subscription = 'This is Premium page'
     
   //display
   return (

@@ -12,7 +12,6 @@ import ParentEditProfile from './ParentEditProfile';
 import ChildProfileSelection from './ChildProfileSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ParentAnnouncements from '../common/ParentAnnouncementPage';
-import SubscriptionLayout from './subscription_module/SubscriptionLayout'
 import PremiumSubscription from './subscription_module/PremiumSubscriptionPage';
 import BasicSubscription from './subscription_module/BasicSubscriptionPage';
 
@@ -30,9 +29,7 @@ const PickupSelectStack = createNativeStackNavigator();
 {/* For stack navigation between child tabs and child profile */}
 const ChildProfileStack = createNativeStackNavigator();
 
-
-function ProfileStackScreen({route}) {
-    const usertype = route.params || {}; 
+function ProfileStackScreen() {
     return (
         <ProfileStack.Navigator 
             screenOptions={{
@@ -63,47 +60,25 @@ function ProfileStackScreen({route}) {
                     title:"Edit Profile"
                 }}
             />
-
-            {/* page to route to from main */}
-            {/* {usertype === 'basic' ? (
-                <ProfileStack.Screen 
-                name="BasicProfile" 
-                component={BasicSubscription} 
-                options={{
-                    title: "Basic Profile"
-                }}
-                />
-            ) : usertype === 'prem' ? (
-                <ProfileStack.Screen 
-                name="PremiumProfile" 
-                component={PremiumSubscription} 
-                options={{
-                    title: "Premium Profile"
-                }}
-                />
-            ) : null} */}
-
-            {/* page to route to from main */}
+            {/*premium sub page*/}
             <ProfileStack.Screen 
-                name="PremiumSubscriptionPage" 
+                name="PremSubPage" 
                 component={PremiumSubscription} 
                 options={{
                     title:"Manage Subscription"
                 }}
-            /> 
-
+            />
+            {/*baisc unsub page*/}
             <ProfileStack.Screen 
-                name="BasicSubscriptionPage" 
+                name="BaiscSubPage" 
                 component={BasicSubscription} 
                 options={{
                     title:"Manage Subscription"
                 }}
-            /> 
-
-
-            </ProfileStack.Navigator>
-            );
-            }
+            />
+        </ProfileStack.Navigator>
+    );
+}
 
 function ChildSelectionStackScreen() {
     return (
