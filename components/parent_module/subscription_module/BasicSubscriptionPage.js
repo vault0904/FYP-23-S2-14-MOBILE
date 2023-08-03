@@ -56,7 +56,7 @@ const BasicSubscription = ({navigation}) => {
 
               <View style={{flexDirection: 'row'}}>
                 <Icon name="block-helper" size={20} style={{color: '#e8ffe3', marginTop: 5, marginLeft: 2}}/>
-                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 7, fontSize: 15, marginLeft: 3}}> Bus pick up services </Text>
+                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 5, fontSize: 15, marginLeft: 3}}> Bus pick up services </Text>
               </View>
           </View>
         </Card>
