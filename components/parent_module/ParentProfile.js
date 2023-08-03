@@ -229,8 +229,8 @@ const ParentProfile = ({ navigation }) => {
             </TouchableOpacity>
 
             {/* subsribe button */}
-            <TouchableOpacity onPress={() =>navigation.navigate('Login')} style={styles.subscribeButton}>
-              <Text style={styles.btnText1}>Subscribe</Text>
+            <TouchableOpacity onPress={() =>navigation.navigate('PremiumSubscriptionPage')} style={styles.subscribeButton}>
+              <Text style={styles.btnText1}>Subscription</Text>
             </TouchableOpacity>
           </View>
 
