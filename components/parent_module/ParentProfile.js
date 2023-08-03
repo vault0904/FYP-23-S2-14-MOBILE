@@ -56,7 +56,7 @@ const ParentProfile = ({ navigation }) => {
 
   const navigateType = () => {
     if (thisSub === 'Basic') {
-      navigation.navigate('BaiscSubPage');
+      navigation.navigate('BasicSubPage');
     } else if (thisSub === 'Premium') {
       navigation.navigate('PremSubPage');
     } else {
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   btnText1:{
     padding: 5,
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold'
   },
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   btnText:{
     padding: 15,
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold'
   },

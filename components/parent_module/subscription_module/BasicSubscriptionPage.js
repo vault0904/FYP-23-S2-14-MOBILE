@@ -41,7 +41,23 @@ const BasicSubscription = ({navigation}) => {
             <Text style={styles.text1}>Marsupium {subscription}</Text>
             <Text style={styles.price}>$30.99 /mth</Text>
             <Text style={styles.text2}>1 {subscription} Account</Text>
-            <Text style={styles.text2}>Your plan will automatically renew on {date}</Text>
+          </View>
+            {/*  basic plan benefits */}
+            <View style={{backgroundColor: '#56844B', marginHorizontal: 15, marginBottom: 10, marginTop: 10}}>
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="check" size={24} style={{color: '#e8ffe3'}}/>
+                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Pick up time slot selection </Text>
+              </View>
+
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="check" size={24} style={{color: '#e8ffe3'}}/>
+                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Car pick up services </Text>
+              </View>
+
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="block-helper" size={20} style={{color: '#e8ffe3', marginTop: 5, marginLeft: 2}}/>
+                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 7, fontSize: 15, marginLeft: 3}}> Bus pick up services </Text>
+              </View>
           </View>
         </Card>
 
@@ -170,6 +186,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     backgroundColor: '#56844B',
     paddingTop: 15,
+    paddingLeft: 5
   },
   cardDisplay2: {
     paddingBottom: 25,
@@ -195,7 +212,6 @@ const styles = StyleSheet.create({
   },
   text2: {
     color: '#ffffff',
-    marginTop: 5
   },
   text3: {
     fontWeight: 'bold',
@@ -206,7 +222,6 @@ const styles = StyleSheet.create({
   text4: {
     color: '#ffffff',
     marginBottom: 20,
-    marginHorizontal: 5
   },
   text5: {
     color: '#56844B',

@@ -22,8 +22,24 @@ const PremiumSubscription = ({navigation}) => {
             <Text style={styles.text1}>Marsupium {subscription}</Text>
             <Text style={styles.price}>$30.99 /mth</Text>
             <Text style={styles.text2}>1 {subscription} Account</Text>
-            <Text style={styles.text2}>Your plan will automatically renew on {date}</Text>
           </View>
+          {/*  premium plan benefits */}
+          <View style={{backgroundColor: '#5c3542',marginHorizontal: 15, marginBottom: 10, marginTop: 10}}>
+                <View style={{flexDirection: 'row'}}>
+                  <Icon name="check" size={24} style={{color: '#c4879d'}}/>
+                  <Text style={{color: '#c4879d', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Pick up time slot selection </Text>
+                </View>
+
+                <View style={{flexDirection: 'row'}}>
+                  <Icon name="check" size={24} style={{color: '#c4879d'}}/>
+                  <Text style={{color: '#c4879d', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Car pick up services </Text>
+                </View>
+
+                <View style={{flexDirection: 'row'}}>
+                  <Icon name="check" size={24} style={{color: '#c4879d'}}/>
+                  <Text style={{color: '#c4879d', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Bus pick up services </Text>
+                </View>
+              </View>
         </Card>
 
         <Text style={styles.headerText} > Want to change your plan? </Text>
@@ -35,15 +51,20 @@ const PremiumSubscription = ({navigation}) => {
                         <Text style={styles.text4}>Don't worry, you can still pick up your child... on foot!</Text>
 
                         {/* basic plan benefits */}
-                        <View style={{backgroundColor: '#5c3542'}}>
+                        <View style={{backgroundColor: '#56844B'}}>
                             <View style={{flexDirection: 'row'}}>
-                                <Icon name="check" size={24} style={{color: '#c4879d'}}/>
-                                <Text style={{color: '#c4879d', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Pick up time slot selection </Text>
+                                <Icon name="check" size={24} style={{color: '#e8ffe3'}}/>
+                                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Pick up time slot selection </Text>
                             </View>
 
                             <View style={{flexDirection: 'row'}}>
-                                <Icon name="check" size={24} style={{color: '#c4879d'}}/>
-                                <Text style={{color: '#c4879d', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Car pick up services </Text>
+                                <Icon name="check" size={24} style={{color: '#e8ffe3'}}/>
+                                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 3, fontSize: 15}}> Car pick up services </Text>
+                            </View>
+
+                            <View style={{flexDirection: 'row'}}>
+                                <Icon name="block-helper" size={20} style={{color: '#e8ffe3', marginTop: 5, marginLeft: 2}}/>
+                                <Text style={{color: '#e8ffe3', fontWeight: 'bold', marginTop: 7, fontSize: 15, marginLeft: 3}}> Bus pick up services </Text>
                             </View>
                         </View>
                     </View>
@@ -81,14 +102,15 @@ const styles = StyleSheet.create({
   },
   cardDisplay: {
     paddingBottom: 15,
-    backgroundColor: '#56844B',
+    backgroundColor: '#5c3542',
     paddingTop: 15,
+    paddingLeft: 5
   },
   cardDisplay2: {
     paddingBottom: 25,
-    backgroundColor: '#5c3542',
+    backgroundColor: '#56844B',
     paddingTop: 25,
-    paddingHorizontal: 15
+    paddingLeft: 20
   },
   cardText: {
     margin: 5,
@@ -101,14 +123,13 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   price: {
-    color: '#e8ffe3',
+    color: '#c4879d',
     fontWeight: 'bold',
     fontSize: 30,
     marginBottom: 10
   },
   text2: {
     color: '#ffffff',
-    marginTop: 5
   },
   text3: {
     fontWeight: 'bold',
@@ -119,7 +140,6 @@ const styles = StyleSheet.create({
   text4: {
     color: '#ffffff',
     marginBottom: 20,
-    marginHorizontal: 5
   },
   text5: {
     color: '#56844B',
@@ -127,7 +147,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5
   },
   price2: {
-    color: '#c4879d',
+    color: '#e8ffe3',
     fontWeight: 'bold',
     fontSize: 30,
     marginBottom: 10,
@@ -150,7 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     alignItems:'center',
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 50,
   },
   btnText:{

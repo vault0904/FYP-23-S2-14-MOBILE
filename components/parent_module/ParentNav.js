@@ -70,7 +70,7 @@ function ProfileStackScreen() {
             />
             {/*baisc unsub page*/}
             <ProfileStack.Screen 
-                name="BaiscSubPage" 
+                name="BasicSubPage" 
                 component={BasicSubscription} 
                 options={{
                     title:"Manage Subscription"
