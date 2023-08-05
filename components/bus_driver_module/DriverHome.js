@@ -13,8 +13,8 @@ const Item = ({message}) => (
 const DriverHome = ({ navigation }) => {
   const pickupDetails = {
     time: '1:15pm',
-    school: 'Starfleet Primary School',
-    address: '123 Woodlands Av 4, S123456',
+    school: 'Starfleet Primary',
+    address: '123 Woodlands Av',
     bus_plate: 'PD501X',
   }
 
@@ -71,16 +71,17 @@ const DriverHome = ({ navigation }) => {
           <Text style={styles.label}>School</Text>
           <TextInput style={styles.input} value={school} onChangeText={setSchool} editable={false} />
         </View>
+        
+        <View style={styles.row}>
+          <Text style={styles.label}>Plate</Text>
+          <TextInput style={styles.input} value={bus_plate} onChangeText={setBusPlate} editable={false} />
+        </View>
 
         <View style={styles.row}>
-          <Text style={styles.label}>Address</Text>
+          <Text style={styles.label}>Region</Text>
           <TextInput style={styles.input} value={address} onChangeText={setAddress} editable={false} />
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Bus Plate</Text>
-          <TextInput style={styles.input} value={bus_plate} onChangeText={setBusPlate} editable={false} />
-        </View>
       </View>
   );
 }
@@ -132,7 +133,6 @@ const styles = StyleSheet.create({
       fontSize: 12,
       fontWeight: 'bold',
       marginTop: 15,
-      marginLeft: 10
   },
   input: {
       padding: 15,

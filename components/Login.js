@@ -58,6 +58,7 @@ const Login = ({ navigation }) => {
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
+            alert("Invalid username or password!")
           }
         })
         .catch((error) => {
@@ -77,6 +78,7 @@ const Login = ({ navigation }) => {
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
+            alert("Invalid username or password!")
           }
         })
         .catch((error) => {
@@ -95,6 +97,7 @@ const Login = ({ navigation }) => {
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
+            alert("Invalid username or password!")
           }
         })
         .catch((error) => {
@@ -111,6 +114,7 @@ const Login = ({ navigation }) => {
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
+            alert("Invalid username or password!")
           }
         })
         .catch((error) => {

@@ -112,7 +112,33 @@ app.put('/api/child/updateImageURI', (req, res) => {
   );
 });
 
-//need one api to update parent subscription
+//api to change parent sub to prem
+app.put('/api/parent/prem/:userID', (req, res) => {
+  const userID = req.params.userID;
+  db.query("UPDATE parent SET subscription = 'Premium' WHERE parent_ID =?", [userID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+    console.log("Subscription updated!");
+    res.json({success: true})
+  });
+});
+
+//api to change parent sub to normal
+app.put('/api/parent/normal/:userID', (req, res) => {
+  const userID = req.params.userID;
+  db.query("UPDATE parent SET subscription = 'Normal' WHERE parent_ID =?", [userID], (err, results) => {
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+    console.log("Subscription updated!");
+    res.json({success: true})
+  });
+});
 
 //api for teacher data
 app.get('/api/teacher/:userID', (req, res) => {
@@ -360,9 +386,11 @@ app.get('/api/pickupchild/:childID', (req, res) => {
   const childID = req.params.childID;
   // fetch child data from the database
   db.query(
-    `SELECT child_ID, firstName, lastName, address, 
-      region, school_ID, parent_ID, 
-      class_ID FROM child WHERE child_ID = ?`, [childID], (err, results) => {
+    `SELECT child.child_ID, child.firstName, child.lastName, child.address, 
+    child.region, child.school_ID, child.parent_ID, child.class_ID, parent.subscription
+    FROM child
+    JOIN parent ON child.parent_ID = parent.parent_ID
+    WHERE child.child_ID = ?`, [childID], (err, results) => {
       if (err) {
         console.error('Database query error:', err);
         res.status(500).json({ error: 'An error occurred' });
@@ -662,5 +690,116 @@ app.get('/api/announcements/10', (req, res) => {
     res.json(results);
   });
 });
+
+//api to get gate data
+app.get('/api/gates/:schoolID', (req, res) => {
+  const schoolID = req.params.schoolID;
+
+  db.query(
+    'SELECT gate_ID, gate_Name, capacity FROM school_gate WHERE school_ID = ? ',
+    [schoolID],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({error: "An error occurred"});
+        return;
+      }
+      if (results.length === 0) {
+        res.status(404).json({error: "No gates found for this school"});
+        return;
+      }
+      res.json(results);
+    }
+  );
+});
+
+//api to get selfpickup capacity
+app.post('/api/spuCapacity', (req, res) => {
+  const {timeSlot, school_ID, todayDate} = req.body;
+
+  if (!timeSlot || !school_ID || !todayDate) {
+    res.status(400).json({error: "Invalid input data"})
+    return;
+  }
+
+  db.query(
+    `SELECT gate_ID, COUNT(*) AS capacity
+    FROM selfpickup_jobs
+    WHERE school_ID = ? AND timeSlot = ? AND DATE(jobcreated) = ?
+    GROUP BY gate_ID;` ,
+    [school_ID, timeSlot, todayDate],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({error: "An error occurred"});
+        return;
+      }
+      res.json(results);
+    }
+  );
+});
+
+//api to create self pickup jobs
+app.post('/api/selfpickup', (req, res) => {
+  const {datetime, timeslot, parent_ID, child_ID, gate_ID, school_ID } = req.body;
+  db.query(
+    `INSERT INTO selfpickup_jobs (jobcreated, timeslot, parent_ID, child_ID, gate_ID, school_ID)
+    VALUES (?, ?, ?, ?, ?, ?)` ,
+    [datetime, timeslot, parent_ID, child_ID, gate_ID, school_ID],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({error: "An error occurred"});
+        return;
+      }
+      res.json({sucess: true})
+    }
+  );
+});
+
+//api to create bus pickup jobs
+app.post('/api/buspickup', (req, res) => {
+  const {datetime, timeslot, address, region, parent_ID, child_ID, school_ID} = req.body;
+  db.query(
+    `INSERT INTO vehiclepickup_jobs (jobcreated, timeslot, dropoff_Address, dropoff_Region
+      , parent_ID, child_ID, school_ID) VALUES (?, ?, ?, ?, ?, ?, ?)` ,
+    [datetime, timeslot, address, region, parent_ID, child_ID, school_ID],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({error: "An error occurred"});
+        return;
+      }
+      res.json({success: true})
+    }
+  );
+});
+
+//api to check if booking exist
+app.get('/api/checkBooking', (req, res) => {
+  const {child_ID, datetime} = req.query;
+  console.log("before database");
+
+  db.query(
+    `SELECT spu_Job_ID FROM selfpickup_jobs WHERE child_ID = ? AND DATE(jobcreated) = ?
+    UNION
+    SELECT vpu_Job_ID FROM vehiclepickup_jobs WHERE child_ID = ? AND DATE(jobcreated) = ?;
+    `,
+    [child_ID, datetime, child_ID, datetime],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({ error: "An error occurred" });
+        return;
+      }
+      if (results.length === 0) {
+        res.json({ success: true });
+      } else {
+        res.json({ success: false });
+      }
+    }
+  );
+});
+
 
 module.exports.handler = serverless(app);

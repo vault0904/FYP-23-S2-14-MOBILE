@@ -1,98 +1,131 @@
-//import libaries
+// import libaries
 import React, { useEffect, useState } from "react";
-import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
-import axios from 'axios';
-import { userSchoolID } from '../Login';
+import {View,Text,StyleSheet,TextInput,FlatList,TouchableOpacity,ScrollView,} from "react-native";
+import axios from "axios";
+import { userSchoolID } from "../Login";
 
-const Item = ({message}) => (
-    <View style={styles.item}>
-        <Text style={styles.title}>{message}</Text>
-    </View>
+const Item = ({ message }) => (
+  <View style={styles.item}>
+    <Text style={styles.title}>{message}</Text>
+  </View>
 );
 
 // pickup dummy data
-const ParentHome = ({navigation}) => {
-    const pickupDetails = {
-        time: '1:15pm',
-        mode: 'Self pickup',
-        gate: 'West gate',
-        status: 'picked up',
-    }
+const ParentHome = ({ navigation }) => {
+  const pickupDetails = {
+    time: "1:15pm",
+    mode: "Self pickup",
+    gate: "West gate",
+    status: "picked up",
+  };
 
-    const [time, setTime] = useState(pickupDetails.time);
-    const [mode, setMode] = useState(pickupDetails.mode);
-    const [gate, setGate] = useState(pickupDetails.gate);
-    const [status, setStatus] = useState(pickupDetails.status);
-    const [announcements, setAnnouncements] = useState([]);
-    const thisSchool = userSchoolID;
-    console.log("this parent school_ID is", thisSchool);
+  const [time, setTime] = useState(pickupDetails.time);
+  const [mode, setMode] = useState(pickupDetails.mode);
+  const [gate, setGate] = useState(pickupDetails.gate);
+  const [status, setStatus] = useState(pickupDetails.status);
 
-    //grab and fetch the latest 3 announcements from database
-    useEffect(() => {
-        axios
-        .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/announcements/3/${thisSchool}`)
-        .then((response) => {
-            console.log('Response from server:', response.data);
-            const receivedAnn = response.data;
-            setAnnouncements(receivedAnn);
-        })
-        .catch((error) => {
-            console.log('Error fetching annoucements', error);
-        });
-    }, []);
+  //set and display annoucements
+  const [announcements, setAnnouncements] = useState([]);
+  const thisSchool = userSchoolID;
+  console.log("this parent school_ID is", thisSchool);
 
-    //display
-    return(
-        <View style={styles.container}>
-        <View style={styles.upperRow}>
-            
-            {/* header */}
-            <Text style={styles.header}>News & Notices</Text>
-            <TouchableOpacity key='View More'
-                onPress={() => navigation.navigate('ParentAnnouncementPage')}
-            >
-                <Text style={styles.btnText}>View More</Text>
-            </TouchableOpacity> 
-        </View>
-        <View style={styles.list}>
-            <FlatList 
-            data={announcements}
-            renderItem={({item}) => <Item message={item.message} />}
-            keyExtractor={(item) => item.ann_ID.toString()}
-            />
-        </View>
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
 
-                {/* pickup details */}
-                <Text style={styles.header}>Pickup details</Text>
+  // grab and fetch the latest 3 announcements from database
+  useEffect(() => {
+    axios
+      .get(
+        `https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/announcements/3/${thisSchool}`
+      )
+      .then((response) => {
+        console.log("Response from server:", response.data);
+        const receivedAnn = response.data;
+        setAnnouncements(receivedAnn);
+      })
+      .catch((error) => {
+        console.log("Error fetching annoucements", error);
+      });
+  }, []);
 
-                {/* pickup : time */}
-                <View style={styles.row}>
-                    <Text style={styles.label}>Time</Text>
-                    <TextInput style={styles.input} value={time} onChangeText={setTime} editable={false}/>
-                </View>
+  // display
+  return (
+    <View style={styles.container}>
+      <View style={styles.upperRow}>
+        {/* header */}
+        <Text style={styles.header}>News & Notices</Text>
+        <TouchableOpacity
+          key="View More"
+          onPress={() => navigation.navigate("ParentAnnouncementPage")}
+        >
+          <Text style={styles.btnText}>View More</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.list}>
+        <FlatList
+          data={announcements}
+          renderItem={({ item }) => <Item message={item.message} />}
+          keyExtractor={(item) => item.ann_ID.toString()}
+        />
+      </View>
 
-                {/* pickup : mode */}
-                <View style={styles.row}>
-                    <Text style={styles.label}>Mode</Text>
-                    <TextInput style={styles.input} value={mode} onChangeText={setMode} editable={false}/>
-                </View>
+      {/* pickup details */}
+      <Text style={styles.header}>Pickup details {'\t\t\t\t'}{todayDate}</Text>
 
-                {/* pickup : gate */}
-                <View style={styles.row}>
-                    <Text style={styles.label}>Gate</Text>
-                    <TextInput style={styles.input} value={gate} onChangeText={setGate} editable={false}/>
-                </View>
+      {/* pickup : time */}
+      <View style={styles.row}>
+        <Text style={styles.label}>Time</Text>
+        <TextInput
+          style={styles.input}
+          value={time}
+          onChangeText={setTime}
+          editable={false}
+        />
+      </View>
 
-                {/* pickup : status */}
-                <View style={styles.row}>
-                    <Text style={styles.label}>Status</Text>
-                    {/* text colour changes based on pick up status  */}
-                    <TextInput style={(pickupDetails.status == 'picked up') ? styles.inputGreen : styles.inputRed} value={status} onChangeText={setStatus} editable={false}/>
-                </View>
-            </View>
-    )
-};
-   
+      {/* pickup : mode */}
+      <View style={styles.row}>
+        <Text style={styles.label}>Mode</Text>
+        <TextInput
+          style={styles.input}
+          value={mode}
+          onChangeText={setMode}
+          editable={false}
+        />
+      </View>
+
+      {/* pickup : gate */}
+      <View style={styles.row}>
+        <Text style={styles.label}>Gate</Text>
+        <TextInput
+          style={styles.input}
+          value={gate}
+          onChangeText={setGate}
+          editable={false}
+        />
+      </View>
+
+      {/* pickup : status */}
+      <View style={styles.row}>
+        <Text style={styles.label}>Status</Text>
+        {/* text colour changes based on pick up status  */}
+        <TextInput
+          style={
+            pickupDetails.status == "picked up"
+              ? styles.inputGreen
+              : styles.inputRed
+          }
+          value={status}
+          onChangeText={setStatus}
+          editable={false}
+        />
+      </View>
+    </View>
+  );
+};   
 export default ParentHome;
 
 //styling

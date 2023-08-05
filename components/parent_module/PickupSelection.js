@@ -7,30 +7,39 @@ import { useIsFocused } from "@react-navigation/native";
 import { Button } from 'react-native'
 import {useRoute} from "@react-navigation/native";
 import { SelectList } from 'react-native-dropdown-select-list'
-import { parentSub } from '../Login';
+import { userSchoolID } from '../Login';
+import { usernameValue } from '../Login';
 
 const PickupSelection = () => {
     //grab the childID based on which GUI selected
     const route = useRoute();
     const {thisChild} = route.params;
+    //the current school ID
+    const thisSchool = userSchoolID;
     const iSFocused = useIsFocused();
     //set child data
     const [thisChildData, setThisData] = useState(null);
+    //raw gate data
+    const [gateRaw, setRawGate] = useState(null);
+    //store the mapped gateData with capacity left
+    const [gateData, setGateData] = useState([]);
 
     //set button data for self or bus pickup
     const [buttonselected, setButton] = useState(null);
+    //set sub tier
+    const [thisSub, setThisSub] = useState(null);
+    const thisParent = usernameValue;
 
     //this is needed to set the state of a select list
     const [selected, setSelected] = React.useState(null);
     const [selected2, setSelected2] = React.useState(null);
     const [selected3, setSelected3] = React.useState(null);
-    const thisTime = selected;
-    const thisTime2 = selected2;
+    const selfTime = selected;
+    const busTime = selected2;
     const thisGate = selected3;
-    console.log("this self time", thisTime);
-    console.log("this bus time", thisTime2);
-    console.log("this gate", thisGate);
-    const subscriptionCheck = parentSub === 'normal';
+    // console.log("this self time", selfTime);
+    // console.log("this bus time", busTime);
+    // console.log("this gate", thisGate);
 
     //timing for self pickup 
     const selfTiming = [
@@ -53,38 +62,32 @@ const PickupSelection = () => {
 
     const defaultData1 = [
       {key: "1", value: "Please select a pickup type first", disabled: true}
-      
     ]
 
     const defaultData2 = [
       {key: "1", value: "Please select a timeslot first", disabled: true}
     ]
-    //create new function to use school_ID and grab all the gates in that school
-    // display gate number + capacity (reminding)
-    //reminding = grab gate capcity
-    //           then grab total jobs for self pickup = that gate
-    //            gate capacity - that 
-
-    //select time slot first
-    //grab time slot check database, find capacity = this timeslot
-    //then do the above
-    const gatedata = [
-      {key:'1', value:'west gate'},
-      {key:'2', value:'north gate'},
-      {key:'3', value:'south gate'},
-      {key:'4', value:'main gate'},
-      {key:'5', value:'central'}
-    ]
 
     //fetch child data based on childID that is received from GUI
     const fetchData = () => {
       //axios to get child data
-      console.log("current child id befeore grab", thisChild)
       axios
         .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/pickupchild/${thisChild}`)
         .then((response) => {
           const recData = response.data;
+          const recSub = response.data.subscription;
           setThisData(recData);
+          setThisSub(recSub);
+          axios
+            .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/gates/${thisSchool}`)
+            .then((response) => {
+              //put the raw data
+              const recData2 = response.data;
+              setRawGate(recData2);
+            })
+            .catch((error) => {
+              console.log("Error fetching gate data:", error);
+            });
         })
         .catch((error) => {
           console.log('Error fetching child data:', error);
@@ -104,6 +107,25 @@ const PickupSelection = () => {
           fetchData();
         }
       }, [iSFocused]);
+
+      //validate user subscription tier
+      const subscriptionCheck = thisSub === 'Normal';
+
+      //reset values upon switching pages
+      const resetSelects = () => {
+        setButton(null);
+        setSelected(null);
+        setSelected2(null);
+        setSelected3(null);
+      };
+
+      useEffect(() => {
+        resetSelects();
+      }, []);
+
+      useLayoutEffect(()=> {
+        resetSelects();
+      }, [iSFocused]);
       
       if (!thisChildData) {
         return (
@@ -113,24 +135,149 @@ const PickupSelection = () => {
         );
       }
     
+    //button to send the data to database when a pickup is confirmed
     const confirmButton = () => {
-      if (buttonselected === 'self') {
-        if( !selected || !selected3) {
-          alert("Please select both timeslot and gate");
-        } else {
-          alert("ok pass");
-          //add in logic to submit backend later
-        }
-      } else if (buttonselected === 'bus') {
-        if (!selected2) {
-          alert("Please select a timeslot");
-        } else {
-          alert("ok pass");
-          //add in backend to submit backend later
-        }
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth() + 1;
+      const day = today.getDate();
+      const todayDate = year + "-" + month + "-" + day;
+      const hour = today.getHours();
+      const min = today.getMinutes();
+      const second = today.getSeconds();
+      const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
+      
+      //check local date time to cut off booking after 12pm
+      if (hour >= 12) {
+        alert("Booking stops at 12pm daily!");
       } else {
-        alert("Please select a pickup method");
-      }
+        //button validation
+        if (buttonselected === 'self') {
+          if (!selected || !selected3) {
+            alert("Please select both timeslot and gate");
+          } else {
+            axios //api request to check if booking exist
+              .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
+                params: {
+                  child_ID: thisChild,
+                  datetime: todayDate,
+                },
+              })
+              .then((response) => {
+                console.log("response form server", response.data);
+                if (response.data.success) { //passing payload to create job
+                  const payloadSelf = {
+                    datetime: formattedDate,
+                    timeslot: selfTime,
+                    parent_ID: thisParent,
+                    child_ID: thisChild,
+                    gate_ID: thisGate,
+                    school_ID: thisSchool,
+                  };
+                  axios //api request to insert payload
+                    .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/selfpickup", payloadSelf)
+                    .then((response) => {
+                      console.log("Data inserted:", response.data);
+                      alert("Booking confirmed!");
+                    }) 
+                    .catch((error) => {
+                      console.error("Error inserting data:", error);
+                      alert("Error, please try again!");
+                    });  
+                } else {
+                  alert("You already have a booking for today!");
+                }
+              })
+              .catch((error) => {
+                console.error("Error checking booking:", error);
+                alert("Error, please try again!");
+              });
+            }
+          } else if (buttonselected === 'bus') {
+            if (!selected2) {
+              alert("Please select a timeslot");
+            } else {
+              axios
+                .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
+                  params: {
+                    child_ID: thisChild,
+                    datetime: todayDate,
+                  },
+                })
+                .then((response) => {
+                  if (response.data.success) {
+                    const thisAddress = "temporary test address";
+                    const thisRegion = "central";
+                    const payloadBus = {
+                      datetime: formattedDate,
+                      timeslot: busTime,
+                      address: thisAddress,
+                      region: thisRegion,
+                      parent_ID: thisParent,
+                      child_ID: thisChild,
+                      school_ID: thisSchool,
+                    };
+                    axios
+                      .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/buspickup", payloadBus)
+                      .then((response) => {
+                        console.log("Date inserted:", response.data);
+                        alert("Booking confirmed!");
+                      })
+                      .catch((error) => {
+                        console.error("Error inserting data:", error);
+                        alert("Error, please try again!");
+                      });
+                  } else {
+                    alert("You already have a booking for today!");
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error checking booking:", error);
+                  alert("Error, please try again!");
+                });
+            }
+          } else {
+            alert("Please select a pickup method");
+          }
+        }
+    };
+    
+    //get current job created function
+    const getCapacity = () => {
+      //send this data to backend
+      const sendingData = {
+        timeSlot: selfTime,
+        school_ID: thisSchool,
+        todayDate: todayDate,
+      };
+
+      axios
+        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/spuCapacity', sendingData)
+        .then((response)=> {
+          //calculate the capacity left and map it
+          const calculateCapacity = gateRaw.map((gate) => {
+            const thisGate = response.data.find((item) => item.gate_ID === gate.gate_ID);
+            //if a matching ID found, perform calculation
+            if (thisGate) {
+              const capacityDiff = gate.capacity - thisGate.capacity;
+              return {
+                key: gate.gate_ID, 
+                value: `${gate.gate_Name} \t\t\t\t\tCapacity left - ${capacityDiff}`,
+                disabled: capacityDiff === 0
+              };
+            } else { //else return original data
+              return{
+                key: gate.gate_ID, 
+                value: `${gate.gate_Name} \t\t\t\t\tCapacity left - ${gate.capacity}`,
+                disabled: gate.capacity === 0
+              };
+            }
+          });
+          setGateData(calculateCapacity);
+        })
+        .catch((error) => {
+          console.log("Error fetching data for jobs:" , error);
+        });
     };
     
     return (
@@ -153,8 +300,6 @@ const PickupSelection = () => {
                   if (buttonselected !== 'self') {
                     setButton('self');
                     setSelected2(null);
-                    //setSelected3(null);
-                    //setSelected(null);
                   }  
                 }}
               >
@@ -191,6 +336,7 @@ const PickupSelection = () => {
                   setSelected={setSelected}
                   data={selfTiming}
                   save="value"
+                  onSelect={getCapacity}
                 />
               </View>
             )}
@@ -225,13 +371,13 @@ const PickupSelection = () => {
               <View style={styles.dropdownContainer}>
                 <SelectList 
                   setSelected={setSelected3}
-                  data={thisTime === null ? defaultData2 : gatedata} 
-                  save="value"
+                  data={selfTime === null ? defaultData2 : gateData} 
+                  save="key"
                 />
               </View>
             </View>
           )}
-    
+
           {/* confirm button  */}
           <View style={styles.confirmContainer}>
             <TouchableOpacity

@@ -12,8 +12,8 @@ import ParentEditProfile from './ParentEditProfile';
 import ChildProfileSelection from './ChildProfileSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ParentAnnouncements from '../common/ParentAnnouncementPage';
-import PremiumSubscription from './subscription_module/PremiumSubscriptionPage';
-import BasicSubscription from './subscription_module/BasicSubscriptionPage';
+import CancelSubscription from './subscription_module/CancelSubscriptionPage';
+import Subscriptionpage from './subscription_module/SubscriptionPage';
 
 //import the userLastName from login
 import {userLastName} from '../Login';
@@ -62,16 +62,16 @@ function ProfileStackScreen() {
             />
             {/*premium sub page*/}
             <ProfileStack.Screen 
-                name="PremSubPage" 
-                component={PremiumSubscription} 
+                name="cancelSub" 
+                component={CancelSubscription} 
                 options={{
                     title:"Manage Subscription"
                 }}
             />
             {/*baisc unsub page*/}
             <ProfileStack.Screen 
-                name="BasicSubPage" 
-                component={BasicSubscription} 
+                name="subPage" 
+                component={Subscriptionpage} 
                 options={{
                     title:"Manage Subscription"
                 }}

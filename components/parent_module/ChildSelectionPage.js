@@ -46,42 +46,44 @@ const ChildSelection = ({navigation}) => {
   //display
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.userInfoSection}>
+      <ScrollView>
+        <View style={styles.userInfoSection}>
 
-        <View style={styles.headerContainer}>
-            <Text style={styles.header}>Child Pickup Selection</Text>
-            <Text style={styles.subheader}>Please select a profile you would like to choose a pickup slot for</Text>
-        </View>
-        
-        <View>
-          {childData.map((child) => {
-            return (
-              <TouchableOpacity
-                style={styles.logoutBtn}
-                key={child.child_ID}
-                onPress={() => {
-                  console.log('Pressed child_ID:', child.child_ID);
-                  navigation.navigate('PickupSelection', { thisChild: child.child_ID });
-                }}
-              >
-                <Card style={styles.cardDisplay}>
-                  <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                    <Avatar.Image 
-                    source={child.imageURI ? { uri: child.imageURI } : require('../common/picture/default.jpg')}
-                    size={80} />
-                    <View style={{ marginLeft: 20, marginTop: 10 }}>
-                      <Title style={styles.title}>
-                        {child.firstName} {child.lastName}
-                      </Title>
-                      {/*<Caption style={styles.caption}>{child.grade}</Caption> */}
+          <View style={styles.headerContainer}>
+              <Text style={styles.header}>Child Pickup Selection</Text>
+              <Text style={styles.subheader}>Please select a profile you would like to choose a pickup slot for</Text>
+          </View>
+          
+          <View>
+            {childData.map((child) => {
+              return (
+                <TouchableOpacity
+                  style={styles.logoutBtn}
+                  key={child.child_ID}
+                  onPress={() => {
+                    console.log('Pressed child_ID:', child.child_ID);
+                    navigation.navigate('PickupSelection', { thisChild: child.child_ID });
+                  }}
+                >
+                  <Card style={styles.cardDisplay}>
+                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                      <Avatar.Image 
+                      source={child.imageURI ? { uri: child.imageURI } : require('../common/picture/default.jpg')}
+                      size={80} />
+                      <View style={{ marginLeft: 20, marginTop: 10 }}>
+                        <Title style={styles.title}>
+                          {child.firstName} {child.lastName}
+                        </Title>
+                        {/*<Caption style={styles.caption}>{child.grade}</Caption> */}
+                      </View>
                     </View>
-                  </View>
-                </Card>
-              </TouchableOpacity>
-            );
-          })}
+                  </Card>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

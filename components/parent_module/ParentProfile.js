@@ -9,7 +9,6 @@ import axios from 'axios';
 //import username from login
 import { usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
-import { parentSub } from '../Login';
 import * as ImagePicker from 'expo-image-picker';
 
 //parent profile
@@ -19,8 +18,6 @@ const ParentProfile = ({ navigation }) => {
   //username is equal to the username from login
   const username = usernameValue;
   const iSFocused = useIsFocused();
-  const thisSub = parentSub;
-  //const thisSub = 'Basic'
 
   //fetch parent data from database
   const fetchData = () => {
@@ -55,10 +52,10 @@ const ParentProfile = ({ navigation }) => {
   }
 
   const navigateType = () => {
-    if (thisSub === 'Basic') {
-      navigation.navigate('BasicSubPage');
-    } else if (thisSub === 'Premium') {
-      navigation.navigate('PremSubPage');
+    if (userData.subscription === 'Normal') {
+      navigation.navigate('subPage');
+    } else if (userData.subscription === 'Premium') {
+      navigation.navigate('cancelSub');
     } else {
       alert("Invalid subscription");
     }
