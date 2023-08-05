@@ -1,6 +1,6 @@
 //import libaries
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
+import {Avatar, Title, Caption, Text, Card, TextInput} from 'react-native-paper'
 import React, { useState, useEffect, useLayoutEffect} from "react";
 import axios from 'axios';
 import { useIsFocused } from "@react-navigation/native";
@@ -29,6 +29,10 @@ const PickupSelection = () => {
     //set sub tier
     const [thisSub, setThisSub] = useState(null);
     const thisParent = usernameValue;
+    
+    //new address
+    const [newAddress, setAddress] = useState("");
+    const [newRegion, setRegion] = useState("");
 
     //this is needed to set the state of a select list
     const [selected, setSelected] = React.useState(null);
@@ -47,7 +51,9 @@ const PickupSelection = () => {
     const month = today.getMonth() + 1;
     const day = today.getDate();
     const todayDate = year + "-" + month + "-" + day;
-    const hour = today.getHours();
+    const hour = "9";
+    //const hour = today.getHours();
+    //console.log("hour", hour);
     const min = today.getMinutes();
     const second = today.getSeconds();
     const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
@@ -146,18 +152,66 @@ const PickupSelection = () => {
         );
       }
     
-    //button to send the data to database when a pickup is confirmed
-    const confirmButton = () => {  
-      //check local date time to cut off booking after 12pm
-      if (hour >= 12) {
-        alert("Booking stops at 12pm daily!");
-      } else {
-        //button validation
-        if (buttonselected === 'self') {
-          if (!selected || !selected3) {
-            alert("Please select both timeslot and gate");
-          } else {
-            axios //api request to check if booking exist
+    const newAddressCheck = () => {
+      return newAddress.trim() === '' && newRegion.trim() ==='';
+    };
+
+//button to send the data to the database when a pickup is confirmed
+  const confirmButton = () => {  
+    //check local date time to cut off booking after 12pm
+    if (hour >= 12) {
+      alert("Booking stops at 12pm daily!");
+    } else {
+      //button validation
+      if (buttonselected === 'self') {
+        if (!selected || !selected3) {
+          alert("Please select both timeslot and gate");
+        } else {
+          axios //api request to check if booking exists
+            .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
+              params: {
+                child_ID: thisChild,
+                datetime: todayDate,
+              },
+            })
+            .then((response) => {
+              console.log("response form server", response.data);
+              if (response.data.success) { //passing payload to create job
+                const payloadSelf = {
+                  datetime: formattedDate,
+                  timeslot: selfTime,
+                  parent_ID: thisParent,
+                  child_ID: thisChild,
+                  gate_ID: thisGate,
+                  school_ID: thisSchool,
+                };
+                axios //api request to insert payload
+                  .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/selfpickup", payloadSelf)
+                  .then((response) => {
+                    console.log("Data inserted:", response.data);
+                    alert("Booking confirmed!");
+                  }) 
+                  .catch((error) => {
+                    console.error("Error inserting data:", error);
+                    alert("Error, please try again!");
+                  });  
+              } else {
+                alert("You already have a booking for today!");
+              }
+            })
+            .catch((error) => {
+              console.error("Error checking booking:", error);
+              alert("Error, please try again!");
+            });
+        }
+      } else if (buttonselected === 'bus') {
+        if (!selected2) {
+          alert("Please select a timeslot");
+        } else {
+          if (newAddressCheck()) {
+            const thisAddress = thisChildData.address;
+            const thisRegion = thisChildData.region;
+            axios
               .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
                 params: {
                   child_ID: thisChild,
@@ -165,26 +219,26 @@ const PickupSelection = () => {
                 },
               })
               .then((response) => {
-                console.log("response form server", response.data);
-                if (response.data.success) { //passing payload to create job
-                  const payloadSelf = {
+                if (response.data.success) {
+                  const payloadBus = {
                     datetime: formattedDate,
-                    timeslot: selfTime,
+                    timeslot: busTime,
+                    address: thisAddress,
+                    region: thisRegion,
                     parent_ID: thisParent,
                     child_ID: thisChild,
-                    gate_ID: thisGate,
                     school_ID: thisSchool,
                   };
-                  axios //api request to insert payload
-                    .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/selfpickup", payloadSelf)
+                  axios
+                    .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/buspickup", payloadBus)
                     .then((response) => {
-                      console.log("Data inserted:", response.data);
+                      console.log("Date inserted:", response.data);
                       alert("Booking confirmed!");
-                    }) 
+                    })
                     .catch((error) => {
                       console.error("Error inserting data:", error);
                       alert("Error, please try again!");
-                    });  
+                    });
                 } else {
                   alert("You already have a booking for today!");
                 }
@@ -193,11 +247,12 @@ const PickupSelection = () => {
                 console.error("Error checking booking:", error);
                 alert("Error, please try again!");
               });
-            }
-          } else if (buttonselected === 'bus') {
-            if (!selected2) {
-              alert("Please select a timeslot");
+          } else {
+            if (newAddress.trim() === "" || newRegion.trim() === "") {
+              alert("Please enter both new address and new region!");
             } else {
+              const thisAddress = newAddress;
+              const thisRegion = newRegion;
               axios
                 .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
                   params: {
@@ -207,8 +262,6 @@ const PickupSelection = () => {
                 })
                 .then((response) => {
                   if (response.data.success) {
-                    const thisAddress = "temporary test address";
-                    const thisRegion = "central";
                     const payloadBus = {
                       datetime: formattedDate,
                       timeslot: busTime,
@@ -237,14 +290,17 @@ const PickupSelection = () => {
                   alert("Error, please try again!");
                 });
             }
-          } else {
-            alert("Please select a pickup method");
           }
         }
-    };
-    
+      } else {
+        alert("Please select a pickup method");
+      }
+    }
+  };
+      
     //get current job created function
     const getCapacity = () => {
+      setSelected3(null);
       //send this data to backend
       const sendingData = {
         timeSlot: selfTime,
@@ -282,116 +338,149 @@ const PickupSelection = () => {
     };
     
     return (
-      <View style={styles.container}>
-        <ScrollView>
-          <View>
-            <Text style={styles.childHeader}>Pickup Selection for {thisChildData.firstName} {thisChildData.lastName}</Text>
-          </View>
-          
-          {/* pickup method selection - bus / self etc*/}
-          <View style={styles.headerContainer}>
-            <Text style={styles.header}>Pickup selection methods</Text>
-            <Text style={styles.subheader}>Please select one of the following methods for child pickup</Text>
+      <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior = "padding" 
+        >
+        <View style={styles.container}>
+          <ScrollView>
+            <View>
+              <Text style={styles.childHeader}>Pickup Selection for {thisChildData.firstName} {thisChildData.lastName}</Text>
+            </View>
             
-            {/* Pickup method */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                style={[styles.pickupBtn, styles.leftButton, buttonselected === 'self' && styles.buttonSelect]}
-                onPress={() => {
-                  if (buttonselected !== 'self') {
-                    setButton('self');
-                    setSelected2(null);
-                  }  
-                }}
-              >
-                <Text style={styles.pickupText}>Self Pickup</Text>
-              </TouchableOpacity>
+            {/* pickup method selection - bus / self etc*/}
+            <View style={styles.headerContainer}>
+              <Text style={styles.header}>Pickup selection methods</Text>
+              <Text style={styles.subheader}>Please select one of the following methods for child pickup</Text>
               
-              <TouchableOpacity 
-                style={[styles.pickupBtn, styles.rightButton, buttonselected === 'bus' && styles.buttonSelect, subscriptionCheck && styles.disabledButton]}
-                disabled={subscriptionCheck}
-                onPress={() => {
-                  if (buttonselected !== 'bus') {
-                    setButton('bus');
-                    setSelected(null);
-                    setSelected3(null);
-                  }
-                }}
-              >
-                <Text style={styles.pickupText}>Bus Pickup</Text>
-              </TouchableOpacity>
+              {/* Pickup method */}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity 
+                  style={[styles.pickupBtn, styles.leftButton, buttonselected === 'self' && styles.buttonSelect]}
+                  onPress={() => {
+                    if (buttonselected !== 'self') {
+                      setButton('self');
+                      setSelected2(null);
+                    }  
+                  }}
+                >
+                  <Text style={styles.pickupText}>Self Pickup</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={[styles.pickupBtn, styles.rightButton, buttonselected === 'bus' && styles.buttonSelect, subscriptionCheck && styles.disabledButton]}
+                  disabled={subscriptionCheck}
+                  onPress={() => {
+                    if (buttonselected !== 'bus') {
+                      setButton('bus');
+                      setSelected(null);
+                      setSelected3(null);
+                    }
+                  }}
+                >
+                  <Text style={styles.pickupText}>Bus Pickup</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-    
-          {/* pickup timeslot selection */}
-          <View style={styles.headerContainer}> 
-            <Text style={styles.header}>Pickup time-slot selection</Text>
-            <Text style={styles.subheader}>
-              {buttonselected ? "Please choose a timeslot below" : "Please select a pickup type first"}
-            </Text>
-          
-            {/* drop down for timing selection */}
-            {buttonselected === "self" && (
-              <View style={styles.dropdownContainer}>
-                <SelectList
-                  setSelected={setSelected}
-                  data={selfTiming}
-                  save="value"
-                  onSelect={getCapacity}
-                />
-              </View>
-            )}
-    
-            {buttonselected === 'bus' && (
-              <View style={styles.dropdownContainer}>
-                <SelectList
-                  setSelected={setSelected2}
-                  data={busTiming}
-                  save="value"
-                />
-              </View>
-            )}
-    
-            {buttonselected === null && (
-              <View style={styles.dropdownContainer}>
-                <SelectList
-                  data={defaultData1}
-                  save="value"
-                />
-              </View>
-            )}
-          </View>
-    
-          {/* pickup gate selection */}
-          {buttonselected === 'self' && (
+      
+            {/* pickup timeslot selection */}
             <View style={styles.headerContainer}> 
-              <Text style={styles.header}>Pickup gate selection</Text>
-              <Text style={styles.subheader}>Please choose a gate below</Text>
+              <Text style={styles.header}>Pickup time-slot selection</Text>
+              <Text style={styles.subheader}>
+                {buttonselected ? "Please choose a timeslot below" : "Please select a pickup type first"}
+              </Text>
             
-              {/* drop down for gate selection */}
-              <View style={styles.dropdownContainer}>
-                <SelectList 
-                  setSelected={setSelected3}
-                  data={selfTime === null ? defaultData2 : gateData} 
-                  save="key"
-                />
-              </View>
+              {/* drop down for timing selection */}
+              {buttonselected === "self" && (
+                <View style={styles.dropdownContainer}>
+                  <SelectList
+                    setSelected={setSelected}
+                    data={selfTiming}
+                    save="value"
+                    onSelect={getCapacity}
+                  />
+                </View>
+              )}
+      
+              {buttonselected === 'bus' && (
+                <View style={styles.dropdownContainer}>
+                  <SelectList
+                    setSelected={setSelected2}
+                    data={busTiming}
+                    save="value"
+                  />
+                </View>
+              )}
+      
+              {buttonselected === null && (
+                <View style={styles.dropdownContainer}>
+                  <SelectList
+                    data={defaultData1}
+                    save="value"
+                  />
+                </View>
+              )}
             </View>
-          )}
+      
+            {/* pickup gate selection */}
+            {buttonselected === 'self' && (
+              <View style={styles.headerContainer}> 
+                <Text style={styles.header}>Pickup gate selection</Text>
+                <Text style={styles.subheader}>Please choose a gate below</Text>
+              
+                {/* drop down for gate selection */}
+                <View style={styles.dropdownContainer}>
+                  <SelectList 
+                    setSelected={setSelected3}
+                    data={selfTime === null ? defaultData2 : gateData} 
+                    save="key"
+                  />
+                </View>
+              </View>
+            )}
+            
+            {/* Eidt here @Simran*/}
+            {/* pickup address */}
+            {buttonselected === 'bus' && (
+              <View style={styles.headerContainer}> 
+                <Text style={styles.header}>Address Confirmation</Text>
+                <Text style={styles.subheader}>Use default address, or enter a new address</Text>
 
-          {/* confirm button  */}
-          <View style={styles.confirmContainer}>
-            <TouchableOpacity
-              style={styles.confirmBtn}
-              onPress={confirmButton}
-            >
-              <Text style={styles.btnText}>Confirm</Text>
-            </TouchableOpacity> 
-          </View>
-    
-        </ScrollView>
-      </View>
-    );
+                <TextInput
+                  style = {styles.input}
+                  value= {thisChildData.address}
+                  editable = {false}
+                  />
+
+                <TextInput
+                  style = {styles.input}
+                  onChangeText = {setAddress}
+                  value= {newAddress}
+                  placeholder='Enter new address'
+                  />
+
+                <TextInput
+                  style = {styles.input2}
+                  onChangeText = {setRegion}
+                  value= {newRegion}
+                  placeholder='Region'
+                  />     
+              </View>
+            )}
+              
+            {/* confirm button  */}
+            <View style={styles.confirmContainer}>
+              <TouchableOpacity
+                style={styles.confirmBtn}
+                onPress={confirmButton}
+              >
+                <Text style={styles.btnText}>Confirm</Text>
+              </TouchableOpacity> 
+            </View>
+          </ScrollView>
+        </View>
+    </KeyboardAvoidingView>
+  );
 };    
 
 export default PickupSelection;
@@ -471,5 +560,20 @@ const styles = StyleSheet.create({
   },
   disabledButton : {
     backgroundColor: '#CCCCCC',
+  },
+  input: {
+    marginTop: 15,
+    padding: 7,
+    borderRadius: 8,
+    backgroundColor: '#E6E6E6',
+    height: 35,
+  },
+  input2: {
+    marginTop: 5,
+    padding: 7,
+    borderRadius: 8,
+    backgroundColor: '#E6E6E6',
+    height: 35,
+    width: '50%',
   },
 });

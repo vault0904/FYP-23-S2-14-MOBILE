@@ -801,5 +801,46 @@ app.get('/api/checkBooking', (req, res) => {
   );
 });
 
+//api to retrieve current parent self pickup jobs
+app.get('/api/get/selfpickup', (req, res) => {
+  const { parent_ID, datetime } = req.query;
+  db.query(
+    `
+    SELECT *
+    FROM selfpickup_jobs
+    WHERE parent_ID = ? AND DATE(jobcreated) = ?;
+    `,
+    [parent_ID, datetime],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({ error: "An error occurred" });
+        return;
+      }
+      res.json(results);
+    }
+  );
+});
+
+//api to retrieve current parent bus pickup jobs
+app.get('/api/get/buspickup', (req, res) => {
+  const { parent_ID, datetime } = req.query;
+  db.query(
+    `
+    SELECT *
+    FROM vehiclepickup_jobs
+    WHERE parent_ID = ? AND DATE(jobcreated) = ?;
+    `,
+    [parent_ID, datetime],
+    (err, results) => {
+      if (err) {
+        console.error("Database query error:", err);
+        res.status(500).json({ error: "An error occurred" });
+        return;
+      }
+      res.json(results);
+    }
+  );
+});
 
 module.exports.handler = serverless(app);

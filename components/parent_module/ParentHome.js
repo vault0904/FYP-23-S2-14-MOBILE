@@ -1,8 +1,10 @@
 // import libaries
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import {View,Text,StyleSheet,TextInput,FlatList,TouchableOpacity,ScrollView,} from "react-native";
 import axios from "axios";
+import { useIsFocused } from "@react-navigation/native";
 import { userSchoolID } from "../Login";
+import { usernameValue } from '../Login';
 
 const Item = ({ message }) => (
   <View style={styles.item}>
@@ -10,15 +12,15 @@ const Item = ({ message }) => (
   </View>
 );
 
-// pickup dummy data
 const ParentHome = ({ navigation }) => {
+  // pickup dummy data
+  //update this to display dynamic data after gui update
   const pickupDetails = {
     time: "1:15pm",
     mode: "Self pickup",
     gate: "West gate",
     status: "picked up",
   };
-
   const [time, setTime] = useState(pickupDetails.time);
   const [mode, setMode] = useState(pickupDetails.mode);
   const [gate, setGate] = useState(pickupDetails.gate);
@@ -27,31 +29,88 @@ const ParentHome = ({ navigation }) => {
   //set and display annoucements
   const [announcements, setAnnouncements] = useState([]);
   const thisSchool = userSchoolID;
-  console.log("this parent school_ID is", thisSchool);
+  const thisParent = usernameValue;
+  const iSFocused = useIsFocused();
 
+  //date setting for current date
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth() + 1;
   const day = today.getDate();
   const todayDate = year + "-" + month + "-" + day;
 
-  // grab and fetch the latest 3 announcements from database
-  useEffect(() => {
+  //self pickup data
+  const[thisSelfData, setSelfPickup] = useState([]);
+  //bus pickup data
+  const[thisBusData, setBusPickup] = useState([]);
+  // console.log("This self data:", thisSelfData);
+  // console.log("This bus data:", thisBusData);
+
+  // grab and fetch all the needed data for display
+  const fetchData = () => {
     axios
-      .get(
+      .get( //grabbing announcement data
         `https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/announcements/3/${thisSchool}`
       )
       .then((response) => {
-        console.log("Response from server:", response.data);
         const receivedAnn = response.data;
         setAnnouncements(receivedAnn);
       })
       .catch((error) => {
         console.log("Error fetching annoucements", error);
       });
+
+    axios //grabbing self pickup data
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/selfpickup`, {
+        params: {
+          parent_ID: thisParent,
+          datetime: todayDate,
+        },
+      })
+      .then((response) => {
+        const recSelfPickUp = response.data;
+        setSelfPickup(recSelfPickUp);
+      })
+      .catch((error) => {
+        console.log("Error fetching self pickup data", error);
+      });
+    
+    axios //grabbing bus pickup data
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/buspickup` , {
+        params: {
+          parent_ID: thisParent,
+          datetime: todayDate,
+        },
+      })
+      .then((response) => {
+        const recBusPickUp = response.data;
+        setBusPickup(recBusPickUp);
+      })
+      .catch((error) => {
+        console.log("Error fetching bus pickup data", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
+    }
+  }, [iSFocused]);
+  
+  if (!announcements && !thisSelfData && !thisBusData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   // display
+  //update displaying to display dynamic data after GUI
   return (
     <View style={styles.container}>
       <View style={styles.upperRow}>
@@ -80,8 +139,8 @@ const ParentHome = ({ navigation }) => {
         <Text style={styles.label}>Time</Text>
         <TextInput
           style={styles.input}
-          value={time}
-          onChangeText={setTime}
+          value={thisSelfData.length > 0 ? thisSelfData[0].timeslot : ""}
+          //value={time}
           editable={false}
         />
       </View>
@@ -92,7 +151,6 @@ const ParentHome = ({ navigation }) => {
         <TextInput
           style={styles.input}
           value={mode}
-          onChangeText={setMode}
           editable={false}
         />
       </View>
@@ -103,7 +161,6 @@ const ParentHome = ({ navigation }) => {
         <TextInput
           style={styles.input}
           value={gate}
-          onChangeText={setGate}
           editable={false}
         />
       </View>
@@ -119,7 +176,6 @@ const ParentHome = ({ navigation }) => {
               : styles.inputRed
           }
           value={status}
-          onChangeText={setStatus}
           editable={false}
         />
       </View>

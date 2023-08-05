@@ -15,13 +15,11 @@ const ChildProfile = () => {
     const route = useRoute();
     //this childID is based on the GUI ID
     const {thisChild} = route.params;
-    console.log("thisID", thisChild);
     const iSFocused = useIsFocused();
     const[thisChildData, setThisData] = useState(null);
   
     const fetchData = () => {
       //axios to get child data
-      console.log("current child id", thisChild)
       axios
         .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/thischild/${thisChild}`)
         .then((response) => {
