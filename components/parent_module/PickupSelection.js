@@ -41,6 +41,17 @@ const PickupSelection = () => {
     // console.log("this bus time", busTime);
     // console.log("this gate", thisGate);
 
+    //datetime setup
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const todayDate = year + "-" + month + "-" + day;
+    const hour = today.getHours();
+    const min = today.getMinutes();
+    const second = today.getSeconds();
+    const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
+
     //timing for self pickup 
     const selfTiming = [
       {key:'1', value:'Select a time slot', disabled: true},
@@ -136,17 +147,7 @@ const PickupSelection = () => {
       }
     
     //button to send the data to database when a pickup is confirmed
-    const confirmButton = () => {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      const day = today.getDate();
-      const todayDate = year + "-" + month + "-" + day;
-      const hour = today.getHours();
-      const min = today.getMinutes();
-      const second = today.getSeconds();
-      const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
-      
+    const confirmButton = () => {  
       //check local date time to cut off booking after 12pm
       if (hour >= 12) {
         alert("Booking stops at 12pm daily!");
