@@ -22,7 +22,7 @@ const users = [
     },
 ];
 
-const TeacherPickUp = ({navigation}) => {
+const TeacherPickup = ({navigation}) => {
   const pickup = {
     gate: 'west gate',
   }
@@ -71,7 +71,7 @@ const TeacherPickUp = ({navigation}) => {
   );
 }
 
-export default TeacherPickUp;
+export default TeacherPickup;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
@@ -93,6 +93,12 @@ const styles = StyleSheet.create({
   },
   time: {
     paddingTop: 5
+  },
+  otp:{
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginLeft: 23,
+    color: '#e27602',
   },
   header_row:{
     flexDirection: 'row',

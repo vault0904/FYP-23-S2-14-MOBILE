@@ -215,9 +215,6 @@ const TeacherEditProfile = () => {
 
 //styling
 const styles = StyleSheet.create({
-    container:{
-        flex: 1,
-    },
     title: {
         color: 'grey',
         fontSize: 16,

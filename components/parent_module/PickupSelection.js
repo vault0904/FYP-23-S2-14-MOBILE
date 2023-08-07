@@ -41,9 +41,6 @@ const PickupSelection = () => {
     const selfTime = selected;
     const busTime = selected2;
     const thisGate = selected3;
-    // console.log("this self time", selfTime);
-    // console.log("this bus time", busTime);
-    // console.log("this gate", thisGate);
 
     //datetime setup
     const today = new Date();
@@ -51,11 +48,12 @@ const PickupSelection = () => {
     const month = today.getMonth() + 1;
     const day = today.getDate();
     const todayDate = year + "-" + month + "-" + day;
-    const hour = "9";
-    //const hour = today.getHours();
-    //console.log("hour", hour);
+    const hour = today.getHours();
     const min = today.getMinutes();
     const second = today.getSeconds();
+    const timeStamp = hour + ":" + min + ":" + second;
+    const [timestampHour, timestampMin, timestampSecond] = timeStamp.split(":").map(Number);
+    const timeStampSecond = timestampHour *3600 + timestampMin *60 + timestampSecond;
     const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
 
     //timing for self pickup 
@@ -112,7 +110,7 @@ const PickupSelection = () => {
       };
 
       useEffect(() => {
-        console.log("receive data1", thisChildData);
+        //console.log("receive data1", thisChildData);
       }, [thisChildData]);
 
       useEffect(() => {
@@ -152,65 +150,35 @@ const PickupSelection = () => {
         );
       }
     
+      //trim the address input
     const newAddressCheck = () => {
       return newAddress.trim() === '' && newRegion.trim() ==='';
     };
 
-//button to send the data to the database when a pickup is confirmed
-  const confirmButton = () => {  
-    //check local date time to cut off booking after 12pm
-    if (hour >= 12) {
-      alert("Booking stops at 12pm daily!");
-    } else {
-      //button validation
+    //convert time to 24hour clock in seconds for comparison 
+    const convertTime = (timeStr) => {
+      const [time, amPM] = timeStr.split(/(?=[ap]m)/i);
+      const [hour, minute] = time.split(":").map(Number);
+      
+      let convertHour = hour;
+      if (/pm/i.test(amPM) && hour !==12) {
+        convertHour +=12;
+      } else if (/am/i.test(amPM) && hour ==12) {
+        convertHour = 0;
+      }
+      return convertHour * 3600 + minute * 60;
+    };
+
+    // Button to send the data to the database when a pickup is confirmed
+    const confirmButton = () => {
+      // Button validation
       if (buttonselected === 'self') {
         if (!selected || !selected3) {
           alert("Please select both timeslot and gate");
         } else {
-          axios //api request to check if booking exists
-            .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
-              params: {
-                child_ID: thisChild,
-                datetime: todayDate,
-              },
-            })
-            .then((response) => {
-              console.log("response form server", response.data);
-              if (response.data.success) { //passing payload to create job
-                const payloadSelf = {
-                  datetime: formattedDate,
-                  timeslot: selfTime,
-                  parent_ID: thisParent,
-                  child_ID: thisChild,
-                  gate_ID: thisGate,
-                  school_ID: thisSchool,
-                };
-                axios //api request to insert payload
-                  .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/selfpickup", payloadSelf)
-                  .then((response) => {
-                    console.log("Data inserted:", response.data);
-                    alert("Booking confirmed!");
-                  }) 
-                  .catch((error) => {
-                    console.error("Error inserting data:", error);
-                    alert("Error, please try again!");
-                  });  
-              } else {
-                alert("You already have a booking for today!");
-              }
-            })
-            .catch((error) => {
-              console.error("Error checking booking:", error);
-              alert("Error, please try again!");
-            });
-        }
-      } else if (buttonselected === 'bus') {
-        if (!selected2) {
-          alert("Please select a timeslot");
-        } else {
-          if (newAddressCheck()) {
-            const thisAddress = thisChildData.address;
-            const thisRegion = thisChildData.region;
+          const selfTimeSecond = convertTime(selected);
+          if (timeStampSecond <= selfTimeSecond - 3600) {
+            // API request to check if booking exists
             axios
               .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
                 params: {
@@ -219,26 +187,25 @@ const PickupSelection = () => {
                 },
               })
               .then((response) => {
-                if (response.data.success) {
-                  const payloadBus = {
+                if (response.data.success) { // Passing payload to create job
+                  const payloadSelf = {
                     datetime: formattedDate,
-                    timeslot: busTime,
-                    address: thisAddress,
-                    region: thisRegion,
+                    timeslot: selfTime,
                     parent_ID: thisParent,
                     child_ID: thisChild,
+                    gate_ID: thisGate,
                     school_ID: thisSchool,
                   };
+                  // API request to insert payload
                   axios
-                    .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/buspickup", payloadBus)
+                    .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/selfpickup", payloadSelf)
                     .then((response) => {
-                      console.log("Date inserted:", response.data);
                       alert("Booking confirmed!");
-                    })
+                    }) 
                     .catch((error) => {
                       console.error("Error inserting data:", error);
                       alert("Error, please try again!");
-                    });
+                    });  
                 } else {
                   alert("You already have a booking for today!");
                 }
@@ -248,11 +215,18 @@ const PickupSelection = () => {
                 alert("Error, please try again!");
               });
           } else {
-            if (newAddress.trim() === "" || newRegion.trim() === "") {
-              alert("Please enter both new address and new region!");
-            } else {
-              const thisAddress = newAddress;
-              const thisRegion = newRegion;
+            alert("Please book at least an hour before each timeslot!");
+          }
+        }
+      } else if (buttonselected === 'bus') {
+        if (!selected2) {
+          alert("Please select a timeslot");
+        } else {
+          const busTimeSecond = convertTime(selected2);
+          if (timeStampSecond <= busTimeSecond - 3600) {
+            if (newAddressCheck()) {
+              const thisAddress = thisChildData.address;
+              const thisRegion = thisChildData.region;
               axios
                 .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
                   params: {
@@ -274,7 +248,6 @@ const PickupSelection = () => {
                     axios
                       .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/buspickup", payloadBus)
                       .then((response) => {
-                        console.log("Date inserted:", response.data);
                         alert("Booking confirmed!");
                       })
                       .catch((error) => {
@@ -289,14 +262,58 @@ const PickupSelection = () => {
                   console.error("Error checking booking:", error);
                   alert("Error, please try again!");
                 });
+            } else {
+              if (newAddress.trim() === "" || newRegion.trim() === "") {
+                alert("Please enter both new address and new region!");
+              } else {
+                const thisAddress = newAddress;
+                const thisRegion = newRegion;
+                axios
+                  .get("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/checkBooking", {
+                    params: {
+                      child_ID: thisChild,
+                      datetime: todayDate,
+                    },
+                  })
+                  .then((response) => {
+                    if (response.data.success) {
+                      const payloadBus = {
+                        datetime: formattedDate,
+                        timeslot: busTime,
+                        address: thisAddress,
+                        region: thisRegion,
+                        parent_ID: thisParent,
+                        child_ID: thisChild,
+                        school_ID: thisSchool,
+                      };
+                      axios
+                        .post("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/buspickup", payloadBus)
+                        .then((response) => {
+                          alert("Booking confirmed!");
+                        })
+                        .catch((error) => {
+                          console.error("Error inserting data:", error);
+                          alert("Error, please try again!");
+                        });
+                    } else {
+                      alert("You already have a booking for today!");
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error checking booking:", error);
+                    alert("Error, please try again!");
+                  });
+              }
             }
+          } else {
+            alert("Please book at least an hour before each timeslot!");
           }
         }
       } else {
         alert("Please select a pickup method");
       }
-    }
-  };
+    };
+
       
     //get current job created function
     const getCapacity = () => {
