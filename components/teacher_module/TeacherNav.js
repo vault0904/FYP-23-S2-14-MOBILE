@@ -13,6 +13,7 @@ import TeacherEditProfile from './TeacherEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {userLastName} from '../Login';
 import TeacherAnnouncements from '../common/TeacherAnnouncements';
+import StudentProfile from './StudentProfile';
 
 //announcement stack screen
 const AnnouncementStack = createNativeStackNavigator();
@@ -123,6 +124,13 @@ function TeacherBusPickUpStackScreen() {
                 component={DriverDetails} 
                 options={{
                     title:"Driver Details"
+                }}
+            />
+            <TeacherBusPickUpStack.Screen 
+                name="StudentProfile" 
+                component={StudentProfile} 
+                options={{
+                    title:"Student Details"
                 }}
             />
         </TeacherBusPickUpStack.Navigator>

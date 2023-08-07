@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/driver.jpg'
+import Logo from '../common/picture/default.jpg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const DriverProfile = () => {

@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {SafeAreaView, ScrollView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import { Card, ListItem, Button, Icon } from 'react-native-elements';
 import { Avatar } from 'react-native-paper';
 import React, { useState } from "react";
-import Logo from '../common/avatars/driver.jpg'
+import Logo from '../common/picture/default.jpg'
+import StudentProfile from './StudentProfile';
 
 const users = [
     {
@@ -35,7 +36,7 @@ const TeacherBusPickUp = ({navigation}) => {
   const [gate, setGate] = useState(pickup.gate);
   
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
         <View>
             <View style={styles.header_row}>
                 <Text style={styles.header}>Student Pick-Up Details</Text>
@@ -73,6 +74,9 @@ const TeacherBusPickUp = ({navigation}) => {
                 users.map((u, i) => {
                 return (
                     <Card key={i}>
+                      <TouchableOpacity 
+                     // onPress={() => navigation.navigate('StudentProfile')}
+                      >
                         <View style={{flexDirection: 'row'}}>
                             <View style={{flex: '2', marginTop: 5}}>
                                 <Text style={styles.name}>{u.name}</Text>
@@ -88,13 +92,14 @@ const TeacherBusPickUp = ({navigation}) => {
                                 </TouchableOpacity> 
                             </View>
                         </View>
+                      </TouchableOpacity>
                     </Card>
                 );
                 })
             }
             </View>
         </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
