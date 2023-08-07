@@ -47,7 +47,7 @@ const PremiumSubscription = ({navigation}) => {
             <Card style={styles.cardDisplay2}>
                     <View>
                         <Text style={styles.text3}> Marsupium Basic </Text>
-                        <Text style={styles.price2}>$30.99 /mth</Text>
+                        <Text style={styles.price2}>Free /mth</Text>
                         <Text style={styles.text4}>Don't worry, you can still pick up your child... on foot!</Text>
 
                         {/* basic plan benefits */}

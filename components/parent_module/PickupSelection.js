@@ -1,6 +1,6 @@
 //import libaries
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
-import {Avatar, Title, Caption, Text, Card, TextInput} from 'react-native-paper'
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, TextInput} from 'react-native';
+import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import React, { useState, useEffect, useLayoutEffect} from "react";
 import axios from 'axios';
 import { useIsFocused } from "@react-navigation/native";
@@ -439,19 +439,23 @@ const PickupSelection = () => {
               </View>
             )}
             
-            {/* Eidt here @Simran*/}
             {/* pickup address */}
             {buttonselected === 'bus' && (
               <View style={styles.headerContainer}> 
                 <Text style={styles.header}>Address Confirmation</Text>
-                <Text style={styles.subheader}>Use default address, or enter a new address</Text>
+                <Text style={styles.subheader}>Use your default address, or enter a new address for drop off</Text>
 
-                <TextInput
-                  style = {styles.input}
-                  value= {thisChildData.address}
-                  editable = {false}
-                  />
+                {/* default address */}
+                <View style={{marginBottom: 10}}>
+                  <Text style={styles.label}>Default address</Text>
+                  <TextInput 
+                  style={styles.input} 
+                  value={thisChildData.address} 
+                  editable={false} />
+                </View>
 
+                {/* editable address */}
+                <Text style={styles.label}>New address</Text>
                 <TextInput
                   style = {styles.input}
                   onChangeText = {setAddress}
@@ -561,12 +565,19 @@ const styles = StyleSheet.create({
   disabledButton : {
     backgroundColor: '#CCCCCC',
   },
+  label: {
+    marginVertical: 16,
+    marginBottom: 0,
+    color: '#56844B',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
   input: {
-    marginTop: 15,
-    padding: 7,
+    marginTop: 10,
+    padding: 10,
     borderRadius: 8,
     backgroundColor: '#E6E6E6',
-    height: 35,
+    height: 40,
   },
   input2: {
     marginTop: 5,

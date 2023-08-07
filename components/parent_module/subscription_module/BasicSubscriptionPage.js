@@ -39,7 +39,7 @@ const BasicSubscription = ({navigation}) => {
         <Card style={styles.cardDisplay}>
           <View style={styles.cardText}>
             <Text style={styles.text1}>Marsupium {subscription}</Text>
-            <Text style={styles.price}>$30.99 /mth</Text>
+            <Text style={styles.price}>Free /mth</Text>
             <Text style={styles.text2}>1 {subscription} Account</Text>
           </View>
             {/*  basic plan benefits */}
