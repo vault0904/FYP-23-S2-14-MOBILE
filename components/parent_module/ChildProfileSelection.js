@@ -1,76 +1,101 @@
+//import libaries
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/child.jpg'
+import React, { useState, useEffect, useLayoutEffect} from "react";
+import { usernameValue } from '../Login';
+import axios from 'axios';
+import { useIsFocused } from "@react-navigation/native";
 
-// child data 
-const child = [
-    {
-        id: 1,
-        image: {Logo},
-        name: "Bell Zettifar",
-        level: "Primary 1"
-    },
-    {
-        id: 2,
-        image: {Logo},
-        name: "Geralt Zettifar",
-        level: "Primary 3"
-    },
-    {
-        id: 3,
-        image: {Logo},
-        name: "Toto Zettifar",
-        level: "Primary 4"
+
+const ChildProfileSelection = ({ navigation }) => {
+  const [childData, setChildData] = useState([]);
+  const username = usernameValue;
+  const isFocused = useIsFocused();
+
+  const fetchData = () => {
+    //axios to get all parent's child
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/child/${username}`)
+      .then((response) => {
+        const recData = response.data;
+        setChildData(recData);
+        console.log("child data", recData);
+      })
+      .catch((error) => {
+        console.log('Error fetching child data:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (isFocused)  { 
+      fetchData();
     }
-]
+  }, [isFocused]);
+  
+  if (!childData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
-const ChildProfileSelection = ({navigation}) => {
+  //displaying
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.userInfoSection}>
-
-        <View style={{marginBottom: '20px'}}>
+      <ScrollView>
+        <View style={styles.userInfoSection}>
+          <View style={styles.headerContainer}>
             <Text style={styles.header}>Child Profile</Text>
             <Text style={styles.subheader}>Please select a profile you would like to view</Text>
+          </View>
+
+          <View>
+            {childData.map((child) => {
+              return (
+                <TouchableOpacity
+                  style={styles.logoutBtn}
+                  key={child.child_ID}
+                  onPress={() => {
+                    console.log('Pressed child_ID:', child.child_ID);
+                    navigation.navigate('ChildDetails', { thisChild: child.child_ID });
+                  }}
+                >
+                  <Card style={styles.cardDisplay}>
+                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                      <Avatar.Image 
+                      source={child.imageURI ? { uri: child.imageURI } : require('../common/picture/default.jpg')}
+                      size={80} />
+                      <View style={{ marginLeft: 20, marginTop: 10 }}>
+                        <Title style={styles.title}>
+                          {child.firstName} {child.lastName}
+                        </Title>
+                        {/*<Caption style={styles.caption}>{child.grade}</Caption> */}
+                      </View>
+                    </View>
+                  </Card>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-        
-        <ScrollView>
-            <View>
-                {child.map((child) => {
-                    return(
-                        <TouchableOpacity
-                        onPress={() => navigation.navigate('ChildDetails')}
-                        style={styles.logoutBtn}
-                        key={child.id}
-                        >
-                            <Card style={styles.cardDisplay}>
-                                <View style={{flexDirection: 'row', marginTop: 15}}>
-                                <Avatar.Image 
-                                    source={child.image}
-                                    size={80}
-                                />
-                                <View style={{marginLeft: 20, marginTop: 10}}>
-                                    <Title style={styles.title}>{child.name}</Title>
-                                    <Caption style={styles.caption}>{child.level}</Caption>
-                                </View>
-                                </View>
-                            </Card>
-                    </TouchableOpacity>
-                    )
-                })}
-            </View>
-        </ScrollView> 
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
-}
-
+};
 export default ChildProfileSelection;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    marginBottom: 20
   },
   header: {
     fontWeight: 'bold',

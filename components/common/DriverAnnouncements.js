@@ -3,13 +3,15 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Card } from 'react-native-paper';
 import axios from 'axios';
+import { userVendorID } from '../Login';
 
-const Announcements = () => {
+const DriverAnnouncements = () => {
   const [announcements, setAnnouncements] = useState([]);
+  const thisVendor = userVendorID;
 
   useEffect(() => {
     // Fetch top 10 announcements from the API
-    axios.get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/announcements/10')
+    axios.get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/announcements/10/${thisVendor}`)
       .then((response) => {
         console.log('Response from server:', response.data);
         const receivedAnn = response.data;
@@ -41,7 +43,7 @@ const Announcements = () => {
   );
 }
 
-export default Announcements;
+export default DriverAnnouncements;
 
 //styling
 const styles = StyleSheet.create({

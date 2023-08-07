@@ -1,25 +1,170 @@
+//import libaries
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect} from 'react';
+import { Linking } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
-import Logo from '../common/avatars/child.jpg'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'axios';
+//import username from login
+import { usernameValue } from '../Login';
+import { useIsFocused } from "@react-navigation/native";
+import * as ImagePicker from 'expo-image-picker';
 
-const ParentProfile = ({navigation}) => {
+//parent profile
+const ParentProfile = ({ navigation }) => {
+  //userData stores all the data of user from database
+  const [userData, setUserData] = useState(null);
+  //username is equal to the username from login
+  const username = usernameValue;
+  const iSFocused = useIsFocused();
+
+  //fetch parent data from database
+  const fetchData = () => {
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${username}`)
+      .then((response) => {
+        const userData = response.data;
+        console.log('User data:', userData);
+        setUserData(userData);
+      })
+      .catch((error) => {
+        console.log('Error fetching data', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
+    }
+  }, [iSFocused]);
+  
+  if (!userData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  const navigateType = () => {
+    if (userData.subscription === 'Normal') {
+      navigation.navigate('subPage');
+    } else if (userData.subscription === 'Premium') {
+      navigation.navigate('cancelSub');
+    } else {
+      alert("Invalid subscription");
+    }
+  };
+
+  //file upload function
+  const fileUpload = async (uri) => {
+    if (uri) {
+      try {
+        const response = await axios.get(uri, { responseType: 'blob' });
+        const blob = response.data;
+        //set s3 folder
+        const folName = "/parent";
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result.split(',')[1];
+          const fNameBef = uri.split("/ImagePicker/")[1];
+          const fName = fNameBef;
+          console.log("fname" , fName);
+          const fType = blob.type;
+  
+          //upload file to s3
+          axios
+            .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
+              file: base64String,
+              name: fName,
+              folderName: folName,
+              type: fType,
+            })
+            .then((res) => {
+              const uploadedURI = res.data.imageURL;
+              console.log(uploadedURI);
+              const sendData = {
+                userID : usernameValue,
+                newImageURI : uploadedURI,
+              };
+              //insert/update image in user database
+              console.log(sendData);
+              axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateImageURI', sendData)
+              .then((response) => {
+                console.log(response.data);
+                setUserData((prevUserData) => ({
+                  ...prevUserData,
+                  imageURI: uploadedURI,
+                }));
+                alert ('File uploaded successfully!');
+              })
+              .catch((error) => {
+                console.error("Error updating user image: ", error);
+                alert("An error occurred while changeing image!");
+              })
+            })
+            .catch((err) => {
+              alert('Error uploading file');
+              console.log(err);
+            });
+        };
+        reader.readAsDataURL(blob);
+      } catch (error) {
+        alert('Error while reading image:', error);
+      }
+    } else {
+      alert('FILE CANNOT BE EMPTY');
+    }
+  };
+
+  //image picker to select image
+  const handleChooseProfilePicture = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        console.log('Selected image URI:', result.assets[0].uri);
+        fileUpload(result.assets[0].uri);
+      } else {
+        console.log('Image picker canceled');
+      }
+    } catch (error) {
+      console.log('Error while picking image:', error);
+    }
+  };
+
+  //if user do not have an image, display default image
+  const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
+
+  //display
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
         {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
-            <View style={{flexDirection: 'row', marginTop: 15}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* Add TouchableOpacity to make the image clickable */}
+            <TouchableOpacity onPress={handleChooseProfilePicture}>
               <Avatar.Image 
-                source={Logo}
+                source={imageSource}
                 size={80}
               />
-              <View style={{marginLeft: 20, marginTop: 10}}>
-                  <Title style={styles.title}>Mell Zettifar</Title>
-                  <Caption style={styles.caption}>Parent</Caption>
-              </View>
+            </TouchableOpacity>
+            <View style={{ marginLeft: 20 }}>
+              <Title style={styles.title}>{userData.firstName + ' ' + userData.lastName}</Title>
+              <Caption style={styles.caption}>Parent</Caption>
             </View>
+          </View>
         </Card>
 
         {/* Profile Information */}
@@ -28,10 +173,9 @@ const ParentProfile = ({navigation}) => {
                 Profile Information
             </Text>
             <View>
-            <TouchableOpacity key='edit'
-            onPress={() => navigation.navigate('ParentEditProfile')}>
-              <Icon name="pencil" size={20} color="#56844B"/>
-            </TouchableOpacity> 
+              <TouchableOpacity key='edit' onPress={() => navigation.navigate('ParentEditProfile')}>
+                <Icon name="pencil" size={20} color="#56844B" style={{ marginRight: 10 }} />
+              </TouchableOpacity> 
             </View>
         </View>
 
@@ -40,7 +184,7 @@ const ParentProfile = ({navigation}) => {
             <Text style={styles.profileTag}>Username</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'gvps_zettifar' 
+              value = {userData.parent_ID}
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -50,7 +194,7 @@ const ParentProfile = ({navigation}) => {
             <Text style={styles.profileTag}>Email</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'mZettifar@gmail.com' 
+              value = {userData.email}
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -60,7 +204,7 @@ const ParentProfile = ({navigation}) => {
             <Text style={styles.profileTag}>Contact</Text>
             <TextInput 
               style={styles.profileText} 
-              value = '98765432' 
+              value = {userData.contactNo}
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -70,7 +214,7 @@ const ParentProfile = ({navigation}) => {
             <Text style={styles.profileTag}>Subscription</Text>
             <TextInput 
               style={styles.profileText} 
-              value = 'Premium Tier' 
+              value = {userData.subscription}
               placeholderTextColor='#56844B'
               editable = {false}
             />
@@ -82,23 +226,34 @@ const ParentProfile = ({navigation}) => {
               style={styles.profileText} 
               multiline
               numberOfLines={3}
-              value = '11 Serangoon North Avenue 5 06-01' 
+              value = {userData.address}
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
-            style={styles.logoutBtn}
-          >
+          <View style={styles.buttonGroupContainer}>
+            {/* visit us button */}
+            <TouchableOpacity onPress={() => Linking.openURL("https://xinyi0247.wixsite.com/marsupium")} style={styles.visitUsButton}>
+              <Text style={styles.btnText1}>Visit Us</Text>
+            </TouchableOpacity>
+
+            {/* subsribe button */}
+            <TouchableOpacity onPress={navigateType} style={styles.subscribeButton}>
+              <Text style={styles.btnText1}>Subscription</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* logout button */}
+          <TouchableOpacity onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn}>
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
+
         </View>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
-}
+};
 
 export default ParentProfile;
 
@@ -108,11 +263,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardDisplay: {
-    paddingBottom: 25,
+    paddingBottom: 15,
     paddingLeft: 15,
     paddingRight: 130,
     backgroundColor: '#56844B',
-    paddingTop: 10,
+    paddingTop: 15,
   },
   profileInfo: {
     color: '#56844B',
@@ -179,20 +334,50 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 100,
   },
+  buttonGroupContainer:{
+    marginTop: 30,
+    marginVertical: 14,
+    flexDirection: 'row',
+  },
+  visitUsButton: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 10,
+    paddingHorizontal: 20, 
+    marginRight: 10
+  },
+  subscribeButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    marginLeft: 10
+  },
+  btnText1:{
+    padding: 5,
+    color: '#FFFFFF',
+    fontSize: 15,
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
   logoutBtn:{
     backgroundColor: '#FFA500',
     marginVertical: 14,
-    borderRadius:10,
-    height:50,
+    borderRadius: 10,
+    height: 50,
     alignItems:'center',
-    marginTop:50,
-    marginBottom:50,
-},
-btnText:{
+    marginTop: 10,
+    marginBottom: 50,
+  },
+  btnText:{
     padding: 15,
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold'
-}
+  },
 });

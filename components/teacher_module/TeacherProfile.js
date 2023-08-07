@@ -1,28 +1,24 @@
 //import libaries
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useEffect, useLayoutEffect} from 'react';
 import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
+import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
+import Logo from '../common/picture/default.jpg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, { useState, useEffect, useLayoutEffect} from 'react';
 import axios from 'axios';
-//import username from login
-import { usernameValue } from '../Login';
+import { usernameValue} from '../Login';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 
-//driver profile
-const DriverProfile = ({navigation}) => {
-  //userData stores all the data of user from database
+//teacher profile
+const TeacherProfile = ({navigation}) => {
   const [userData, setUserData] = useState(null);
-  //username is equal to the username from login
   const username = usernameValue;
-  //console.log ("username from context", username);
   const iSFocused = useIsFocused();
-
-  //grabbing user details from database
+  //fetch data 
   const fetchData = () => {
     axios
-      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/${username}`)
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${username}`)
       .then((response) => {
         const userData = response.data;
         console.log('User data:', userData);
@@ -51,23 +47,23 @@ const DriverProfile = ({navigation}) => {
     );
   }
 
-  //file upload function
+  //upload picture function
   const fileUpload = async (uri) => {
     if (uri) {
       try {
         const response = await axios.get(uri, { responseType: 'blob' });
         const blob = response.data;
-        //set s3 folder
-        const folName = "/driver";
+        //set s3 folder name
+        const folName = "/teacher";
         const reader = new FileReader();
         reader.onloadend = () => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
-          const fName = fNameBef;
+          const fName = fNameBef; 
           console.log("fname" , fName);
-          const fType = blob.type;
-  
-          //upload file/data to s3
+          const fType = blob.type; 
+          
+          //upload file to s3 bucket
           axios
             .post('https://46heb0y4ri.execute-api.us-east-1.amazonaws.com/dev/api/s3/uploadfile', {
               file: base64String,
@@ -82,9 +78,9 @@ const DriverProfile = ({navigation}) => {
                 userID : usernameValue,
                 newImageURI : uploadedURI,
               };
-              //insert/update new data in user database
               console.log(sendData);
-              axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updateImageURI', sendData)
+              //update profile picture URI in user database
+              axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updateImageURI', sendData)
               .then((response) => {
                 console.log(response.data);
                 setUserData((prevUserData) => ({
@@ -95,7 +91,7 @@ const DriverProfile = ({navigation}) => {
               })
               .catch((error) => {
                 console.error("Error updating user image: ", error);
-                alert("An error occurred while changeing image!");
+                alert("An error occurred while changing image!");
               })
             })
             .catch((err) => {
@@ -112,7 +108,7 @@ const DriverProfile = ({navigation}) => {
     }
   };
 
-  //image picker to select image
+  //image picking function
   const handleChooseProfilePicture = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -143,6 +139,7 @@ const DriverProfile = ({navigation}) => {
         {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* Add TouchableOpacity to make the image clickable */}
             <TouchableOpacity onPress={handleChooseProfilePicture}>
               <Avatar.Image 
                 source={imageSource}
@@ -151,7 +148,7 @@ const DriverProfile = ({navigation}) => {
             </TouchableOpacity>
             <View style={{ marginLeft: 20 }}>
               <Title style={styles.title}>{userData.firstName + ' ' + userData.lastName}</Title>
-              <Caption style={styles.caption}>Driver</Caption>
+              <Caption style={styles.caption}>Teacher</Caption>
             </View>
           </View>
         </Card>
@@ -162,13 +159,24 @@ const DriverProfile = ({navigation}) => {
                 Profile Information
             </Text>
             <View>
-              <TouchableOpacity key='edit' onPress={() => navigation.navigate('DriverEditProfile')}>
-                <Icon name="pencil" size={20} color="#56844B" style={{ marginRight: 10 }} />
+              <TouchableOpacity key='edit'
+              onPress={() => navigation.navigate('TeacherEditProfile')}>
+                <Icon name="pencil" size={20} color="#56844B"/>
               </TouchableOpacity> 
             </View>
         </View>
 
         <View>
+          <View style={styles.profileContainer}>
+            <Text style={styles.profileTag}>Username</Text>
+            <TextInput 
+              style={styles.profileText} 
+              value = {userData.teacher_ID}
+              placeholderTextColor='#56844B'
+              editable = {false}
+            />
+          </View>
+
           <View style={styles.profileContainer}>
             <Text style={styles.profileTag}>Email</Text>
             <TextInput 
@@ -187,49 +195,39 @@ const DriverProfile = ({navigation}) => {
               placeholderTextColor='#56844B'
               editable = {false}
             />
-          </View>        
-           
+          </View>
+
           <View style={styles.profileContainer}>
             <Text style={styles.profileTag}>Address</Text>
             <TextInput 
               style={styles.profileText} 
-              multiline
-              numberOfLines={3}
               value = {userData.address}
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
+
           <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Driving license</Text>
+            <Text style={styles.profileTag}>Form class</Text>
             <TextInput 
               style={styles.profileText} 
-              value = {userData.license}
+              value = {userData.class_Name}
               placeholderTextColor='#56844B'
               editable = {false}
             />
           </View>
 
-          <View style={styles.profileContainer}>
-            <Text style={styles.profileTag}>Company</Text>
-            <TextInput 
-              style={styles.profileText} 
-              value = {userData.vendor_Name}
-              placeholderTextColor='#56844B'
-              editable = {false}
-            />
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn} >
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
-};
+}
 
-export default DriverProfile;
+export default TeacherProfile;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
@@ -317,11 +315,11 @@ const styles = StyleSheet.create({
     marginTop:50,
     marginBottom:50,
   },
-  btnText:{
+btnText:{
     padding: 15,
     color: '#FFFFFF',
     fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold'
-  },
+}
 });

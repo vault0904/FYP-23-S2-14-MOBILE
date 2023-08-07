@@ -1,54 +1,64 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+//import libaries
+import React, { useEffect, useState } from "react";
+import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
+import axios from 'axios';
 
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'North gate will be under renovation from 3-5 June 2023, all children from North date will be send to East gate',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        title: "Early dismissal on 10 Oct 2023, Children's Day. Students will be released at 12:10pm",
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Time slots for child pick up after remedial classes has been updated',
-    },
-]
-
-const Item = ({title}) => (
+const Item = ({message}) => (
     <View style={styles.item}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{message}</Text>
     </View>
 );
 
-const FacilHome = () => (
-    <View style={styles.container}>
-        <View style={styles.row}>
-          <Text style={styles.header}>Announcements</Text>
-          <TouchableOpacity key='View More'>
-            <Text style={styles.btnText}>View More</Text>
-          </TouchableOpacity> 
-        </View>
-        <View style={styles.list}>
-        <FlatList 
-          data={DATA}
-          renderItem={({item}) => <Item title={item.title} />}
-          keyExtractor={item => item.id}
-        />
-        </View>
+const FacilHome = ({navigation}) => {
+    const [announcements, setAnnouncements] = useState([]);
+
+    //grab and fetch the latest 3 announcements from database
+    useEffect(() => {
+        axios
+        .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/announcements/3')
+        .then((response) => {
+            console.log('Response from server:', response.data);
+            const receivedAnn = response.data;
+            setAnnouncements(receivedAnn);
+        })
+        .catch((error) => {
+            console.log('Error fetching annoucements', error);
+        });
+    }, []);
+
+    //display
+    return (
+        <View style={styles.container}>
+            <View style={styles.upperRow}>
+                {/* header */}
+                <Text style={styles.header}>News & Notices</Text>
+                <TouchableOpacity key='View More'
+                    onPress={() => navigation.navigate('AnnouncementPage')}
+                >
+                    <Text style={styles.btnText}>View More</Text>
+                </TouchableOpacity> 
+                </View>
+                <View style={styles.list}>
+                    <FlatList 
+                    data={announcements}
+                    renderItem={({item}) => <Item message={item.message} />}
+                    keyExtractor={(item) => item.ann_ID.toString()}
+                    />
+                </View>
         <Text style={styles.header}>Gate assignment</Text>
         <Text style={styles.gate}>NORTH GATE</Text>
     </View>
-);
+    )
+};
 
 export default FacilHome;
 
+//styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    row: {
+    upperrow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
@@ -86,7 +96,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: 'bold',
         color: '#56844B',
-        marginTop: 50,
+        marginTop: 35,
         marginLeft: 150 
     }
 });

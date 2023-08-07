@@ -1,3 +1,4 @@
+//import libaries
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,12 +11,13 @@ import ParentProfile from './ParentProfile';
 import ParentEditProfile from './ParentEditProfile';
 import ChildProfileSelection from './ChildProfileSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Announcements from '../common/AnnouncementPage';
+import ParentAnnouncements from '../common/ParentAnnouncementPage';
+import CancelSubscription from './subscription_module/CancelSubscriptionPage';
+import Subscriptionpage from './subscription_module/SubscriptionPage';
 
-// calling parent's name here to display on top bar
-const name = 'MS ZETTIFAR'
+//import the userLastName from login
+import {userLastName} from '../Login';
 
-{/* For stack navigation between child tabs and child profile */}
 const AnnouncementStack = createNativeStackNavigator();
 
 {/* For stack navigation between profile and edit profile page */}
@@ -56,6 +58,22 @@ function ProfileStackScreen() {
                 component={ParentEditProfile} 
                 options={{
                     title:"Edit Profile"
+                }}
+            />
+            {/*premium sub page*/}
+            <ProfileStack.Screen 
+                name="cancelSub" 
+                component={CancelSubscription} 
+                options={{
+                    title:"Manage Subscription"
+                }}
+            />
+            {/*baisc unsub page*/}
+            <ProfileStack.Screen 
+                name="subPage" 
+                component={Subscriptionpage} 
+                options={{
+                    title:"Manage Subscription"
                 }}
             />
         </ProfileStack.Navigator>
@@ -133,42 +151,43 @@ function ChildProfileStackScreen() {
 }
 
 function AnnouncementStackScreen() {
+    //setting last name of user from login
+    const Lname = userLastName;
     return (
-        <AnnouncementStack.Navigator 
-            screenOptions={{
-                headerStyle: {
-                    backgroundColor: '#56844B',
-                },
-                headerTintColor: '#FFFFFF',
-                headerTitleStyle: {
-                    fontWeight: 'bold',
-                },
-                headerBackTitleVisible: false
-            }}
-        >
-            {/* main page */}
-            <AnnouncementStack.Screen 
-                name="ParentHome" 
-                component={ParentHome}
-                options={{
-                    title: "Hello, " + name
-                }}
-            />
-
-            {/* page to route to from main */}
-            <AnnouncementStack.Screen 
-                name="AnnouncementPage" 
-                component={Announcements} 
-                options={{
-                    title:"Announcements"
-                }}
-            />
-        </AnnouncementStack.Navigator>
+      <AnnouncementStack.Navigator 
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#56844B',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          headerBackTitleVisible: false
+        }}
+      >
+        {/* main page */}
+        <AnnouncementStack.Screen 
+          name="ParentHome" 
+          component={ParentHome}
+          options={{
+            title: "Welcome, "+ Lname
+          }}
+        />
+  
+        {/* page to route to from main */}
+        <AnnouncementStack.Screen 
+          name="ParentAnnouncementPage" 
+          component={ParentAnnouncements} 
+          options={{
+            title:"Announcements"
+          }}
+        />
+      </AnnouncementStack.Navigator>
     );
-}
+  }
 
 const Tab = createBottomTabNavigator();
-
 
 export default function ParentNav() {
     return (
@@ -187,7 +206,7 @@ export default function ParentNav() {
         }}
       >
         <Tab.Screen 
-            name="Hello, "
+            name="Hello"
             component={AnnouncementStackScreen}
             options={{
                 headerShown: false,
@@ -197,6 +216,7 @@ export default function ParentNav() {
                 ),
             }} 
         />
+
         <Tab.Screen 
             name="Child Details" 
             component={ChildProfileStackScreen} 
