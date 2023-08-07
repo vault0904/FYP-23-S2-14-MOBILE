@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class TeacherEditProfile extends React.Component {
     constructor(props) {
@@ -15,6 +16,7 @@ export default class TeacherEditProfile extends React.Component {
             loading: false,    //manage loader
         }
     }
+
     /* Authenticate User */
     formValidation = async () => {
         const {navigate} = this.props.navigation;
@@ -61,41 +63,46 @@ export default class TeacherEditProfile extends React.Component {
     }
     render() {
         return  (
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <ScrollView style={styles.form}>
-                    {/*Profile Information*/}
-                    <View style={styles.profileView}>
-                        <Text style={styles.title}>Profile Information</Text>
-                        <Text style={styles.label}>Name</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.name} onChangeText={name => this.setState({name})} editable={false}/>
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.email} onChangeText={email => this.setState({email})} editable={false}/>
-                    </View>
-                    {/*Account Information*/}
-                    <View>
-                        <Text style={styles.title}>Account Information</Text>
-                        <Text style={styles.label}>Username</Text>
-                        <TextInput style={styles.uneditInput} value={this.state.username} onChangeText={username => this.setState({username})} editable={false}/>
-                        <Text style={styles.label}>New Password</Text>
-                        <TextInput style={styles.input} value={this.state.password} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
-                        {this.state.passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.passwordErrorMessage}</Text>}
-                        <Text style={styles.label}>Confirm New Password</Text>
-                        <TextInput style={styles.input} value={this.state.confirmPassword} secureTextEntry={true} onChangeText={confirmPassword => this.setState({confirmPassword})}/>
-                        {this.state.confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.confirmPasswordErrorMessage}</Text>}
-                    </View>
-                    <TouchableOpacity
-                        onPress={() => this.formValidation()}
-                        style={styles.btn}
-                    >
-                        <Text style={styles.btnText}>Save Changes</Text>
-                    </TouchableOpacity>
-                </ScrollView>
-            </View>
+            <KeyboardAwareScrollView>
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <ScrollView style={styles.form}>
+                        {/*Profile Information*/}
+                        <View style={styles.profileView}>
+                            <Text style={styles.title}>Profile Information</Text>
+                            <Text style={styles.label}>Name</Text>
+                            <TextInput style={styles.uneditInput} value={this.state.name} onChangeText={name => this.setState({name})} editable={false}/>
+                            <Text style={styles.label}>Email</Text>
+                            <TextInput style={styles.uneditInput} value={this.state.email} onChangeText={email => this.setState({email})} editable={false}/>
+                        </View>
+                        {/*Account Information*/}
+                        <View>
+                            <Text style={styles.title}>Account Information</Text>
+                            <Text style={styles.label}>Username</Text>
+                            <TextInput style={styles.uneditInput} value={this.state.username} onChangeText={username => this.setState({username})} editable={false}/>
+                            <Text style={styles.label}>New Password</Text>
+                            <TextInput style={styles.input} value={this.state.password} secureTextEntry={true} onChangeText={password => this.setState({password})}/>
+                            {this.state.passwordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.passwordErrorMessage}</Text>}
+                            <Text style={styles.label}>Confirm New Password</Text>
+                            <TextInput style={styles.input} value={this.state.confirmPassword} secureTextEntry={true} onChangeText={confirmPassword => this.setState({confirmPassword})}/>
+                            {this.state.confirmPasswordErrorMessage.length > 0 && <Text style={styles.textDanger}>{this.state.confirmPasswordErrorMessage}</Text>}
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => this.formValidation()}
+                            style={styles.btn}
+                        >
+                            <Text style={styles.btnText}>Save Changes</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </View>
+            </KeyboardAwareScrollView>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    container:{
+        flex: 1,
+    },
     title: {
         color: 'grey',
         fontSize: 16,

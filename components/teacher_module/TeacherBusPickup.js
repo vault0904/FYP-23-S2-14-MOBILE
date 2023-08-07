@@ -1,30 +1,36 @@
 import { StatusBar } from 'expo-status-bar';
 import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
+import { Card, ListItem, Button, Icon } from 'react-native-elements';
+import { Avatar } from 'react-native-paper';
 import React, { useState } from "react";
+import Logo from '../common/avatars/driver.jpg'
 
 const users = [
     {
        name: 'Bell Zettifar',
-       time: '1:15pm'
+       status: 'picked up',
+       time: '1:25pm'
     },
     {
         name: 'Vernestra Rwoh',
+        status: 'picked up',
         time: '1:25pm'
     },
     {
       name: 'Imri Cantos',
-      time: '1:35pm'
+      status: 'not picked up',
+      time: '1:25pm'
     },
     {
       name: 'Reath Silas',
-      time: '1:35pm'
+      status: 'not picked up',
+      time: '1:25pm'
     },
 ];
 
-const TeacherPickUp = ({navigation}) => {
+const TeacherBusPickUp = ({navigation}) => {
   const pickup = {
-    gate: 'west gate',
+    gate: 'Main foyer',
   }
   const [gate, setGate] = useState(pickup.gate);
   
@@ -43,7 +49,24 @@ const TeacherPickUp = ({navigation}) => {
                 <Text style={styles.label}>Gate Assignment</Text>
                 <TextInput style={styles.input} value={gate} editable={false}/>
             </View>
-                
+            <Text style={styles.driverLabel}>Driver Assignment</Text>
+            {/* Driver Card */}
+            <TouchableOpacity
+                onPress={() => navigation.navigate('DriverDetails')}
+            >
+                <Card containerStyle = {styles.card}>
+                    <View style={{flexDirection: 'row', marginTop: 5}}>
+                    <Avatar.Image 
+                        source={Logo}
+                        size={60}
+                    />
+                    <View style={{marginLeft: 20, marginTop: 10}}>
+                        <Text style={styles.title} >LEOX GYASI</Text>
+                        <Text style={styles.caption}>BX3921G</Text>
+                    </View>
+                    </View>
+                </Card>    
+            </TouchableOpacity>
             {/* Individual passenger details */}
             <View >
             {
@@ -56,6 +79,10 @@ const TeacherPickUp = ({navigation}) => {
                                 <Text style={styles.time}>{u.time}</Text>
                             </View>
                             <View style={{justifyContent: 'flex-end', flex: '1'}}>
+                                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                                    <Text>status:</Text>
+                                    <Text style={{color:'#56844B'}}>{u.status}</Text>
+                                </View>
                                 <TouchableOpacity key='dropped-off' style={styles.droppedOffBtn}>
                                 <Text style={styles.droppedOffText}>Picked up</Text>
                                 </TouchableOpacity> 
@@ -71,7 +98,7 @@ const TeacherPickUp = ({navigation}) => {
   );
 }
 
-export default TeacherPickUp;
+export default TeacherBusPickUp;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
@@ -86,6 +113,26 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingHorizontal: 15
   },
+  card: {
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 130,
+    backgroundColor: '#56844B',
+    paddingTop: 5,
+    borderRadius: 15,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#ffffff'
+  },
+  caption: {
+    paddingTop: 5,
+    fontSize: 15,
+    lineHeight: 14,
+    fontWeight: '500',
+    color: '#ffffff'
+  },
   name: {
     fontSize: 17,
     color: '#56844B',
@@ -93,6 +140,12 @@ const styles = StyleSheet.create({
   },
   time: {
     paddingTop: 5
+  },
+  otp:{
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginLeft: 23,
+    color: '#e27602',
   },
   header_row:{
     flexDirection: 'row',
@@ -115,6 +168,13 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       marginTop: 15,
       marginLeft: 5
+  },
+  driverLabel: {
+      color: '#808080',
+      fontSize: 15,
+      fontWeight: 'bold',
+      marginTop: 15,
+      marginLeft: 15
   },
   input: {
       padding: 15,

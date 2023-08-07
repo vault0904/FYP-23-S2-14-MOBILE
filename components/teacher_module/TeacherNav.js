@@ -3,6 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TeacherHome from './TeacherHome';
 import TeacherPickup from './TeacherPickup';
+import TeacherBusPickUp from './TeacherBusPickup';
+import DriverDetails from './DriverProfile';
 import TeacherScanQR from './TeacherScanQR';
 import TeacherChat from './TeacherChat';
 import TeacherProfile from './TeacherProfile';
@@ -79,6 +81,47 @@ function PickUpStackScreen() {
     );
 }
 
+{/* For stack navigation between driver tab and driver profile */}
+const TeacherBusPickUpStack = createNativeStackNavigator();
+
+function TeacherBusPickUpStackScreen() {
+    return (
+        <TeacherBusPickUpStack.Navigator 
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+        >
+            <TeacherBusPickUpStack.Screen 
+                name="TeacherBusPickup" 
+                component={TeacherBusPickUp}
+                options={{
+                    title:"Pick Up"
+                }}
+            />
+            <TeacherBusPickUpStack.Screen 
+                name="TeacherScanQR" 
+                component={TeacherScanQR} 
+                options={{
+                    title:"Scanning QR Code"
+                }}
+            />
+            <TeacherBusPickUpStack.Screen 
+                name="DriverDetails" 
+                component={DriverDetails} 
+                options={{
+                    title:"Driver Details"
+                }}
+            />
+        </TeacherBusPickUpStack.Navigator>
+    );
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -110,8 +153,8 @@ export default function TeacherNav() {
             }} 
         />
         <Tab.Screen 
-            name="PickUpStack" 
-            component={PickUpStackScreen} 
+            name="TeacherBusPickUpStack" 
+            component={TeacherBusPickUpStackScreen} 
             options={{
                 headerShown: false,
                 tabBarLabel: 'Pick up',
