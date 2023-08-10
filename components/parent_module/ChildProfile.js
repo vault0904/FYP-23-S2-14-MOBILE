@@ -32,7 +32,7 @@ const ChildProfile = () => {
       };
 
       useEffect(() => {
-        console.log("thischildData:", thisChildData);
+        //console.log("thischildData:", thisChildData);
       }, [thisChildData]);
 
       useEffect(() => {

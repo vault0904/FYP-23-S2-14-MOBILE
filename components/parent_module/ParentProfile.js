@@ -25,7 +25,7 @@ const ParentProfile = ({ navigation }) => {
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${username}`)
       .then((response) => {
         const userData = response.data;
-        console.log('User data:', userData);
+        //console.log('User data:', userData);
         setUserData(userData);
       })
       .catch((error) => {

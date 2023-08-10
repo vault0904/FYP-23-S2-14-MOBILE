@@ -142,6 +142,7 @@ function DriverSelectionStackScreen() {
         </DriverSelectionStack.Navigator>
     );
 }
+
 const Tab = createBottomTabNavigator();
 
 function AnnouncementStackScreen() {

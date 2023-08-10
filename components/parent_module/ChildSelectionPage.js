@@ -18,7 +18,7 @@ const ChildSelection = ({navigation}) => {
       .then((response) => {
         const recData = response.data;
         setChildData(recData);
-        console.log("child data", recData);
+        //console.log("child data", recData);
       })
       .catch((error) => {
         console.log('Error fetching child data:', error);
