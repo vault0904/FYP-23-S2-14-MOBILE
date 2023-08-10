@@ -5,7 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TeacherHome from './TeacherHome';
 import TeacherPickup from './TeacherPickup';
 import TeacherBusPickUp from './TeacherBusPickup';
-import DriverDetails from './DriverProfile';
+//import DriverDetails from './DriverProfile';
+import DriverList from './DriverList';
 import TeacherScanQR from './TeacherScanQR';
 import TeacherChat from './TeacherChat';
 import TeacherProfile from './TeacherProfile';
@@ -14,9 +15,13 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {userLastName} from '../Login';
 import TeacherAnnouncements from '../common/TeacherAnnouncements';
 import StudentProfile from './StudentProfile';
+import StudentQR from './StudentQR';
 
 //announcement stack screen
 const AnnouncementStack = createNativeStackNavigator();
+
+//driver selection stack screen
+const DriverSelectionStack = createNativeStackNavigator();
 
 {/* For stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
@@ -53,7 +58,7 @@ function ProfileStackScreen() {
     );
 }
 
-{/* For stack navigation between pickup and qr scanning page */}
+{/* For stack navigation between self pickup and qr scanning page */}
 const PickUpStack = createNativeStackNavigator();
 
 function PickUpStackScreen() {
@@ -74,7 +79,7 @@ function PickUpStackScreen() {
                 name="TeacherPickup" 
                 component={TeacherPickup}
                 options={{
-                    title:"Pick Up"
+                    title:"Self Pick Up"
                 }}
             />
             <PickUpStack.Screen 
@@ -84,16 +89,20 @@ function PickUpStackScreen() {
                     title:"Scanning QR Code"
                 }}
             />
+            <PickUpStack.Screen 
+                name="StudentProfile" 
+                component={StudentProfile} 
+                options={{
+                    title:"Student Profile"
+                }}
+            />
         </PickUpStack.Navigator>
     );
 }
-
-{/* For stack navigation between driver tab and driver profile */}
-const TeacherBusPickUpStack = createNativeStackNavigator();
-
-function TeacherBusPickUpStackScreen() {
+{/* For stack navigation between bus driver list, bus pickup and student qr code page */}
+function DriverSelectionStackScreen() {
     return (
-        <TeacherBusPickUpStack.Navigator 
+        <DriverSelectionStack.Navigator
             screenOptions={{
                 headerStyle: {
                     backgroundColor: '#56844B',
@@ -105,38 +114,34 @@ function TeacherBusPickUpStackScreen() {
                 headerBackTitleVisible: false
             }}
         >
-            <TeacherBusPickUpStack.Screen 
+            {/* main page */}
+            <DriverSelectionStack.Screen
+                name="DriverList" 
+                component={DriverList} 
+                options={{
+                    title:"Driver List"
+                }}
+            />
+            {/*Route to bus pick up page*/}
+            <DriverSelectionStack.Screen
                 name="TeacherBusPickup" 
                 component={TeacherBusPickUp}
                 options={{
-                    title:"Pick Up"
+                    title:"Bus Pick Up"
                 }}
             />
-            <TeacherBusPickUpStack.Screen 
-                name="TeacherScanQR" 
-                component={TeacherScanQR} 
+            {/*Route to student QR Code page*/}
+            <DriverSelectionStack.Screen
+                name="StudentQR" 
+                component={StudentQR} 
                 options={{
-                    title:"Scanning QR Code"
+                    title:"Student QR Code"
                 }}
             />
-            <TeacherBusPickUpStack.Screen 
-                name="DriverDetails" 
-                component={DriverDetails} 
-                options={{
-                    title:"Driver Details"
-                }}
-            />
-            <TeacherBusPickUpStack.Screen 
-                name="StudentProfile" 
-                component={StudentProfile} 
-                options={{
-                    title:"Student Details"
-                }}
-            />
-        </TeacherBusPickUpStack.Navigator>
+
+        </DriverSelectionStack.Navigator>
     );
 }
-
 const Tab = createBottomTabNavigator();
 
 function AnnouncementStackScreen() {
@@ -205,13 +210,24 @@ export default function TeacherNav() {
             }} 
         />
         <Tab.Screen 
-            name="TeacherBusPickUpStack" 
-            component={TeacherBusPickUpStackScreen} 
+            name="PickUpStack" 
+            component={PickUpStackScreen} 
             options={{
                 headerShown: false,
-                tabBarLabel: 'Pick up',
+                tabBarLabel: 'Self Pick up',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="account" color={color} size={size} />
+                ),
+            }} 
+        />
+        <Tab.Screen 
+            name="DriverSelectionStack" 
+            component={DriverSelectionStackScreen} 
+            options={{
+                headerShown: false,
+                tabBarLabel: 'Bus Pick up',
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="bus" color={color} size={size} />
                 ),
             }} 
         />

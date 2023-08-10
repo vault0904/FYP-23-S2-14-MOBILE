@@ -30,44 +30,14 @@ const users = [
 ];
 
 const TeacherBusPickUp = ({navigation}) => {
-  const pickup = {
-    gate: 'Main foyer',
-  }
-  const [gate, setGate] = useState(pickup.gate);
   
   return (
     <ScrollView style={styles.container}>
         <View>
             <View style={styles.header_row}>
                 <Text style={styles.header}>Student Pick-Up Details</Text>
-                <Icon style={styles.icon} 
-                      name='qrcode-scan'
-                      type='material-community'
-                      onPress={() => navigation.navigate('TeacherScanQR')}
-                />
             </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Gate Assignment</Text>
-                <TextInput style={styles.input} value={gate} editable={false}/>
-            </View>
-            <Text style={styles.driverLabel}>Driver Assignment</Text>
-            {/* Driver Card */}
-            <TouchableOpacity
-                onPress={() => navigation.navigate('DriverDetails')}
-            >
-                <Card containerStyle = {styles.card}>
-                    <View style={{flexDirection: 'row', marginTop: 5}}>
-                    <Avatar.Image 
-                        source={Logo}
-                        size={60}
-                    />
-                    <View style={{marginLeft: 20, marginTop: 10}}>
-                        <Text style={styles.title} >LEOX GYASI</Text>
-                        <Text style={styles.caption}>BX3921G</Text>
-                    </View>
-                    </View>
-                </Card>    
-            </TouchableOpacity>
+
             {/* Individual passenger details */}
             <View >
             {
@@ -75,7 +45,7 @@ const TeacherBusPickUp = ({navigation}) => {
                 return (
                     <Card key={i}>
                       <TouchableOpacity 
-                     // onPress={() => navigation.navigate('StudentProfile')}
+                        onPress={() => navigation.navigate('StudentQR')}
                       >
                         <View style={{flexDirection: 'row'}}>
                             <View style={{flex: '2', marginTop: 5}}>
@@ -83,10 +53,6 @@ const TeacherBusPickUp = ({navigation}) => {
                                 <Text style={styles.time}>{u.time}</Text>
                             </View>
                             <View style={{justifyContent: 'flex-end', flex: '1'}}>
-                                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                    <Text>status:</Text>
-                                    <Text style={{color:'#56844B'}}>{u.status}</Text>
-                                </View>
                                 <TouchableOpacity key='dropped-off' style={styles.droppedOffBtn}>
                                 <Text style={styles.droppedOffText}>Picked up</Text>
                                 </TouchableOpacity> 
@@ -180,6 +146,19 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       marginTop: 15,
       marginLeft: 15
+  },
+  driverBtn: {
+    padding: 12,
+    margin: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderRadius: 6,
+    backgroundColor: "#56844B"
+  },
+  driverText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#ffffff'
   },
   input: {
       padding: 15,
