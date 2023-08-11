@@ -5,18 +5,23 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DriverHome from './DriverHome';
 import DriverPickup from './DriverPickup';
 import DriverScanQR from './DriverScanQR';
-import DriverChat from './DriverChat';
+import { Ionicons, Entypo } from '@expo/vector-icons'
 import DriverProfile from './DriverProfile';
 import DriverEditProfile from './DriverEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DriverAnnouncements from '../common/DriverAnnouncements';
 //import the userLastName from login
 import {userLastName} from '../Login';
+import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
+import ChatScreen from '../common/chat_module/screen/ChatScreen';
 
 {/* For stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
 
 const AnnouncementStack = createNativeStackNavigator();
+
+// stack navigation for chat screens
+const ChatStack = createNativeStackNavigator();
 
 function ProfileStackScreen() {
     return (
@@ -120,7 +125,53 @@ function AnnouncementStackScreen() {
         />
       </AnnouncementStack.Navigator>
     );
-  }
+}
+
+// stack navigation between chat pages
+function ChatStackScreen() {
+    return(
+        <ChatStack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+            // initialRouteName='Chats'
+        >
+
+            {/* main page */}
+            <ChatStack.Screen 
+                name="Chats" 
+                component={ChatsScreen}
+                options={{
+                    title:"Chats",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-chatbubbles-sharp" size={size} color={color} />
+                    ),
+                    headerRight: () => (
+                        <Entypo name="new-message" size={18} color={'white'} />
+                    )
+                }}
+            />
+
+            {/* page to route to from main */}
+            <ChatStack.Screen 
+                name="Chat Messages" 
+                component={ChatScreen} 
+                options={{
+                    title:"Chat Messages"
+                }}
+            />
+
+        </ChatStack.Navigator>
+    )
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -165,8 +216,9 @@ export default function DriverNav() {
         />
         <Tab.Screen 
             name="Chat" 
-            component={DriverChat} 
+            component={ChatStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Chat',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="chat" color={color} size={size} />
