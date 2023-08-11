@@ -11,7 +11,16 @@ const Item = ({message}) => (
 );
 
 const TeacherHome = ({navigation}) => {
+    const pickupDetails = {
+        id: '01',
+        gate: "North gate",
+        time: "1:15pm",
+    }
+
     const [announcements, setAnnouncements] = useState([]);
+    const [id, setId] = useState(pickupDetails.id);
+    const [gate, setGate] = useState(pickupDetails.gate);
+    const [time, setTime] = useState(pickupDetails.time);
     const thisSchool = userSchoolID;
 
     //grab and fetch the latest 3 announcements from database
@@ -49,9 +58,44 @@ const TeacherHome = ({navigation}) => {
                     />
                 </View>
 
-        <Text style={styles.header}>Gate assignment</Text>
+        <Text style={styles.header}>Today's pickup details</Text>
 
-        <Text style={styles.gate}>WEST GATE</Text>
+        <View>
+          {/* pickup : id */}
+          <View style={styles.row}>
+            <Text style={styles.label}>id</Text>
+            <TextInput
+              style={styles.input}
+              value={id}
+              onChangeText={setId}
+              editable={false}
+            />
+          </View>
+        </View>
+        <View>
+          {/* pickup : gate name */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Gate</Text>
+            <TextInput
+              style={styles.input}
+              value={gate}
+              onChangeText={setGate}
+              editable={false}
+            />
+          </View>
+        </View>
+        <View>
+          {/* pickup : time */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Time</Text>
+            <TextInput
+              style={styles.input}
+              value={time}
+              onChangeText={setTime}
+              editable={false}
+            />
+          </View>
+        </View>
     </View>
     )
 };
@@ -106,23 +150,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   label: {
-    color: '#858585',
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginTop: 15,
-    marginLeft: 10
+      color: '#858585',
+      fontSize: 12,
+      fontWeight: 'bold',
+      marginTop: 15,
   },
   input: {
-    padding: 15,
-    backgroundColor: '#E6E6E6',
-    borderRadius: 8,
-    height: 35,
-    width: 220,
-    marginVertical: 5,
-    marginHorizontal: 50,
-    color: '#616161',
-    fontSize: 12,
-    fontWeight: 'bold',
+      padding: 15,
+      backgroundColor: '#E6E6E6',
+      borderRadius: 8,
+      height: 35,
+      width: 220,
+      marginVertical: 5,
+      marginHorizontal: 50,
+      color: '#616161',
+      fontSize: 12,
+      fontWeight: 'bold',
   },
   inputRed: {
     padding: 15,

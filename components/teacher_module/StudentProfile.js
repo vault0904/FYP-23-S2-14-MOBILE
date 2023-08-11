@@ -10,7 +10,7 @@ import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
 
 
-const ChildProfile = () => {
+const StudentProfile = () => {
     //grab the childID
     const route = useRoute();
     //this childID is based on the GUI ID
@@ -32,7 +32,7 @@ const ChildProfile = () => {
       };
 
       useEffect(() => {
-        //console.log("thischildData:", thisChildData);
+        console.log("thischildData:", thisChildData);
       }, [thisChildData]);
 
       useEffect(() => {
@@ -244,7 +244,7 @@ const ChildProfile = () => {
       );
     }
 
-export default ChildProfile;
+export default StudentProfile;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({

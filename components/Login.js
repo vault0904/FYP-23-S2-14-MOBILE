@@ -47,7 +47,7 @@ const Login = ({ navigation }) => {
       axios
         .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/login', userData)
         .then((response) => {
-          console.log("response for parent", response.data);
+          //console.log("response for parent", response.data);
           if (response.data.success) {
             const userLName = response.data.LName;
             const userSchool = response.data.schoolID;
@@ -69,7 +69,7 @@ const Login = ({ navigation }) => {
       axios
         .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/login', userData)
         .then((response) => {
-          console.log("response for teacher", response.data);
+          //console.log("response for teacher", response.data);
           if (response.data.success) {
             const userLName = response.data.LName;
             const userSchool = response.data.schoolID;
@@ -88,7 +88,7 @@ const Login = ({ navigation }) => {
       axios
         .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/login', userData)
         .then((response) => {
-          console.log("response for driver", response.data);
+          //console.log("response for driver", response.data);
           if (response.data.success) {
             const userLName = response.data.LName;
             const userVendor = response.data.vendorID;
@@ -107,7 +107,6 @@ const Login = ({ navigation }) => {
       axios
         .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/event_faci/login', userData)
         .then((response) => {
-          console.log("response for parent", response.data);
           if (response.data.success) {
             const userLName = response.data.LName;
             userLastName = userLName;

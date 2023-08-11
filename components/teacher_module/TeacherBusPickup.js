@@ -1,55 +1,52 @@
 import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
+import {SafeAreaView, ScrollView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import { Card, ListItem, Button, Icon } from 'react-native-elements';
+import { Avatar } from 'react-native-paper';
 import React, { useState } from "react";
+import Logo from '../common/picture/default.jpg'
+import StudentProfile from './StudentProfile';
 
 const users = [
     {
        name: 'Bell Zettifar',
-       time: '1:15pm'
+       status: 'picked up',
+       time: '1:25pm'
     },
     {
         name: 'Vernestra Rwoh',
+        status: 'picked up',
         time: '1:25pm'
     },
     {
       name: 'Imri Cantos',
-      time: '1:35pm'
+      status: 'not picked up',
+      time: '1:25pm'
     },
     {
       name: 'Reath Silas',
-      time: '1:35pm'
+      status: 'not picked up',
+      time: '1:25pm'
     },
 ];
 
-const TeacherPickup = ({navigation}) => {
-  const pickup = {
-    gate: 'west gate',
-  }
-  const [gate, setGate] = useState(pickup.gate);
+const TeacherBusPickUp = ({navigation}) => {
   
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
         <View>
             <View style={styles.header_row}>
                 <Text style={styles.header}>Student Pick-Up Details</Text>
-                <Icon style={styles.icon} 
-                      name='qrcode-scan'
-                      type='material-community'
-                      onPress={() => navigation.navigate('TeacherScanQR')}
-                />
             </View>
-            <View style={styles.row}>
-                <Text style={styles.label}>Gate Assignment</Text>
-                <TextInput style={styles.input} value={gate} editable={false}/>
-            </View>
-                
+
             {/* Individual passenger details */}
             <View >
             {
                 users.map((u, i) => {
                 return (
                     <Card key={i}>
+                      <TouchableOpacity 
+                        onPress={() => navigation.navigate('StudentQR')}
+                      >
                         <View style={{flexDirection: 'row'}}>
                             <View style={{flex: '2', marginTop: 5}}>
                                 <Text style={styles.name}>{u.name}</Text>
@@ -61,17 +58,18 @@ const TeacherPickup = ({navigation}) => {
                                 </TouchableOpacity> 
                             </View>
                         </View>
+                      </TouchableOpacity>
                     </Card>
                 );
                 })
             }
             </View>
         </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
-export default TeacherPickup;
+export default TeacherBusPickUp;
 
 {/* styling for profile */}
 const styles = StyleSheet.create({
@@ -85,6 +83,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 15,
     paddingHorizontal: 15
+  },
+  card: {
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 130,
+    backgroundColor: '#56844B',
+    paddingTop: 5,
+    borderRadius: 15,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#ffffff'
+  },
+  caption: {
+    paddingTop: 5,
+    fontSize: 15,
+    lineHeight: 14,
+    fontWeight: '500',
+    color: '#ffffff'
   },
   name: {
     fontSize: 17,
@@ -121,6 +139,26 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       marginTop: 15,
       marginLeft: 5
+  },
+  driverLabel: {
+      color: '#808080',
+      fontSize: 15,
+      fontWeight: 'bold',
+      marginTop: 15,
+      marginLeft: 15
+  },
+  driverBtn: {
+    padding: 12,
+    margin: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderRadius: 6,
+    backgroundColor: "#56844B"
+  },
+  driverText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#ffffff'
   },
   input: {
       padding: 15,
