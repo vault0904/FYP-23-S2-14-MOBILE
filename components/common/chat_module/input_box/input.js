@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'
 import { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const InputBox = () => {
 
