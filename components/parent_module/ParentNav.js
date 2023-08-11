@@ -6,7 +6,7 @@ import ParentHome from './ParentHome';
 import ChildDetails from './ChildProfile';
 import ParentPickup from './PickupSelection';
 import ChildSelection from './ChildSelectionPage';
-import ParentChat from './ParentChat';
+import { Ionicons, Entypo } from '@expo/vector-icons'
 import ParentProfile from './ParentProfile';
 import ParentEditProfile from './ParentEditProfile';
 import ChildProfileSelection from './ChildProfileSelection';
@@ -17,6 +17,8 @@ import Subscriptionpage from './subscription_module/SubscriptionPage';
 
 //import the userLastName from login
 import {userLastName} from '../Login';
+import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
+import ChatScreen from '../common/chat_module/screen/ChatScreen';
 
 const AnnouncementStack = createNativeStackNavigator();
 
@@ -28,6 +30,9 @@ const PickupSelectStack = createNativeStackNavigator();
 
 {/* For stack navigation between child tabs and child profile */}
 const ChildProfileStack = createNativeStackNavigator();
+
+// stack navigation for chat screens
+const ChatStack = createNativeStackNavigator();
 
 function ProfileStackScreen() {
     return (
@@ -185,7 +190,51 @@ function AnnouncementStackScreen() {
         />
       </AnnouncementStack.Navigator>
     );
-  }
+}
+
+function ChatStackScreen() {
+    return(
+        <ChatStack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#56844B',
+                },
+                headerTintColor: '#FFFFFF',
+                headerTitleStyle: {
+                    fontWeight: 'bold',
+                },
+                headerBackTitleVisible: false
+            }}
+            // initialRouteName='Chats'
+        >
+
+            {/* main page */}
+            <ChatStack.Screen 
+                name="Chats" 
+                component={ChatsScreen}
+                options={{
+                    title:"Chats",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="ios-chatbubbles-sharp" size={size} color={color} />
+                    ),
+                    headerRight: () => (
+                        <Entypo name="new-message" size={18} color={'white'} />
+                    )
+                }}
+            />
+
+            {/* page to route to from main */}
+            <ChatStack.Screen 
+                name="Chat Messages" 
+                component={ChatScreen} 
+                options={{
+                    title:"Chat Messages"
+                }}
+            />
+
+        </ChatStack.Navigator>
+    )
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -241,8 +290,9 @@ export default function ParentNav() {
         />
         <Tab.Screen 
             name="Chat" 
-            component={ParentChat} 
+            component={ChatStackScreen} 
             options={{
+                headerShown: false,
                 tabBarLabel: 'Chat',
                 tabBarIcon: ({ color, size }) => (
                     <MaterialCommunityIcons name="chat" color={color} size={size} />
