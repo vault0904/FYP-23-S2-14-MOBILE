@@ -1,3 +1,4 @@
+//import libaries
 import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Logo from '../../picture/default.jpg'
 import { useNavigation } from '@react-navigation/native';

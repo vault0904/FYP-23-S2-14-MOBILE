@@ -1,8 +1,6 @@
 //import libaries
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity,ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper';
-import Logo from '../common/picture/default.jpg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
 import axios from 'axios';
@@ -21,7 +19,6 @@ const TeacherProfile = ({navigation}) => {
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/${username}`)
       .then((response) => {
         const userData = response.data;
-        console.log('User data:', userData);
         setUserData(userData);
       })
       .catch((error) => {
@@ -60,7 +57,6 @@ const TeacherProfile = ({navigation}) => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
           const fName = fNameBef; 
-          console.log("fname" , fName);
           const fType = blob.type; 
           
           //upload file to s3 bucket
@@ -73,16 +69,13 @@ const TeacherProfile = ({navigation}) => {
             })
             .then((res) => {
               const uploadedURI = res.data.imageURL;
-              console.log(uploadedURI);
               const sendData = {
                 userID : usernameValue,
                 newImageURI : uploadedURI,
               };
-              console.log(sendData);
               //update profile picture URI in user database
               axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updateImageURI', sendData)
               .then((response) => {
-                console.log(response.data);
                 setUserData((prevUserData) => ({
                   ...prevUserData,
                   imageURI: uploadedURI,
@@ -119,7 +112,6 @@ const TeacherProfile = ({navigation}) => {
       });
 
       if (!result.canceled) {
-        console.log('Selected image URI:', result.assets[0].uri);
         fileUpload(result.assets[0].uri);
       } else {
         console.log('Image picker canceled');
@@ -136,10 +128,8 @@ const TeacherProfile = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
-        {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {/* Add TouchableOpacity to make the image clickable */}
             <TouchableOpacity onPress={handleChooseProfilePicture}>
               <Avatar.Image 
                 source={imageSource}
@@ -153,7 +143,6 @@ const TeacherProfile = ({navigation}) => {
           </View>
         </Card>
 
-        {/* Profile Information */}
         <View style={styles.information}>
             <Text style={styles.profileInfo}>
                 Profile Information
@@ -229,7 +218,7 @@ const TeacherProfile = ({navigation}) => {
 
 export default TeacherProfile;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

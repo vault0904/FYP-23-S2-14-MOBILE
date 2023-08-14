@@ -1,36 +1,72 @@
-import React, { useEffect, useState } from "react";
+//import libaries
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { StyleSheet, View, Text } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import axios from 'axios';
+import {useIsFocused, useRoute } from '@react-navigation/native';
 
+//main for student QR
 const StudentQR = () => {
-    const user = {
-        name: 'Bell Zettifar'
-    }
+    const route = useRoute();
+    const {childID, childfName} = route.params;
+    const iSFocused = useIsFocused();
+    const [childQR, setChildQR] = useState();
 
-    //generate QR code
-    const secretKey = "fypPickupAPP";
-    //const qrData = thisChildData.child_ID + "|" +secretKey;
+    const fetchData = () => {
+        //axios request to get child QR
+        axios
+            .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/qr/generator/${childID}`)
+            .then((response) => {
+                const recChildQR = response.data;
+                if(recChildQR && recChildQR.length >0) {
+                    setChildQR(recChildQR);
+                } else {
+                    setChildQR();
+                }
+            })
+            .catch((error) => {
+                console.log("Error fetching child QR", error);
+            });
+    };
+
+    useEffect(() => {
+        fetchData();
+      }, []);
     
-    const [name, setName] = useState(user.name);
-
+      useLayoutEffect(() => {
+        if (iSFocused)  { 
+          fetchData();
+        }
+      }, [iSFocused]);
+      
+      //buffer
+      if (!childQR) {
+        return (
+          <View style={styles.loadingContainer}>
+            <Text>Loading...</Text>
+          </View>
+        );
+      }
+    
+    //display
     return (
         <View style={styles.container}>
-            {/*Display selected child's name*/}
             <View>
-              <Text style={styles.childHeader}>QR Code for {name}</Text>
+              <Text style={styles.childHeader}>QR Code For Student: {childfName}</Text>
             </View>
-            {/*Display selected child's QR Code*/}
             <View style={styles.qrContainer}>
+            {childQR && (
                 <QRCode
-                    value={secretKey}
+                    value={childQR}
                     color={'#56844B'}
                     backgroundColor={'white'}
-                    size={160}
+                    size={300}
                     logoMargin={2}
                     logoSize={20}
                     logoBorderRadius={10}
                     logoBackgroundColor={'transparent'}
                 />
+            )}    
             </View>
         </View>
     );
@@ -38,16 +74,13 @@ const StudentQR = () => {
 
 export default StudentQR;
 
-{/* styling for driver list */}
+// styling
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      // backgroundColor: '#fff',
-      // alignItems: 'center',
-      // justifyContent: 'center',
+      alignItems: 'center',
     },
     childHeader: {
-        marginHorizontal: 25,
         color: 'black',
         fontSize: 18,
         fontWeight: 'bold',
@@ -55,6 +88,6 @@ const styles = StyleSheet.create({
       },
     qrContainer: {
         marginHorizontal: '30%',
-        marginTop: 50
+        marginTop: 150
     }
 });

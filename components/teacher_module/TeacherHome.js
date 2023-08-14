@@ -1,8 +1,12 @@
 //import libaries
-import React, { useEffect, useState } from "react";
-import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useEffect, useState, useLayoutEffect } from "react";
+import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity} from 'react-native';
 import axios from 'axios';
-import { userSchoolID } from '../Login';
+import { userSchoolID, usernameValue } from '../Login';
+import { useIsFocused } from "@react-navigation/native";
+
+export let teacherGateName = '';
+export let teacherGateID = '';
 
 const Item = ({message}) => (
     <View style={styles.item}>
@@ -11,93 +15,113 @@ const Item = ({message}) => (
 );
 
 const TeacherHome = ({navigation}) => {
-    const pickupDetails = {
-        id: '01',
-        gate: "North gate",
-        time: "1:15pm",
+  //date setting for current date
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
+
+  //get announcement data
+  const [announcements, setAnnouncements] = useState([]);
+  const thisSchool = userSchoolID;
+  const thisTeacher = usernameValue;
+  const iSFocused = useIsFocused();
+  const [gateDetails, setGateDetails] = useState();
+
+  //grab and fetch the latest 3 announcements from database
+  const fetchData = () => {
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/announcements/3/${thisSchool}`)
+      .then((response) => {
+          const receivedAnn = response.data;
+          setAnnouncements(receivedAnn);
+      })
+      .catch((error) => {
+          console.log('Error fetching annoucements', error);
+      });
+
+    axios
+      .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacherGate', {
+        params : {
+          datetime: todayDate,
+          teacherID: thisTeacher,
+        },
+      })
+      .then((response) => {
+        const recGateDetails = response.data;
+        const recGateName = response.data.gate_Name;
+        const recGateID = response.data.gate_ID;
+        setGateDetails(recGateDetails);
+        teacherGateName = recGateName;
+        teacherGateID = recGateID;
+      })
+      .catch((error) => {
+        console.log("Error fetching data", error);
+      })
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
     }
+  }, [iSFocused]);
+  
+  if (!announcements && !gateDetails) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  };
 
-    const [announcements, setAnnouncements] = useState([]);
-    const [id, setId] = useState(pickupDetails.id);
-    const [gate, setGate] = useState(pickupDetails.gate);
-    const [time, setTime] = useState(pickupDetails.time);
-    const thisSchool = userSchoolID;
-
-    //grab and fetch the latest 3 announcements from database
-    useEffect(() => {
-        axios
-        .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/announcements/3/${thisSchool}`)
-        .then((response) => {
-            console.log('Response from server:', response.data);
-            const receivedAnn = response.data;
-            setAnnouncements(receivedAnn);
-        })
-        .catch((error) => {
-            console.log('Error fetching annoucements', error);
-        });
-    }, []);
-
-    //display
-    return(
-            <View style={styles.container}>
-                <View style={styles.upperRow}>
-                    
-                    {/* header */}
-                    <Text style={styles.header}>News & Notices</Text>
-                    <TouchableOpacity key='View More'
-                        onPress={() => navigation.navigate('TeacherAnnouncementPage')}
-                    >
-                        <Text style={styles.btnText}>View More</Text>
-                    </TouchableOpacity> 
-                </View>
-                <View style={styles.list}>
-                    <FlatList 
-                    data={announcements}
-                    renderItem={({item}) => <Item message={item.message} />}
-                    keyExtractor={(item) => item.ann_ID.toString()}
-                    />
-                </View>
-
-        <Text style={styles.header}>Today's pickup details</Text>
-
-        <View>
-          {/* pickup : id */}
-          <View style={styles.row}>
-            <Text style={styles.label}>id</Text>
-            <TextInput
-              style={styles.input}
-              value={id}
-              onChangeText={setId}
-              editable={false}
-            />
-          </View>
+  //display
+  return(
+          <View style={styles.container}>
+              <View style={styles.upperRow}>
+                  
+                  {/* header */}
+                  <Text style={styles.header}>News & Notices</Text>
+                  <TouchableOpacity key='View More'
+                      onPress={() => navigation.navigate('TeacherAnnouncementPage')}
+                  >
+                      <Text style={styles.btnText}>View More</Text>
+                  </TouchableOpacity> 
+              </View>
+              <View style={styles.list}>
+                  <FlatList 
+                  data={announcements}
+                  renderItem={({item}) => <Item message={item.message} />}
+                  keyExtractor={(item) => item.ann_ID.toString()}
+                  />
+              </View>
+      <Text style={styles.header}>Today's gate details{'\t\t\t'}{todayDate}</Text>
+      <View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Gate ID</Text>
+          <TextInput
+            style={styles.input}
+            value={gateDetails && gateDetails.gate_ID ? gateDetails.gate_ID.toString() : ''}
+            editable={false}
+          />
         </View>
-        <View>
-          {/* pickup : gate name */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Gate</Text>
-            <TextInput
-              style={styles.input}
-              value={gate}
-              onChangeText={setGate}
-              editable={false}
-            />
-          </View>
+      </View>
+      <View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Gate</Text>
+          <TextInput
+            style={styles.input}
+            value={gateDetails?.gate_Name}
+            editable={false}
+          />
         </View>
-        <View>
-          {/* pickup : time */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Time</Text>
-            <TextInput
-              style={styles.input}
-              value={time}
-              onChangeText={setTime}
-              editable={false}
-            />
-          </View>
-        </View>
-    </View>
-    )
+      </View>
+  </View>
+  )
 };
 
 export default TeacherHome;
@@ -127,7 +151,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   list: {
-    maxHeight: 300
+    maxHeight: 230
   },
   item: {
     backgroundColor: 'lightgrey',
@@ -150,10 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   label: {
-      color: '#858585',
-      fontSize: 12,
-      fontWeight: 'bold',
-      marginTop: 15,
+    color: '#858585',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginLeft: 5,
   },
   input: {
       padding: 15,

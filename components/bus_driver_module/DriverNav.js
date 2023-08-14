@@ -15,7 +15,7 @@ import {userLastName} from '../Login';
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
 
-{/* For stack navigation between profile and edit profile page */}
+{/* stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
 
 const AnnouncementStack = createNativeStackNavigator();
@@ -55,7 +55,7 @@ function ProfileStackScreen() {
     );
 }
 
-{/* For stack navigation between pickup and qr scanning page */}
+{/* stack navigation between pickup and qr scanning page */}
 const PickUpStack = createNativeStackNavigator();
 
 function PickUpStackScreen() {
@@ -125,9 +125,9 @@ function AnnouncementStackScreen() {
         />
       </AnnouncementStack.Navigator>
     );
-}
+  }
 
-// stack navigation between chat pages
+  // stack navigation between chat pages
 function ChatStackScreen() {
     return(
         <ChatStack.Navigator
@@ -143,7 +143,6 @@ function ChatStackScreen() {
             }}
             // initialRouteName='Chats'
         >
-
             {/* main page */}
             <ChatStack.Screen 
                 name="Chats" 
@@ -158,7 +157,6 @@ function ChatStackScreen() {
                     )
                 }}
             />
-
             {/* page to route to from main */}
             <ChatStack.Screen 
                 name="Chat Messages" 
@@ -167,11 +165,9 @@ function ChatStackScreen() {
                     title:"Chat Messages"
                 }}
             />
-
         </ChatStack.Navigator>
     )
 }
-
 
 const Tab = createBottomTabNavigator();
 
@@ -202,7 +198,6 @@ export default function DriverNav() {
                 ),
             }} 
         />
-        
         <Tab.Screen 
             name="PickUpStack" 
             component={PickUpStackScreen} 

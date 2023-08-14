@@ -1,6 +1,6 @@
 //import libaries
 import React  from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import {Text, Card} from 'react-native-paper'
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import {Alert} from 'react-native';
@@ -9,7 +9,6 @@ import axios from 'axios';
 
 // subscription page
 const CancelSubscription = ({navigation}) => {
-    const date = "01/01/24"
     const subscription = 'Premium'
     const thisID = usernameValue;
 
@@ -31,7 +30,6 @@ const CancelSubscription = ({navigation}) => {
                 .put(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/normal/${thisID}`)
                 .then((response) => {
                   if (response.data.success) {
-                    console.log("Subscription canceled", response.data);
                     Alert.alert(
                       "See you",
                       "Your subscription has been canceled successfully!",
@@ -44,7 +42,6 @@ const CancelSubscription = ({navigation}) => {
                       {cancelable: false}
                     );
                   } else {
-                    console.log("Error occurred:", response.date);
                     alert("Subscription cancellation failed, please try again");
                   }
                 })
@@ -119,6 +116,7 @@ const CancelSubscription = ({navigation}) => {
                         </View>
                     </View>
             </Card>
+
             {/* payment button */}
             <TouchableOpacity onPress={cancelButton} style={styles.paymentBtn}>
                 <Text style={styles.btnText}>Cancel Premium</Text>
@@ -130,7 +128,7 @@ const CancelSubscription = ({navigation}) => {
 
 export default CancelSubscription;
 
-
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

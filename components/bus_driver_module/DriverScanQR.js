@@ -2,33 +2,46 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import {Alert} from 'react-native';
+import { usernameValue } from '../Login';
+import axios from 'axios';
 
-export default function DriverScanQR() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [text, setText] = useState("Not yet scanned");
+//main for driver scan qr code
+export default function DriverScanQR({ navigation }) {
+  const [permission, setPermission] = useState(null);
+  const [scannedData, setScannedData] = useState(false);
+  const thisDriver = usernameValue;
 
-  const askForCameraPermission = () => {
+  //date setting for current date
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
+  const hour = today.getHours();
+  const min = today.getMinutes();
+  const second = today.getSeconds();
+  const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
+
+  //get cam permission
+  const requestCam = () => {
     (async () => {
         const { status } = await BarCodeScanner.requestPermissionsAsync();
-        setHasPermission(status == 'granted')
+        setPermission(status == 'granted')
     })()
   }
-
-  //Request Camera Permission
   useEffect(() => {
-    askForCameraPermission();
+    requestCam();
   }, []);
 
-  // what happens when we scan barcode
-  const handleBarCodeScanned = ({type, data}) => {
-    setScanned(true);
-    alert('Bar Code with type' + type + 'and data ' + data + ' has been scanned');
-
+  // handle bar code scanned function
+  const barCodeScan = ({type, data}) => {
+    setScannedData(true);
+    validateQR(data);
   }
 
-  //Check permission and return the screens
-  if (hasPermission === null) {
+  //check permissions
+  if (permission === null) {
     return (
         <View style={styles.container}>
             <Text>Requesting for camera permission</Text>
@@ -36,31 +49,168 @@ export default function DriverScanQR() {
     )
   }
 
-  if (hasPermission === false) {
+  if (permission === false) {
     return (
         <View style={styles.container}>
             <Text style={{margin: 10}}>Requesting for camera permission</Text>
-            <Button title={'Allow Camera'} onPress={() => askForCameraPermission()}/>
+            <Button title={'Allow Camera'} onPress={() => requestCam()}/>
         </View>
     )
-  }
+  };
 
-  // Return the View
+  //validate QR code function
+  const validateQR = (receivedData) => {
+    const bodyData = {
+      QRData: receivedData,
+      todayDate: todayDate,
+      driverID: thisDriver,
+    };
+
+    axios
+      .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/qr/driver/validation', bodyData)
+      .then((response) => {
+        const recStats = response.data[0].status;
+        const recChildID = response.data[0].child_ID;
+        updateStatus(recStats, recChildID);
+      })
+      .catch((error) => {
+        Alert.alert(
+          'Alert',
+          'Invalid QR Code!',
+          [
+            {
+              text: 'Ok',
+            },
+          ]
+        );
+      });
+  };
+
+  //update status function
+  const updateStatus = (thisStatus, thisChildID) => {
+    let tempStats;
+
+    if (thisStatus === 'Waiting') {
+      tempStats = 'Picked Up';
+
+      const bodyData = {
+        datetime: todayDate,
+        childID: thisChildID,
+        driverID: thisDriver,
+        status: tempStats,
+      };
+
+      axios
+        .put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/qr/driver/updatePickedup', bodyData)
+        .then((response) => {
+          Alert.alert(
+            'Alert',
+            'Child Picked Up!',
+            [
+              {
+                text: 'Ok',
+              },
+            ]
+          );
+        })
+        .catch((error) => {
+          Alert.alert(
+            'Error',
+            'Unexpected error occured, try again!',
+            [
+              {
+                text: 'Ok',
+              },
+            ]
+          );
+      });
+
+    } else if (thisStatus === 'Picked Up') {
+      tempStats = 'Dropped Off';
+
+      const bodyData = {
+        datetime: todayDate,
+        childID: thisChildID,
+        driverID: thisDriver,
+        status: tempStats,
+        timestamp: formattedDate,
+      };
+
+      axios
+        .put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/qr/driver/updateDroppedoff', bodyData)
+        .then((response) => {
+          Alert.alert(
+            'Alert',
+            'Child Dropped Off!',
+            [
+              {
+                text: 'Ok',
+              },
+            ]
+          );
+        })
+        .catch((error) => {
+          Alert.alert(
+            'Error',
+            'Unexpected error occured, try again!',
+            [
+              {
+                text: 'Ok',
+              },
+            ]
+          );
+      });
+    } else if (thisStatus === 'Dropped Off') {
+      Alert.alert(
+        'Warning',
+        'This child has already been dropped off!',
+        [
+          {
+            text: 'Ok',
+          },
+        ]
+      );
+    }
+  };
+
+  //function to rescan qr code
+  const reScan = () => {
+    Alert.alert(
+      'Alert',
+      'Scan next data?',
+      [
+        {
+          text: 'No',
+          onPress: () => {
+            navigation.navigate('DriverPickup')
+          },
+          style: 'cancel'
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            setScannedData(false);
+          }
+        }
+      ],
+      {cancelable: false}
+    );
+  };
+
+  // rendering data
   return (
     <View style={styles.container}>
         <View style={styles.barcodebox}>
             <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                style = {{ height: 400, width: 400 }} />
+                onBarCodeScanned={scannedData ? undefined : barCodeScan}
+                style = {{ height: 350, width: 350 }} />
         </View>
-        {/*<Text style={styles.maintext}>{text}</Text>*/}
-
-        {scanned && <Button title='Scan again?' onPress={() => setScanned(false)} color='red'/>}
-    </View>
+        {scannedData && <Button title='Scan again?' onPress={reScan} color='red'/>}
+  </View>
   )
-  
-}
+};
 
+// styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -72,8 +222,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 300,
-        width: 300,
+        height: 350,
+        width: 350,
         overflow: 'hidden',
         borderRadius: 30,
         backgroundColor: 'red',

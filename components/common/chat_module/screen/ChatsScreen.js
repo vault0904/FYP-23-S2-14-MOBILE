@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, FlatList } from 'react-native';
+import {FlatList } from 'react-native';
 import ChatListItem from '../components/ChatItem';
 import Logo from '../../picture/default.jpg'
 

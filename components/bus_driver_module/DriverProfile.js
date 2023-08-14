@@ -1,7 +1,6 @@
 //import libaries
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
@@ -25,7 +24,6 @@ const DriverProfile = ({navigation}) => {
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/${username}`)
       .then((response) => {
         const userData = response.data;
-        console.log('User data:', userData);
         setUserData(userData);
       })
       .catch((error) => {
@@ -64,7 +62,6 @@ const DriverProfile = ({navigation}) => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
           const fName = fNameBef;
-          console.log("fname" , fName);
           const fType = blob.type;
   
           //upload file/data to s3
@@ -77,16 +74,13 @@ const DriverProfile = ({navigation}) => {
             })
             .then((res) => {
               const uploadedURI = res.data.imageURL;
-              console.log(uploadedURI);
               const sendData = {
                 userID : usernameValue,
                 newImageURI : uploadedURI,
               };
               //insert/update new data in user database
-              console.log(sendData);
               axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updateImageURI', sendData)
               .then((response) => {
-                console.log(response.data);
                 setUserData((prevUserData) => ({
                   ...prevUserData,
                   imageURI: uploadedURI,
@@ -123,7 +117,6 @@ const DriverProfile = ({navigation}) => {
       });
 
       if (!result.canceled) {
-        console.log('Selected image URI:', result.assets[0].uri);
         fileUpload(result.assets[0].uri);
       } else {
         console.log('Image picker canceled');
@@ -140,7 +133,6 @@ const DriverProfile = ({navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
-        {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={handleChooseProfilePicture}>
@@ -156,7 +148,6 @@ const DriverProfile = ({navigation}) => {
           </View>
         </Card>
 
-        {/* Profile Information */}
         <View style={styles.information}>
             <Text style={styles.profileInfo}>
                 Profile Information
@@ -231,7 +222,7 @@ const DriverProfile = ({navigation}) => {
 
 export default DriverProfile;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

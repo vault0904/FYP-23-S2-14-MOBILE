@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TeacherHome from './TeacherHome';
 import TeacherPickup from './TeacherPickup';
 import TeacherBusPickUp from './TeacherBusPickup';
-//import DriverDetails from './DriverProfile';
 import DriverList from './DriverList';
 import TeacherScanQR from './TeacherScanQR';
 import { Ionicons, Entypo } from '@expo/vector-icons'
@@ -14,9 +13,7 @@ import TeacherEditProfile from './TeacherEditProfile';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {userLastName} from '../Login';
 import TeacherAnnouncements from '../common/TeacherAnnouncements';
-import StudentProfile from './StudentProfile';
 import StudentQR from './StudentQR';
-
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
 
@@ -26,7 +23,7 @@ const AnnouncementStack = createNativeStackNavigator();
 //driver selection stack screen
 const DriverSelectionStack = createNativeStackNavigator();
 
-{/* For stack navigation between profile and edit profile page */}
+{/* stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
 
 // stack navigation for chat screens
@@ -64,7 +61,7 @@ function ProfileStackScreen() {
     );
 }
 
-{/* For stack navigation between self pickup and qr scanning page */}
+{/* stack navigation between self pickup and qr scanning page */}
 const PickUpStack = createNativeStackNavigator();
 
 function PickUpStackScreen() {
@@ -95,17 +92,11 @@ function PickUpStackScreen() {
                     title:"Scanning QR Code"
                 }}
             />
-            <PickUpStack.Screen 
-                name="StudentProfile" 
-                component={StudentProfile} 
-                options={{
-                    title:"Student Profile"
-                }}
-            />
         </PickUpStack.Navigator>
     );
 }
-{/* For stack navigation between bus driver list, bus pickup and student qr code page */}
+
+{/* stack navigation between bus driver list, bus pickup and student qr code page */}
 function DriverSelectionStackScreen() {
     return (
         <DriverSelectionStack.Navigator
@@ -128,7 +119,7 @@ function DriverSelectionStackScreen() {
                     title:"Driver List"
                 }}
             />
-            {/*Route to bus pick up page*/}
+            {/* route to bus pick up page */}
             <DriverSelectionStack.Screen
                 name="TeacherBusPickup" 
                 component={TeacherBusPickUp}
@@ -136,7 +127,7 @@ function DriverSelectionStackScreen() {
                     title:"Bus Pick Up"
                 }}
             />
-            {/*Route to student QR Code page*/}
+            {/* route to student QR Code page */}
             <DriverSelectionStack.Screen
                 name="StudentQR" 
                 component={StudentQR} 
@@ -144,7 +135,6 @@ function DriverSelectionStackScreen() {
                     title:"Student QR Code"
                 }}
             />
-
         </DriverSelectionStack.Navigator>
     );
 }
@@ -165,7 +155,6 @@ function ChatStackScreen() {
             }}
             // initialRouteName='Chats'
         >
-
             {/* main page */}
             <ChatStack.Screen 
                 name="Chats" 
@@ -180,7 +169,6 @@ function ChatStackScreen() {
                     )
                 }}
             />
-
             {/* page to route to from main */}
             <ChatStack.Screen 
                 name="Chat Messages" 
@@ -189,7 +177,6 @@ function ChatStackScreen() {
                     title:"Chat Messages"
                 }}
             />
-
         </ChatStack.Navigator>
     )
 }
@@ -220,7 +207,6 @@ function AnnouncementStackScreen() {
             title: "Welcome, "+ Lname
           }}
         />
-  
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
           name="TeacherAnnouncementPage" 
@@ -232,7 +218,6 @@ function AnnouncementStackScreen() {
       </AnnouncementStack.Navigator>
     );
   }
-
 
 export default function TeacherNav() {
     return (

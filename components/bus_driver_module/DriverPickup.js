@@ -1,38 +1,153 @@
 //import libaries
-import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
-import React, { useState } from "react";
+import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import { Card, Icon } from 'react-native-elements'
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useIsFocused } from "@react-navigation/native";
+import axios from 'axios';
+import { usernameValue } from '../Login';
+import {Alert} from 'react-native';
 
-const users = [
-    {
-       name: 'Bell Zettifar',
-       address: '858 Yishun Ave 2, S123456'
-    },
-    {
-        name: 'Vernestra Rwoh',
-        address: '411 Sembawang Dr, S173411'
-    },
-    {
-      name: 'Imri Cantos',
-      address: '82A Sembawang Cove, S293821'
-    },
-    {
-      name: 'Reath Silas',
-      address: '765 Sengkang Street 71, S027765 '
-    },
-];
-
+//driver jobs
 const DriverPickup = ({navigation}) => {
-  const pickupDetails = {
-    time: '1:15pm',
+  //set this driver ID
+  const thisDriver = usernameValue;
+  const iSFocused = useIsFocused();
+
+  //date setting for current date
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
+  const hour = today.getHours();
+  const min = today.getMinutes();
+  const second = today.getSeconds();
+  const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
+  const [todayTime, setTodayTime]= useState(null);
+  const [todaySchool, setTodaySchool] = useState(null);
+  //store driver jobs 
+  const [driverJobs, setDriverJobs]= useState([]);
+
+  //fetch driver jobs data
+  const fetchData = () => {
+    axios
+      .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/driverJobs`, {
+        params: {
+          driver_ID: thisDriver,
+          datetime: todayDate,
+        },
+      })
+      .then((response) => {
+        const receivedJobs = response.data;
+        if (receivedJobs && receivedJobs.length >0 ) {
+          setDriverJobs(receivedJobs);
+          setTodayTime(receivedJobs[0].timeslot);
+          setTodaySchool(receivedJobs[0].school_Name)
+        } else {
+          setDriverJobs([]);
+          setTodayTime('');
+          setTodaySchool('');
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching data", error);
+      });
+  };
+
+  //handle onclick for status
+  const manualButton = (thisChildID, thisStatus) => {
+    let tempStatus;
+    let tempChildID = thisChildID;
+
+    if (thisStatus === 'Waiting') {
+      tempStatus = 'Picked Up';
+    } else if ( thisStatus === 'Picked Up') {
+      tempStatus = 'Dropped Off';
+    }
+
+    const confirmMsg = `Update status to ${tempStatus}?`;
+
+    Alert.alert(
+      'Update Status',
+      confirmMsg,
+      [
+        {
+          text: 'Yes',
+          onPress: () => { 
+            updateStatus(tempChildID, tempStatus);
+          },
+        },
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+      ],
+      {cancelable: false }
+    );
   }
 
-  const [time, setTime] = useState(pickupDetails.time);
+  //update status function
+  const updateStatus  = (thisChild, status) => {
+    if (status === 'Picked Up') {
+      const newDetails = {
+        newStats : status,
+        datetime: todayDate,
+        childID : thisChild,
+      }
+      axios
+        .put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updatePickedup', newDetails)
+        .then((response) => {
+          alert("Status updated!");
+          fetchData();
+        })
+        .catch((error) => {
+          alert("Error, please try again!");
+          console.log("Error from server:", error);
+        });
+
+    } else if (status === 'Dropped Off') {
+      const newDetails = {
+        newStats: status,
+        timestamp: formattedDate,
+        datetime: todayDate,
+        childID: thisChild,
+      }
+      axios
+        .put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updateDroppedoff',newDetails)
+        .then((response) => {
+          alert("Status updated!");
+          fetchData();
+        })
+        .catch((error) => {
+          alert("Error, please try again!");
+          console.log("Error from server:", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
+    }
+  }, [iSFocused]);
+  
+  //buffer
+  if (!driverJobs) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   //display
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
         <View>
             <View style={styles.header_row}>
               <Text style={styles.header}>Student Passenger Details</Text>
@@ -43,24 +158,35 @@ const DriverPickup = ({navigation}) => {
               />
             </View>
             <View style={styles.row}>
+                <Text style={styles.label}>Today's School</Text>
+                <TextInput style={styles.input} value={todaySchool !==null ? todaySchool : ''} editable={false}/>
+            </View>
+            <View style={styles.row}>
                 <Text style={styles.label}>Today's Pickup Time</Text>
-                <TextInput style={styles.input} value={time} editable={false}/>
+                <TextInput style={styles.input} value={todayTime !==null ? todayTime : ''} editable={false}/>
             </View>
                 
-            {/* Individual passenger details */}
             <View >
             {
-                users.map((u, i) => {
+              driverJobs.map((data, index) => {
+                const droppedOff = data.status === 'Dropped Off';
                 return (
-                  <Card key={i}>
+                  <Card key={index}>
                     <View style={{flexDirection: 'row'}}>
                         <View style={{flex: '2'}}>
-                            <Text style={styles.name}>{u.name}</Text>
-                            <Text style={styles.address}>{u.address}</Text>
+                            <Text style={styles.name}>{data.fullName}</Text>
+                            <Text style={styles.address}>{data.address}</Text>
                         </View>
                         <View style={{justifyContent: 'flex-end', flex: '1'}}>
-                            <TouchableOpacity key='dropped-off' style={styles.droppedOffBtn}>
-                            <Text style={styles.droppedOffText}>Dropped off</Text>
+                            <TouchableOpacity 
+                              style={[
+                                data.status === 'Waiting' ? styles.waitingButton :
+                                data.status === 'Picked Up' ? styles.pickedupButton :
+                                styles.droppedOffBtn
+                              ]}
+                              onPress = {() => !droppedOff && manualButton(data.child_ID, data.status)}
+                              disabled= {droppedOff}>
+                            <Text style={styles.droppedOffText}>{data.status}</Text>
                             </TouchableOpacity> 
                         </View>
                     </View>
@@ -70,13 +196,14 @@ const DriverPickup = ({navigation}) => {
             }
             </View>
         </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 export default DriverPickup;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -130,10 +257,26 @@ const styles = StyleSheet.create({
     color: '#616161',
     fontSize: 15,
     fontWeight: 'bold',
-    paddingTop: '3.5%'
+    paddingTop: '3.5%',
 },
   droppedOffBtn: {
     backgroundColor: '#56844B',
+    width: '100%',
+    borderRadius: 5,
+    padding: 4,
+    paddingVertical: 5,
+    marginTop: 15,
+  },
+  pickedupButton: {
+    backgroundColor: '#FFA500',
+    width: '100%',
+    borderRadius: 5,
+    padding: 4,
+    paddingVertical: 5,
+    marginTop: 15,
+  },
+  waitingButton: {
+    backgroundColor: '#C0C0C0',
     width: '100%',
     borderRadius: 5,
     padding: 4,

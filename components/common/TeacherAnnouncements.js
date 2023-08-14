@@ -5,6 +5,7 @@ import { Card } from 'react-native-paper';
 import axios from 'axios';
 import { userSchoolID } from '../Login';
 
+//main teacher announcement
 const TeacherAnnouncements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const thisSchool = userSchoolID;
@@ -13,7 +14,6 @@ const TeacherAnnouncements = () => {
     // Fetch top 10 announcements from the API
     axios.get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/announcements/10/${thisSchool}`)
       .then((response) => {
-        console.log('Response from server:', response.data);
         const receivedAnn = response.data;
         setAnnouncements(receivedAnn);
       })

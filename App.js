@@ -5,7 +5,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/Login';
 import TeacherNav from './components/teacher_module/TeacherNav';
 import ParentNav from './components/parent_module/ParentNav';
-import FacilNav from './components/event_facil_module/FacilNav';
 import DriverNav from './components/bus_driver_module/DriverNav';
 import LandingPage from './components/common/LandingPage';
 
@@ -21,8 +20,6 @@ const ScreenNav = ({ route }) => {
     return <TeacherNav />;
   } else if (userType === 'driver') {
     return <DriverNav />;
-  } else if (userType === 'event_facilitator') {
-    return <FacilNav />;
   } else {
     return <p>Invalid User Type</p>;
   }
@@ -57,7 +54,7 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="ScreenNav"
           component={ScreenNav}
-          options={{ headerShown: false, gestureEnabled:false }}
+          options={{ headerShown: false, gestureEnabled: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

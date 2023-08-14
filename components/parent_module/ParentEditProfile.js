@@ -1,6 +1,7 @@
 //import libaries
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, View, Text, TextInput, StyleSheet, 
+  TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { usernameValue } from '../Login';
 
@@ -19,20 +20,17 @@ const ParentEditProfile = () => {
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
   const [successChangePassMessage, setSuccessChangePassMessage] = useState("");
   const [successUpdateProfileMessage, setSuccessUpdateProfileMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showSuccessDetailsModal, setShowSuccessDetailsModal] = useState(false);
   const [showSuccessPassModal, setShowSuccessPassModal] = useState(false);
 
   // Display user data from userdata object
   useEffect(() => {
     const userID = usernameValue;
-
     //axio request to retrieve parent data
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
       .then((response) => {
         const userData = response.data;
-        console.log("user data: ", userData);
         setName(userData.firstName + " " + userData.lastName);
         setUsername(userData.parent_ID);
         setEmail(userData.email);
@@ -53,12 +51,10 @@ const ParentEditProfile = () => {
       newContact: contact,
       newAddress: address,
     };
-    console.log("new details: ", newDetails);
     //axios request to insert/update new details
     axios
       .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateDetails", newDetails)
       .then((response) => {
-        console.log("Response from server:", response.data);
         setSuccessUpdateProfileMessage("Successfully updated profile");
         setShowSuccessDetailsModal(true);
       })
@@ -87,17 +83,14 @@ const ParentEditProfile = () => {
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${userID}`)
       .then((response) => {
         const DBPassword = response.data.password;
-        console.log("password from DB real time", DBPassword);
 
         if (oldPassword !== DBPassword) {
-          console.log("old password: ", oldPassword, "old password from DB: ", DBPassword);
           setOldPasswordErrorMessage("Old password is incorrect");
           return;
         }
         setOldPasswordErrorMessage("");
 
         if (!password && !confirmPassword) {
-          console.log("password: ", password, "confirm password: ", confirmPassword);
           setPasswordErrorMessage("Please enter new password");
           setConfirmPasswordErrorMessage("Please enter new password");
           return;
@@ -106,7 +99,6 @@ const ParentEditProfile = () => {
         setConfirmPasswordErrorMessage("");
 
         if (password !== confirmPassword) {
-          console.log("password: ", password, "confirm password: ", confirmPassword);
           setConfirmPasswordErrorMessage("Password does not match");
           return;
         }
@@ -122,7 +114,6 @@ const ParentEditProfile = () => {
         axios
           .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updatePass", newPass)
           .then((response) => {
-            console.log("Response from server:", response.data);
             setSuccessChangePassMessage("Password changed successfully");
             setShowSuccessPassModal(true);
           })
@@ -144,7 +135,6 @@ const ParentEditProfile = () => {
     >
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <ScrollView style={styles.form}>
-          {/*Profile Information*/}
           <View style={styles.profileView}>
             <Text style={styles.title}>Profile Information</Text>
             <Text style={styles.label}>Name</Text>
@@ -159,7 +149,6 @@ const ParentEditProfile = () => {
           <TouchableOpacity onPress={formValidationDetails} style={styles.btn}>
             <Text style={styles.btnText}>Change Details</Text>
           </TouchableOpacity>
-          {/*Password information*/}
           <View>
             <Text style={styles.title}>Account Information</Text>
             <Text style={styles.label}>Username</Text>
@@ -178,8 +167,6 @@ const ParentEditProfile = () => {
             <Text style={styles.btnText}>Change Password</Text>
           </TouchableOpacity>
         </ScrollView>
-
-        {/* Show success details message */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -193,8 +180,6 @@ const ParentEditProfile = () => {
             </TouchableOpacity>
           </View>
         </Modal>
-
-        {/* Show success pass message */}
         <Modal
           animationType="slide"
           transparent={true}

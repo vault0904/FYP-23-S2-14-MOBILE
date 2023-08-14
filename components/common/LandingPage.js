@@ -1,7 +1,6 @@
 //import libaries
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 //pass usertype to login page
 const LandingPage = ({navigation}) => {
@@ -11,6 +10,7 @@ const LandingPage = ({navigation}) => {
     }
   };
 
+  //display
   return (
     <View>
        <Text style={styles.textHeader}>
@@ -46,16 +46,6 @@ const LandingPage = ({navigation}) => {
           <View style={styles.buttonText}>
             <Text style={styles.buttonHeader}>DRIVER</Text>
             <Text style={styles.buttonCaption}>Bus driver for child pickup</Text>
-          </View>
-        </TouchableOpacity>
-       </View>
-
-       {/* button for event facilitators */}
-       <View style={styles.buttonGroup}>
-        <TouchableOpacity onPress={() => typeHandler('event_facilitator')}>
-          <View style={styles.buttonText}>
-            <Text style={styles.buttonHeader}>EVENT FACILITATOR</Text>
-            <Text style={styles.buttonCaption}>Faciliator for school events</Text>
           </View>
         </TouchableOpacity>
        </View>

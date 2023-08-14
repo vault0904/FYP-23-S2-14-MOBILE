@@ -1,6 +1,7 @@
 //import libaries
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, Modal, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, View, Text, TextInput, StyleSheet, TouchableOpacity, 
+  Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import axios from 'axios';
 import { usernameValue } from '../Login';
 
@@ -11,8 +12,6 @@ const DriverEditProfile = () => {
     const [email, setEmail] = useState("");
     const [contact, setContact] = useState("");
     const [address, setAddress] = useState("");
-    const [company, setCompany] = useState("");
-    const [license, setLicense] = useState("");
     const [oldPassword, setOldPassword] = useState("");
     const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState("");
     const [password, setPassword] = useState("");
@@ -21,7 +20,6 @@ const DriverEditProfile = () => {
     const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] = useState("");
     const [successChangePassMessage, setSuccessChangePassMessage] = useState("");
     const [successUpdateProfileMessage, setSuccessUpdateProfileMessage] = useState("");
-    const [loading, setLoading] = useState(false);
     const [showSuccessDetailsModal, setShowSuccessDetailsModal] = useState(false);
     const [showSuccessPassModal, setShowSuccessPassModal] = useState(false);
 
@@ -33,7 +31,6 @@ const DriverEditProfile = () => {
         .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/${userID}`)
         .then((response) => {
             const userData = response.data;
-            console.log("user data: ", userData);
             setName(userData.firstName + " " + userData.lastName);
             setUsername(userData.driver_ID);
             setEmail(userData.email);
@@ -56,12 +53,10 @@ const DriverEditProfile = () => {
         newContact: contact,
         newAddress: address,
         };
-        console.log("new details: ", newDetails);
         //axios request to update new details in database
         axios
         .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updateDetails", newDetails)
         .then((response) => {
-            console.log("Response from server:", response.data);
             setSuccessUpdateProfileMessage("Successfully updated profile");
             setShowSuccessDetailsModal(true);
         })
@@ -91,17 +86,14 @@ const DriverEditProfile = () => {
         .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/${userID}`)
         .then((response) => {
             const DBPassword = response.data.password;
-            console.log("password from DB real time", DBPassword);
 
             if (oldPassword !== DBPassword) {
-            console.log("old password: ", oldPassword, "old password from DB: ", DBPassword);
             setOldPasswordErrorMessage("Old password is incorrect");
             return;
             }
             setOldPasswordErrorMessage("");
 
             if (!password && !confirmPassword) {
-            console.log("password: ", password, "confirm password: ", confirmPassword);
             setPasswordErrorMessage("Please enter new password");
             setConfirmPasswordErrorMessage("Please enter new password");
             return;
@@ -110,7 +102,6 @@ const DriverEditProfile = () => {
             setConfirmPasswordErrorMessage("");
 
             if (password !== confirmPassword) {
-            console.log("password: ", password, "confirm password: ", confirmPassword);
             setConfirmPasswordErrorMessage("Password does not match");
             return;
             }
@@ -125,7 +116,6 @@ const DriverEditProfile = () => {
             axios
             .put("https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/updatePass", newPass)
             .then((response) => {
-                console.log("Response from server:", response.data);
                 setSuccessChangePassMessage("Password changed successfully");
                 setShowSuccessPassModal(true);
             })
@@ -147,7 +137,6 @@ const DriverEditProfile = () => {
         >
           <View style={{ flex: 1, justifyContent: 'center' }}>
             <ScrollView style={styles.form}>
-              {/*Profile Information*/}
               <View style={styles.profileView}>
                 <Text style={styles.title}>Profile Information</Text>
                 <Text style={styles.label}>Name</Text>
@@ -162,7 +151,6 @@ const DriverEditProfile = () => {
               <TouchableOpacity onPress={formValidationDetails} style={styles.btn}>
                 <Text style={styles.btnText}>Change Details</Text>
               </TouchableOpacity>
-              {/*Password information*/}
               <View>
                 <Text style={styles.title}>Account Information</Text>
                 <Text style={styles.label}>Username</Text>
@@ -181,8 +169,6 @@ const DriverEditProfile = () => {
                 <Text style={styles.btnText}>Change Password</Text>
               </TouchableOpacity>
             </ScrollView>
-    
-            {/* Show success details message */}
             <Modal
               animationType="slide"
               transparent={true}
@@ -196,8 +182,6 @@ const DriverEditProfile = () => {
                 </TouchableOpacity>
               </View>
             </Modal>
-    
-            {/* Show success pass message */}
             <Modal
               animationType="slide"
               transparent={true}
@@ -215,7 +199,6 @@ const DriverEditProfile = () => {
         </KeyboardAvoidingView>
       );
     };
-
 
 //css styles
 const styles = StyleSheet.create({

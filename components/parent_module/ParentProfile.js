@@ -1,8 +1,7 @@
 //import libaries
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useLayoutEffect} from 'react';
 import { Linking } from 'react-native';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
@@ -18,14 +17,12 @@ const ParentProfile = ({ navigation }) => {
   //username is equal to the username from login
   const username = usernameValue;
   const iSFocused = useIsFocused();
-
   //fetch parent data from database
   const fetchData = () => {
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/${username}`)
       .then((response) => {
         const userData = response.data;
-        //console.log('User data:', userData);
         setUserData(userData);
       })
       .catch((error) => {
@@ -50,7 +47,8 @@ const ParentProfile = ({ navigation }) => {
       </View>
     );
   }
-
+  
+  //navigate based on type of sub tier
   const navigateType = () => {
     if (userData.subscription === 'Normal') {
       navigation.navigate('subPage');
@@ -74,7 +72,6 @@ const ParentProfile = ({ navigation }) => {
           const base64String = reader.result.split(',')[1];
           const fNameBef = uri.split("/ImagePicker/")[1];
           const fName = fNameBef;
-          console.log("fname" , fName);
           const fType = blob.type;
   
           //upload file to s3
@@ -87,16 +84,13 @@ const ParentProfile = ({ navigation }) => {
             })
             .then((res) => {
               const uploadedURI = res.data.imageURL;
-              console.log(uploadedURI);
               const sendData = {
                 userID : usernameValue,
                 newImageURI : uploadedURI,
               };
               //insert/update image in user database
-              console.log(sendData);
               axios.put('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/updateImageURI', sendData)
               .then((response) => {
-                console.log(response.data);
                 setUserData((prevUserData) => ({
                   ...prevUserData,
                   imageURI: uploadedURI,
@@ -133,7 +127,6 @@ const ParentProfile = ({ navigation }) => {
       });
 
       if (!result.canceled) {
-        console.log('Selected image URI:', result.assets[0].uri);
         fileUpload(result.assets[0].uri);
       } else {
         console.log('Image picker canceled');
@@ -150,10 +143,8 @@ const ParentProfile = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userInfoSection}>
-        {/* Top Profile Card */}
         <Card style={styles.cardDisplay}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {/* Add TouchableOpacity to make the image clickable */}
             <TouchableOpacity onPress={handleChooseProfilePicture}>
               <Avatar.Image 
                 source={imageSource}
@@ -166,8 +157,6 @@ const ParentProfile = ({ navigation }) => {
             </View>
           </View>
         </Card>
-
-        {/* Profile Information */}
         <View style={styles.information}>
             <Text style={styles.profileInfo}>
                 Profile Information
@@ -257,7 +246,7 @@ const ParentProfile = ({ navigation }) => {
 
 export default ParentProfile;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

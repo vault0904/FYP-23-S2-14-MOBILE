@@ -1,4 +1,5 @@
-import { View, Text, ImageBackground, StyleSheet, FlatList, KeyboardAvoidingView} from 'react-native';
+//import libaries
+import { View, ImageBackground, StyleSheet, FlatList} from 'react-native';
 import { useEffect } from 'react';
 import bg from '../../picture/BG.png';
 import Message from '../message/message';

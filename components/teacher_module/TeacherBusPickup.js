@@ -1,60 +1,97 @@
-import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, ScrollView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import { Card, ListItem, Button, Icon } from 'react-native-elements';
-import { Avatar } from 'react-native-paper';
-import React, { useState } from "react";
-import Logo from '../common/picture/default.jpg'
-import StudentProfile from './StudentProfile';
-
-const users = [
-    {
-       name: 'Bell Zettifar',
-       status: 'picked up',
-       time: '1:25pm'
-    },
-    {
-        name: 'Vernestra Rwoh',
-        status: 'picked up',
-        time: '1:25pm'
-    },
-    {
-      name: 'Imri Cantos',
-      status: 'not picked up',
-      time: '1:25pm'
-    },
-    {
-      name: 'Reath Silas',
-      status: 'not picked up',
-      time: '1:25pm'
-    },
-];
+//import libaries
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { Card} from 'react-native-elements'
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useIsFocused, useRoute } from "@react-navigation/native";
+import axios from 'axios';
 
 const TeacherBusPickUp = ({navigation}) => {
+  //set driver_ID
+  const route = useRoute();
+  const {driverID} = route.params;
+
+  //date setting for current date
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
+  const iSFocused = useIsFocused();
+  //set bus driver jobs
+  const [busJobs, setBusJobs] = useState([]);
+
+  //fetch bus pickup data
+  const fetchData = () => {
+    axios
+      .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/teacher/busJobs', {
+        params: {
+          datetime: todayDate,
+          driverID: driverID,
+        },
+      })
+      .then((response) => {
+        const recBusJobs = response.data;
+        if(recBusJobs && recBusJobs.length >0) {
+          setBusJobs(recBusJobs);
+        } else {
+          setBusJobs([]);
+        } 
+      })
+      .catch((error) => {
+        console.log("Error fetching bus pick up data", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
+    }
+  }, [iSFocused]);
   
+  //buffer
+  if (!busJobs) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  //display
   return (
     <ScrollView style={styles.container}>
         <View>
             <View style={styles.header_row}>
-                <Text style={styles.header}>Student Pick-Up Details</Text>
+                <Text style={styles.header}>Student Pick-Up Details{'\t\t'}{todayDate}</Text>
             </View>
-
-            {/* Individual passenger details */}
             <View >
             {
-                users.map((u, i) => {
+              busJobs.map((data, index) => {
                 return (
-                    <Card key={i}>
+                    <Card key={index}>
                       <TouchableOpacity 
-                        onPress={() => navigation.navigate('StudentQR')}
+                        onPress={() => navigation.navigate('StudentQR', 
+                        {childID: data.child_ID, childfName: data.fullName})}
                       >
                         <View style={{flexDirection: 'row'}}>
                             <View style={{flex: '2', marginTop: 5}}>
-                                <Text style={styles.name}>{u.name}</Text>
-                                <Text style={styles.time}>{u.time}</Text>
+                                <Text style={styles.name}>{data.fullName}</Text>
+                                <Text style={styles.address}>{data.dropoff_Address}</Text>
+                                <Text style={styles.time}>{data.timeslot}</Text>
                             </View>
                             <View style={{justifyContent: 'flex-end', flex: '1'}}>
-                                <TouchableOpacity key='dropped-off' style={styles.droppedOffBtn}>
-                                <Text style={styles.droppedOffText}>Picked up</Text>
+                                <TouchableOpacity
+                                style = {[
+                                  data.status === 'Waiting' ? styles.waitingButton : 
+                                  data.status === 'Picked Up' ? styles.pickedupButton:
+                                  styles.droppedOffBtn
+                                ]} 
+                                disabled = {true}>
+                                <Text style={styles.droppedOffText}>{data.status}</Text>
                                 </TouchableOpacity> 
                             </View>
                         </View>
@@ -71,7 +108,7 @@ const TeacherBusPickUp = ({navigation}) => {
 
 export default TeacherBusPickUp;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -108,6 +145,9 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#56844B',
     fontWeight: '500'
+  },
+  address: {
+    paddingTop: 5
   },
   time: {
     paddingTop: 5
@@ -179,7 +219,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 4,
     paddingVertical: 5,
-    marginTop: 5,
+    marginTop: 15,
+  },
+  pickedupButton: {
+    backgroundColor: '#FFA500',
+    width: '100%',
+    borderRadius: 5,
+    padding: 4,
+    paddingVertical: 5,
+    marginTop: 15,
+  },
+  waitingButton: {
+    backgroundColor: '#C0C0C0',
+    width: '100%',
+    borderRadius: 5,
+    padding: 4,
+    paddingVertical: 5,
+    marginTop: 15,
   },
   droppedOffText: {
     color: '#FFFFFF',

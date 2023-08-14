@@ -4,7 +4,6 @@ import { StyleSheet, View, Text, TextInput, TouchableWithoutFeedback, Keyboard,T
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
 
-
 //global variables
 export let usernameValue = '';
 export let userLastName = '';
@@ -23,7 +22,6 @@ const Login = ({ navigation }) => {
   const userType = routeCheck || null;
 
   if (!userType) {
-    console.log("Type undefined, navigating back to landing page!")
     navigation.navigate('Landing');
     return null;
   }
@@ -31,9 +29,6 @@ const Login = ({ navigation }) => {
   // Login function
   const handleLogin = () => {
     //to test in console to see what was being received
-    console.log('Username: ', username);
-    console.log('Password: ', password);
-    console.log("Type received from landing :", userType );
     usernameValue = username;
 
     //create user data object
@@ -69,7 +64,6 @@ const Login = ({ navigation }) => {
       axios
         .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/login', userData)
         .then((response) => {
-          //console.log("response for teacher", response.data);
           if (response.data.success) {
             const userLName = response.data.LName;
             const userSchool = response.data.schoolID;
@@ -88,28 +82,11 @@ const Login = ({ navigation }) => {
       axios
         .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/login', userData)
         .then((response) => {
-          //console.log("response for driver", response.data);
           if (response.data.success) {
             const userLName = response.data.LName;
             const userVendor = response.data.vendorID;
             userLastName = userLName;
             userVendorID = userVendor;
-            navigation.navigate('ScreenNav', {userType});
-          } else {
-            console.log(response.data.error);
-            alert("Invalid username or password!")
-          }
-        })
-        .catch((error) => {
-          console.log("Error during login!", error);
-        });
-    } else if (userType === "event_facilitator") {
-      axios
-        .post('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/event_faci/login', userData)
-        .then((response) => {
-          if (response.data.success) {
-            const userLName = response.data.LName;
-            userLastName = userLName;
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
@@ -138,7 +115,6 @@ const Login = ({ navigation }) => {
           <Text style={styles.subTitleContainer}>Welcome back.</Text>
         </View>
         <View style={styles.inputView}>
-          {/* Username Input */}
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.inputText}
@@ -147,7 +123,6 @@ const Login = ({ navigation }) => {
               onChangeText={(username) => setUsername(username)}
             />
           </View>
-          {/* Password Input */}
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.inputText}
@@ -165,6 +140,7 @@ const Login = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
+
 export default Login;
 
 // Styling

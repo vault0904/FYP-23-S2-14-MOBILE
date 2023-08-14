@@ -1,38 +1,131 @@
-import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
-import React, { useState } from "react";
-
-const users = [
-    {
-       name: 'Bell Zettifar',
-       time: '1:15pm'
-    },
-    {
-        name: 'Vernestra Rwoh',
-        time: '1:25pm'
-    },
-    {
-      name: 'Imri Cantos',
-      time: '1:35pm'
-    },
-    {
-      name: 'Reath Silas',
-      time: '1:35pm'
-    },
-];
+//import libaries
+import {SafeAreaView, View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import { Card, Icon } from 'react-native-elements'
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { useIsFocused } from "@react-navigation/native";
+import axios from 'axios';
+import {Alert} from 'react-native';
+import {teacherGateName, teacherGateID} from './TeacherHome';
 
 const TeacherPickup = ({navigation}) => {
-  const pickup = {
-    gate: 'west gate',
+  //date setting for current date
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
+  const hour = today.getHours();
+  const min = today.getMinutes();
+  const second = today.getSeconds();
+  const formattedDate = year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
+
+  //set this gate name
+  const thisGateName = teacherGateName;
+  //set this gate ID
+  const thisGateID = teacherGateID;
+  const iSFocused = useIsFocused();
+  //set self pickup jobs data
+  const [selfJobs, setSelfJobs] = useState([]);
+
+  //fetch self pickup data
+  const fetchData = () => {
+    axios
+      .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/teacher/selfpikcup', {
+        params: {
+          datetime: todayDate,
+          gateID: thisGateID,
+        },
+      })
+      .then((response) => {
+        const recSelfJobs = response.data;
+        if (recSelfJobs && recSelfJobs.length >0) {
+          setSelfJobs(recSelfJobs);
+        } else {
+          setSelfJobs([]);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching self pick up data", error);
+      });
+  };
+
+  //handle onclick for status
+  const manualButton = (thisChildID, thisStatus) => {
+    let tempStatus;
+    let tempChildID = thisChildID;
+
+    if (thisStatus === 'Waiting') {
+      tempStatus = 'Picked Up';
+    }
+    const confirmMsg = `Update status to ${tempStatus}?`;
+
+    Alert.alert(
+      'Update Status',
+      confirmMsg,
+      [
+        {
+          text: 'Yes',
+          onPress: () => {
+            updateStatus(tempChildID, tempStatus);
+          },
+        },
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+      ],
+      {cancelable: false}
+    );
   }
-  const [gate, setGate] = useState(pickup.gate);
+
+  //update status function
+  const updateStatus = (thisChild, status) => {
+    if (status === 'Picked Up') {
+      const newDetails = {
+        newStats : status,
+        datetime: todayDate,
+        childID: thisChild,
+        timestamp: formattedDate,
+      }
+      axios
+        .put(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/teacher/updatePickedUp`, newDetails)
+        .then((response) => {
+          alert("Status updated!");
+          fetchData();
+        })
+        .catch((error) => {
+          alert("Error, please try again!");
+          console.log("Error from server:", error);
+        });
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
+    }
+  }, [iSFocused]);
   
+  //buffer
+  if (!selfJobs) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+  
+  //display
   return (
     <SafeAreaView style={styles.container}>
+    <ScrollView>
         <View>
             <View style={styles.header_row}>
-                <Text style={styles.header}>Student Pick-Up Details</Text>
+                <Text style={styles.header}>Self Pick-Up Details{'\t'}</Text>
                 <Icon style={styles.icon} 
                       name='qrcode-scan'
                       type='material-community'
@@ -41,23 +134,28 @@ const TeacherPickup = ({navigation}) => {
             </View>
             <View style={styles.row}>
                 <Text style={styles.label}>Gate Assignment</Text>
-                <TextInput style={styles.input} value={gate} editable={false}/>
+                <TextInput style={styles.input} value={thisGateName !==null ? thisGateName: ''} editable={false}/>
             </View>
-                
-            {/* Individual passenger details */}
             <View >
             {
-                users.map((u, i) => {
+              selfJobs.map((data, index) => {
+                const pickedUp = data.status === 'Picked Up';
                 return (
-                    <Card key={i}>
+                    <Card key={index}>
                         <View style={{flexDirection: 'row'}}>
                             <View style={{flex: '2', marginTop: 5}}>
-                                <Text style={styles.name}>{u.name}</Text>
-                                <Text style={styles.time}>{u.time}</Text>
+                                <Text style={styles.name}>{data.fullName}</Text>
+                                <Text style={styles.time}>{data.timeslot}</Text>
                             </View>
                             <View style={{justifyContent: 'flex-end', flex: '1'}}>
-                                <TouchableOpacity key='dropped-off' style={styles.droppedOffBtn}>
-                                <Text style={styles.droppedOffText}>Picked up</Text>
+                                <TouchableOpacity 
+                                  style={[
+                                    data.status === 'Waiting' ? styles.waitingButton:
+                                    styles.pickedupButton
+                                  ]}
+                                  onPress = {() => !pickedUp && manualButton(data.child_ID, data.status)}
+                                  disabled ={pickedUp}>
+                                <Text style={styles.droppedOffText}>{data.status}</Text>
                                 </TouchableOpacity> 
                             </View>
                         </View>
@@ -67,13 +165,14 @@ const TeacherPickup = ({navigation}) => {
             }
             </View>
         </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 export default TeacherPickup;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -135,13 +234,21 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       paddingTop: '3.5%'
   },
-  droppedOffBtn: {
+  pickedupButton: {
     backgroundColor: '#56844B',
     width: '100%',
     borderRadius: 5,
     padding: 4,
     paddingVertical: 5,
-    marginTop: 5,
+    marginTop: 15,
+  },
+  waitingButton: {
+    backgroundColor: '#C0C0C0',
+    width: '100%',
+    borderRadius: 5,
+    padding: 4,
+    paddingVertical: 5,
+    marginTop: 15,
   },
   droppedOffText: {
     color: '#FFFFFF',

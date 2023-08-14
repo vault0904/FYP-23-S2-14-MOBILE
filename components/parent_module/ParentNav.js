@@ -6,19 +6,19 @@ import ParentHome from './ParentHome';
 import ChildDetails from './ChildProfile';
 import ParentPickup from './PickupSelection';
 import ChildSelection from './ChildSelectionPage';
-import { Ionicons, Entypo } from '@expo/vector-icons'
 import ParentProfile from './ParentProfile';
+import { Ionicons, Entypo } from '@expo/vector-icons'
 import ParentEditProfile from './ParentEditProfile';
 import ChildProfileSelection from './ChildProfileSelection';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ParentAnnouncements from '../common/ParentAnnouncementPage';
 import CancelSubscription from './subscription_module/CancelSubscriptionPage';
 import Subscriptionpage from './subscription_module/SubscriptionPage';
-
 //import the userLastName from login
 import {userLastName} from '../Login';
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
+
 
 const AnnouncementStack = createNativeStackNavigator();
 
@@ -56,7 +56,6 @@ function ProfileStackScreen() {
                     title:"Profile"
                 }}
             />
-
             {/* page to route to from main */}
             <ProfileStack.Screen 
                 name="ParentEditProfile" 
@@ -107,7 +106,6 @@ function ChildSelectionStackScreen() {
                     title:"Select Child Pickup"
                 }}
             />
-
             {/* page to route to from main */}
             <PickupSelectStack.Screen 
                 name="PickupSelection" 
@@ -142,7 +140,6 @@ function ChildProfileStackScreen() {
                     title:"Select Child Profile"
                 }}
             />
-
             {/* page to route to from main */}
             <ChildProfileStack.Screen 
                 name="ChildDetails" 
@@ -179,7 +176,6 @@ function AnnouncementStackScreen() {
             title: "Welcome, "+ Lname
           }}
         />
-  
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
           name="ParentAnnouncementPage" 
@@ -190,7 +186,7 @@ function AnnouncementStackScreen() {
         />
       </AnnouncementStack.Navigator>
     );
-}
+  }
 
 function ChatStackScreen() {
     return(
@@ -205,9 +201,7 @@ function ChatStackScreen() {
                 },
                 headerBackTitleVisible: false
             }}
-            // initialRouteName='Chats'
         >
-
             {/* main page */}
             <ChatStack.Screen 
                 name="Chats" 
@@ -222,8 +216,6 @@ function ChatStackScreen() {
                     )
                 }}
             />
-
-            {/* page to route to from main */}
             <ChatStack.Screen 
                 name="Chat Messages" 
                 component={ChatScreen} 
@@ -231,7 +223,6 @@ function ChatStackScreen() {
                     title:"Chat Messages"
                 }}
             />
-
         </ChatStack.Navigator>
     )
 }
@@ -265,7 +256,6 @@ export default function ParentNav() {
                 ),
             }} 
         />
-
         <Tab.Screen 
             name="Child Details" 
             component={ChildProfileStackScreen} 

@@ -1,8 +1,8 @@
 //import libaries
 import React, { useState }  from 'react';
-import { StyleSheet, View, SafeAreaView, TextInput, TouchableOpacity, Button, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, 
+  KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import {Text, Card} from 'react-native-paper'
-import { ListItem } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { SelectList } from 'react-native-dropdown-select-list'
 import {Alert} from 'react-native';
@@ -11,25 +11,20 @@ import axios from 'axios';
 
 // subscription page
 const Subscriptionpage = ({navigation}) => {
-    const date = "01/01/24"
     const subscription = 'Normal'
     const [selected, setSelected] = React.useState(null);
     const [selected2, setSelected2] = React.useState(null);
     const thisCard = selected;
     const thisCountry = selected2;
     const thisID = usernameValue;
-    console.log("Card selected: ", thisCard);
-    console.log("Country selected: ", thisCountry);
 
     const cardType = [
-      // disabled param : to show the timeslot is fully booked
       {key:'1', value:'Visa'},
       {key:'2', value:'Mastercard'},
       {key:'3', value:'Amex'},
     ]
 
     const country = [
-      // disabled param : to show the timeslot is fully booked
       {key:'1', value:'Singapore'},
       {key:'2', value:'Australia'},
       {key:'3', value:'Malaysia'},
@@ -41,12 +36,8 @@ const Subscriptionpage = ({navigation}) => {
     const [cardNo, setCardNo] = useState("");
     const [expireDate, setExpire] = useState("");
     const [CVV, setCVV] = useState("");
-    console.log("first name: ", firstName);
-    console.log("last name: ", lastName);
-    console.log("card No: ", cardNo);
-    console.log("Expire date: ", expireDate);
-    console.log("Card CVV: ", CVV);
 
+    //function to pay
     const payButton = () => {
       if (
         thisCard !== null &&
@@ -61,7 +52,6 @@ const Subscriptionpage = ({navigation}) => {
           .put(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/parent/prem/${thisID}`)
           .then((response) => {
             if (response.data.success) {
-              console.log("Response Success", response.data);
               Alert.alert(
                 "Thank you!",
                 "Welcome to the premium club!",
@@ -74,7 +64,6 @@ const Subscriptionpage = ({navigation}) => {
                 { cancelable: false }
               );
             } else {
-              console.log("Error occurred:", response.data);
               alert("Subscription failed. Please try again!");
             }
           })
@@ -86,7 +75,6 @@ const Subscriptionpage = ({navigation}) => {
         alert("Please fill in the right details");
       }
     };
-
 
   //display
   return (
@@ -107,6 +95,7 @@ const Subscriptionpage = ({navigation}) => {
               <Text style={styles.price}>Free</Text>
               <Text style={styles.text2}>{subscription} Account</Text>
             </View>
+
               {/*  basic plan benefits */}
               <View style={{backgroundColor: '#56844B', marginHorizontal: 15, marginBottom: 10, marginTop: 10}}>
                 <View style={{flexDirection: 'row'}}>
@@ -159,7 +148,6 @@ const Subscriptionpage = ({navigation}) => {
               <View>
                 <Text style={styles.headerText2}> Pay with credit or debit card </Text>
                 <Text style={styles.text5}>All transactions are secure and encrypted.</Text>
-
                 <Text style={styles.textLabel}>Card Type</Text>
                 <View style={styles.dropdownContainer}>
                   <SelectList 
@@ -222,12 +210,10 @@ const Subscriptionpage = ({navigation}) => {
                   />
                 </View>
               </View>
-                  
                   {/* payment button */}
                   <TouchableOpacity onPress={payButton} style={styles.paymentBtn}>
                       <Text style={styles.btnText}>Pay</Text>
                   </TouchableOpacity>
-
                   </View>
               </View>
       </ScrollView>
@@ -237,6 +223,7 @@ const Subscriptionpage = ({navigation}) => {
 
 export default Subscriptionpage;
 
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,

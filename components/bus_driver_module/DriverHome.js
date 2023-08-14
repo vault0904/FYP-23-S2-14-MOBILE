@@ -1,8 +1,9 @@
 //import new libaries
-import React, { useEffect, useState } from "react";
-import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useEffect, useState, useLayoutEffect} from "react";
+import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity} from 'react-native';
 import axios from 'axios';
-import { userVendorID } from '../Login';
+import { userVendorID, usernameValue } from '../Login';
+import { useIsFocused } from "@react-navigation/native";
 
 const Item = ({message}) => (
   <View style={styles.item}>
@@ -11,33 +12,68 @@ const Item = ({message}) => (
 );
 
 const DriverHome = ({ navigation }) => {
-  const pickupDetails = {
-    time: '1:15pm',
-    school: 'Starfleet Primary',
-    address: '123 Woodlands Av',
-    bus_plate: 'PD501X',
-  }
+  //date setting for current date
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day = today.getDate();
+  const todayDate = year + "-" + month + "-" + day;
 
-  const [time, setTime] = useState(pickupDetails.time);
-  const [school, setSchool] = useState(pickupDetails.school);
-  const [address, setAddress] = useState(pickupDetails.address);
-  const [bus_plate, setBusPlate] = useState(pickupDetails.bus_plate);
+  //announcements array
   const [announcements, setAnnouncements] = useState([]);
+  //this vendor ID
   const thisVendor = userVendorID;
+  const iSFocused = useIsFocused();
+  //this driver ID
+  const thisDriver = usernameValue;
+  const [jobDetails, setJobDetails] = useState();
 
   // Grab and fetch the latest 3 announcements from the database
-  useEffect(() => {
+  const fetchData = () => {
     axios
       .get(`https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/driver/announcements/3/${thisVendor}`)
       .then((response) => {
-        console.log('Response from server:', response.data);
         const receivedAnn = response.data;
         setAnnouncements(receivedAnn);
       })
       .catch((error) => {
         console.log('Error fetching announcements', error);
       });
+    
+    //axios request to fetch driver job details
+    axios
+      .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/jobDetails' , {
+        params: {
+          driver_ID: thisDriver,
+          datetime: todayDate,
+        },
+      })
+      .then((response) => {
+        const recJobDetails = response.data;
+        setJobDetails (recJobDetails);
+      })
+      .catch((error) => {
+        console.log("Error fecthing pickup details", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
+  useLayoutEffect(() => {
+    if (iSFocused)  { 
+      fetchData();
+    }
+  }, [iSFocused]);
+  
+  if (!announcements && !jobDetails) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   //display
   return(
@@ -60,26 +96,26 @@ const DriverHome = ({ navigation }) => {
         keyExtractor={(item) => item.ann_ID.toString()}
         />
     </View>
-        <Text style={styles.header}>Today's pickup details</Text>
+        <Text style={styles.header}>Today's pickup details{'\t\t\t'}{todayDate}</Text>
 
         <View style={styles.row}>
           <Text style={styles.label}>Time</Text>
-          <TextInput style={styles.input} value={time} onChangeText={setTime} editable={false} />
+          <TextInput style={styles.input} value={jobDetails?.timeslot} editable={false} />
         </View>
 
         <View style={styles.row}>
           <Text style={styles.label}>School</Text>
-          <TextInput style={styles.input} value={school} onChangeText={setSchool} editable={false} />
+          <TextInput style={styles.input} value={jobDetails?.school_Name} editable={false} />
         </View>
         
         <View style={styles.row}>
           <Text style={styles.label}>Plate</Text>
-          <TextInput style={styles.input} value={bus_plate} onChangeText={setBusPlate} editable={false} />
+          <TextInput style={styles.input} value={jobDetails?.vehicle_Plate} editable={false} />
         </View>
 
         <View style={styles.row}>
           <Text style={styles.label}>Region</Text>
-          <TextInput style={styles.input} value={address} onChangeText={setAddress} editable={false} />
+          <TextInput style={styles.input} value={jobDetails?.dropoff_Region} editable={false} />
         </View>
 
       </View>
@@ -106,7 +142,7 @@ const styles = StyleSheet.create({
       flexWrap: 'wrap',
   },
   list: {
-      maxHeight: 300
+      maxHeight: 230
   },
   item: {
       backgroundColor: 'lightgrey',
@@ -133,6 +169,7 @@ const styles = StyleSheet.create({
       fontSize: 12,
       fontWeight: 'bold',
       marginTop: 15,
+      marginLeft: 5,
   },
   input: {
       padding: 15,

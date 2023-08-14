@@ -1,72 +1,107 @@
-import React from 'react';
+//import libaries
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-elements';
 import { Avatar } from 'react-native-paper';
-import Logo from '../common/picture/driver.jpg'
+import axios from 'axios';
+import {useIsFocused } from '@react-navigation/native';
+import { userSchoolID } from '../Login';
 
-const users = [
-    {
-       name: 'Bell Zettifar',
-       plate: 'BX123Q',
-       region: 'West'
-    },
-    {
-        name: 'Vernestra Rwoh',
-        plate: 'BX123Q',
-        region: 'West'
-    },
-    {
-        name: 'Imri Cantos',
-        plate: 'BX123Q',
-        region: 'West'
-    },
-    {
-        name: 'Reath Silas',
-        plate: 'BX123Q',
-        region: 'North'
-    },
-];
+const DriverList = ({ navigation }) => {
+    //date setting for current date
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    const todayDate = year + "-" + month + "-" + day;
 
-const DriverList = ({navigation}) => (
-    <ScrollView style={styles.container}>
-        <View style={styles.headerContainer}>
-            <Text style={styles.header}>Driver Details</Text>
-        </View>
-        {/* Individual driver details */}
-        {
-                users.map((u, i) => {
-                return (
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate('TeacherBusPickup')}>
-                        <Card key={i} containerStyle={styles.card}>
-                            <View style={{flexDirection: 'row', margin: 5}}>
-                                <Avatar.Image 
-                                    source={Logo}
-                                    size={70}
-                            />
-                                <View style={{marginLeft: 20, marginTop: 5}}>
-                                    <Text style={styles.title} >{u.name}</Text>
-                                    <Text style={styles.caption}>{u.plate}</Text>
-                                    <Text style={styles.caption}>{u.region}</Text>
-                                </View>
-                            </View>
-                        </Card>
-                    </TouchableOpacity>
-                );
-                })
+    //set this school_ID
+    const thisSchool = userSchoolID;
+    const iSFocused = useIsFocused();
+    //set driver data for the school
+    const [driverData , setDriverData] = useState([]);
+
+    //fetch driver data
+    const fetchData = () => {
+        axios
+            .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/teacher/drivers', {
+                params: {
+                    datetime: todayDate,
+                    schoolID : thisSchool,
+                },
+            })
+            .then((response) => {
+                const recDriverData = response.data;
+                if(recDriverData && recDriverData.length >0) {
+                    setDriverData(recDriverData);
+                } else {
+                    setDriverData([]);
+                }
+            })
+            .catch((error) => {
+                console.log("Error fetching driver data", error);
+            });
+    };
+
+    useEffect(() => {
+        fetchData();
+      }, []);
+    
+      useLayoutEffect(() => {
+        if (iSFocused)  { 
+          fetchData();
         }
-    </ScrollView>
-);
+      }, [iSFocused]);
+      
+      //buffer
+      if (!driverData) {
+        return (
+          <View style={styles.loadingContainer}>
+            <Text>Loading...</Text>
+          </View>
+        );
+      }
+
+    //display
+    return (
+      <ScrollView style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Driver Details for {'\t\t\t\t'}{todayDate}</Text>
+        </View>
+        {driverData.map((data, index) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigation.navigate('TeacherBusPickup', {driverID: data.driver_ID})}>
+              <Card containerStyle={styles.card}>
+              <View style={{ flexDirection: 'row', 
+                alignItems: 'center',
+                padding: 10 }}>
+                   <Avatar.Image
+                    source ={data.imageURI ? {uri: data.imageURI} : require('../common/picture/driver.jpg')}
+                    size = {80}
+                   />
+                  <View style={{ marginLeft: 35, marginTop: 5 }}>
+                    <Text style={styles.title}>{'Name     : '}{data.fullName}</Text>
+                    <Text style={styles.caption}>{'Car Plate : '}{data.vehicle_Plate}</Text>
+                    <Text style={styles.caption}>{'Time        : '}{data.timeslot}</Text>
+                    <Text style={styles.caption}>{'Region    : '}{data.dropoff_Region}</Text>
+                  </View>
+                </View>
+              </Card>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    );
+};
 
 export default DriverList;
-
-{/* styling for driver list */}
+  
+//styling
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      // backgroundColor: '#fff',
-      // alignItems: 'center',
-      // justifyContent: 'center',
     },
     header: {
         color: '#56844B',
@@ -78,7 +113,7 @@ const styles = StyleSheet.create({
     card: {
         paddingBottom: 10,
         paddingLeft: 15,
-        paddingRight: 130,
+        paddingRight: 100,
         backgroundColor: '#56844B',
         paddingTop: 5,
         borderRadius: 15,
@@ -86,7 +121,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 17,
         fontWeight: 'bold',
-        color: '#ffffff'
+        color: '#ffffff',
+        marginBottom: 5,
     },
     caption: {
         paddingTop: 5,

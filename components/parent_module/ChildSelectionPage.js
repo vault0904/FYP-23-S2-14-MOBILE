@@ -1,6 +1,6 @@
 //import libaries
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
-import {Avatar, Title, Caption, Text, Card} from 'react-native-paper'
+import {Avatar, Title, Text, Card} from 'react-native-paper'
 import React, { useState, useEffect, useLayoutEffect} from "react";
 import { usernameValue } from '../Login';
 import axios from 'axios';
@@ -18,7 +18,6 @@ const ChildSelection = ({navigation}) => {
       .then((response) => {
         const recData = response.data;
         setChildData(recData);
-        //console.log("child data", recData);
       })
       .catch((error) => {
         console.log('Error fetching child data:', error);
@@ -48,7 +47,6 @@ const ChildSelection = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.userInfoSection}>
-
           <View style={styles.headerContainer}>
               <Text style={styles.header}>Child Pickup Selection</Text>
               <Text style={styles.subheader}>Please select a profile you would like to choose a pickup slot for</Text>
@@ -74,7 +72,6 @@ const ChildSelection = ({navigation}) => {
                         <Title style={styles.title}>
                           {child.firstName} {child.lastName}
                         </Title>
-                        {/*<Caption style={styles.caption}>{child.grade}</Caption> */}
                       </View>
                     </View>
                   </Card>
@@ -90,7 +87,7 @@ const ChildSelection = ({navigation}) => {
 
 export default ChildSelection;
 
-{/* styling for profile */}
+// styling
 const styles = StyleSheet.create({
   container: {
     flex: 1,
