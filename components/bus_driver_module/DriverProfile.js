@@ -8,6 +8,7 @@ import axios from 'axios';
 import { usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //driver profile
 const DriverProfile = ({navigation}) => {
@@ -125,6 +126,16 @@ const DriverProfile = ({navigation}) => {
       console.log('Error while picking image:', error);
     }
   };
+  
+  //clear local async storage data
+  const deleteData = async () => {
+    try {
+      await AsyncStorage.clear();
+    } catch (err) {
+      console.error("Error deleteing data:", err);
+    }
+  };
+
 
   //if user do not have an image, display default image
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
@@ -211,7 +222,8 @@ const DriverProfile = ({navigation}) => {
             />
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn}>
+          <TouchableOpacity onPress={() => { deleteData();
+          navigation.navigate('Landing')}} style={styles.logoutBtn}>
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
         </View>

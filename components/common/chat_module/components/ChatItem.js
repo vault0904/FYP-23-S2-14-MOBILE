@@ -1,25 +1,60 @@
 //import libaries
-import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import Logo from '../../picture/default.jpg'
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {Avatar} from 'react-native-paper'
+import React from 'react';
 
 // ChatListItem is to display the chat messages on main chat page 
 // this is the page to style how each chat segment on main page looks like
 
 const ChatListItem = ({ chat }) => {
-    const navigation = useNavigation(); 
+    const navigation = useNavigation();
+    // const URL = 'wss://uhzn5l19x1.execute-api.ap-southeast-1.amazonaws.com/prod';
+    // const thisUser = usernameValue;
+    
+    // // Create a persistent reference to the WebSocket connection using useRef
+    // const socketRef = useRef(null);
+
+    // const setConnect = async () => {
+    //     console.log("user is going to be connected");
+
+    //     if (!socketRef.current) {
+    //         try {
+    //             const connection = {
+    //                 action: 'setName',
+    //                 name: thisUser,
+    //             };
+
+    //             // Initialize the WebSocket connection
+    //             socketRef.current = new WebSocket(URL);
+
+    //             socketRef.current.onopen = () => {
+    //                 socketRef.current.send(JSON.stringify(connection));
+    //             };
+    //             socketRef.current.onerror = (error) => {
+    //                 console.error("Error establishing connection with socket URL!", error);
+    //             };
+    //         } catch (error) {
+    //             console.error("Error establishing connection", error);
+    //         }
+    //     }socket: socketRef.current 
+    //setConnect();
 
     return(
-        <TouchableOpacity onPress={() => navigation.navigate('Chat Messages', { id: chat.id, name: chat.user.name})} style={styles.container}>
-            <Image source={Logo} 
-            style={styles.image}
+        <TouchableOpacity 
+        onPress={() => {  
+        navigation.navigate('Chat Messages', 
+        { id: chat.id, name: chat.name})}} style={styles.container}>
+            <Avatar.Image
+            source={require('../../picture/default.jpg')}
+            size={70}
             />
 
             <View style={styles.content}>
                 {/* user name and time */}
                 <View style={styles.row}>
                     <Text style={styles.name} numberOfLines={1}>
-                        {chat.user.name}
+                        {chat.name}
                     </Text>
                     <Text style={styles.subTitle}>
                         {chat.lastMessage.receivedAt}

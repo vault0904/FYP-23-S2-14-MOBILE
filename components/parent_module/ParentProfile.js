@@ -9,6 +9,7 @@ import axios from 'axios';
 import { usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //parent profile
 const ParentProfile = ({ navigation }) => {
@@ -136,6 +137,15 @@ const ParentProfile = ({ navigation }) => {
     }
   };
 
+  //clear local async storage data
+  const deleteData = async () => {
+    try {
+      await AsyncStorage.clear();
+    } catch (err) {
+      console.error("Error deleteing data:", err);
+    }
+  };
+
   //if user do not have an image, display default image
   const imageSource = userData.imageURI ? { uri: userData.imageURI } : require('../common/picture/default.jpg');
 
@@ -234,7 +244,8 @@ const ParentProfile = ({ navigation }) => {
           </View>
 
           {/* logout button */}
-          <TouchableOpacity onPress={() => navigation.navigate('Landing')} style={styles.logoutBtn}>
+          <TouchableOpacity onPress={() => { deleteData();
+          navigation.navigate('Landing')}} style={styles.logoutBtn}>
             <Text style={styles.btnText}>Logout</Text>
           </TouchableOpacity>
 

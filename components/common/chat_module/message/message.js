@@ -1,21 +1,42 @@
 //import libaries
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
+import { usernameValue } from '../../../Login';
 
+//message displaying GUI
+//to display messages send by user, and messages received
 const Message = ({ message }) => {
-    
+    const thisUser = usernameValue;
     // define function for whose message it is
-    const isMyMessage = () => {
-        return message.user.id === 'u1';
+
+    const isPublicMessage = () => {
+        return message.msgType === 'publicMessage';
     };
+
+    const isMyMessage = () => {
+        return isPublicMessage() && message.sender === thisUser;
+    };
+
+    const donotDisplay = () => {
+        if (message.msgType === 'systemMessage' && message.message.includes(thisUser)) {
+            return false;
+        }
+        return !isPublicMessage() || (message.sender !=='system');
+    };
+
+    if (!donotDisplay()) {
+        return null;
+    }
 
     return (
         <View style={[styles.container, {
             backgroundColor: isMyMessage() ? '#85b678' : '#bc8095',
             alignSelf:isMyMessage() ? 'flex-end' :'flex-start'
         }]}>
-            <Text> {message.text} </Text>
-            <Text style={styles.time}> {message.createdAt} </Text>
+            <Text style = {styles.header}>
+            {message.sender === thisUser? "me": message.sender}</Text>
+            <Text> {message.message} </Text>
+            <Text style={styles.time}> {message.timestamp} </Text>
         </View>
     );
 };
@@ -42,6 +63,10 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         fontSize: 13,
         marginTop: 2
+    },
+    header: {
+        fontWeight: 'bold',
+        textTransform: 'capitalize'
     },
 })
 
