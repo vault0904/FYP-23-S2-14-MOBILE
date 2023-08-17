@@ -3,7 +3,6 @@ import ChatListItem from '../components/ChatItem';
 
 // this page is to generate all the chats on the main chat page
 // displays all past conversations between parties
-
 // ChatScreen displays the ChatItem dynamically as a flatlist
 const ChatsScreen = () => {
     //hard coded public channel
@@ -18,6 +17,7 @@ const ChatsScreen = () => {
             }
         }
     ]
+    
     return (
         // calls the styled chat box from chat item and passes through a flat list
         // with params to display above past chat details

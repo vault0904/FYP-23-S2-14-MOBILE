@@ -132,7 +132,7 @@ const DriverProfile = ({navigation}) => {
     try {
       await AsyncStorage.clear();
     } catch (err) {
-      console.error("Error deleteing data:", err);
+      return null;
     }
   };
 

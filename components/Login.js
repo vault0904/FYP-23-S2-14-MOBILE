@@ -1,6 +1,8 @@
 //importing libaries
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableWithoutFeedback, Keyboard,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, 
+  TouchableWithoutFeedback, Keyboard,
+  Platform,TouchableOpacity,KeyboardAvoidingView } from 'react-native';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
 
@@ -85,8 +87,10 @@ const Login = ({ navigation }) => {
           if (response.data.success) {
             const userLName = response.data.LName;
             const userVendor = response.data.vendorID;
+            const thisSchools = response.data.schoolIDs
             userLastName = userLName;
             userVendorID = userVendor;
+            userSchoolID = thisSchools;
             navigation.navigate('ScreenNav', {userType});
           } else {
             console.log(response.data.error);
@@ -104,10 +108,19 @@ const Login = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
+  //original keyboard view
+  /*<KeyboardAvoidingView 
+      style={styles.container} 
+      behavior="position" 
+      keyboardVerticalOffset={0}>*/
+
   // Display
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <KeyboardAvoidingView style={styles.container} behavior="position" keyboardVerticalOffset={0}>
+      <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior= {Platform.OS === 'ios' ? 'position' : 'height'}
+      keyboardVerticalOffset={Platform.os === 'ios' ? 0 : -100}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>MARSUPIUM</Text>
         </View>

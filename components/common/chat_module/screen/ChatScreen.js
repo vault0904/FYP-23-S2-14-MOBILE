@@ -5,36 +5,42 @@ import { MaterialIcons } from '@expo/vector-icons';
 import bg from '../../picture/BG.png';
 import Message from '../message/message';
 import { useNavigation } from '@react-navigation/native';
-import { usernameValue } from '../../../Login';
+import { usernameValue, userSchoolID } from '../../../Login';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+//main chat function
 const ChatScreen = ({ route }) => {
   const navigation = useNavigation();
   //socket ref to use same connectionID 
   const socketRef = useRef(null);
   const flatListRef = useRef(null);
   const thisUser = usernameValue;
+  const thisschools = userSchoolID;
+  const schoolArray = Array.isArray(thisschools) ? thisschools : [thisschools];
   const [outboundMsg, setOutboundMsg] = useState('');
   const [displayMsg, setDisplayMsg] = useState([]);
   const [newMsg, setnewMsg] = useState(false);
-  console.log("display msg", displayMsg);
-
+  //web socket URL
   const URL = 'wss://uhzn5l19x1.execute-api.ap-southeast-1.amazonaws.com/prod';
 
-  const establishConnection = async () => {
+  const setConnection = async () => {
     if (!socketRef.current) {
       try {
+        let schoolNames;
+        if (Array.isArray(thisschools)) {
+          schoolNames = thisschools.join('--');
+        } else {
+          schoolNames = thisschools;
+        }
         const connection = {
           action: 'setName',
-          name: thisUser,
+          name: `${thisUser}--${schoolNames}`,
         };
 
         socketRef.current = new WebSocket(URL);
-        
         socketRef.current.onopen = () => {
           socketRef.current.send(JSON.stringify(connection));
         };
-
         socketRef.current.onerror = (error) => {
           console.error("Error establishing connection with socket URL!", error);
         };
@@ -44,30 +50,41 @@ const ChatScreen = ({ route }) => {
             const receivedMsg = JSON.parse(event.data);
 
             if (receivedMsg.systemMessage) {
-              const systemMsg = {
-                msgType: 'systemMessage',
-                sender: 'system',
-                message: receivedMsg.systemMessage,
-                timestamp: new Date().toLocaleDateString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-                })
-              };
-              setDisplayMsg(prevMsg => [...prevMsg, systemMsg]);
+              console.log("received msg0", receivedMsg.systemMessage);
+              if (schoolArray.some(school => receivedMsg.systemMessage.includes(school))) {
+                const [senderSchool, message] = receivedMsg.systemMessage.split(' has');
+                const sender = senderSchool.split('--')[0];
+                const systemMsg = {
+                  msgType: 'systemMessage',
+                  sender: 'system',
+                  message: `${sender} has${message}`,
+                  timestamp: new Date().toLocaleDateString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })
+                };
+                console.log("saving msg0", systemMsg);
+                setDisplayMsg(prevMsg => [...prevMsg, systemMsg]);
+              }
             } else if (receivedMsg.publicMessage) {
-              const [sender, message] = receivedMsg.publicMessage.split(": ");
-              const publicMsg = { 
-                msgType: "publicMessage",
-                sender: sender,
-                message: message,
-                timestamp: new Date().toLocaleDateString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-                })
-              };
-              setDisplayMsg(prevMsg => [...prevMsg, publicMsg]);
+              console.log("received msg1", receivedMsg.publicMessage);
+                const [senderSchool, message] = receivedMsg.publicMessage.split(": ");
+                const sender = senderSchool.split("--")[0];
+                if (schoolArray.some(school => senderSchool.includes(school))) {
+                  const publicMsg = { 
+                  msgType: "publicMessage",
+                  sender: sender,
+                  message: message,
+                  timestamp: new Date().toLocaleDateString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })
+                };
+                console.log("saving msg0", publicMsg);
+                setDisplayMsg(prevMsg => [...prevMsg, publicMsg]);
+              }
             }
           } catch (error) {
             console.error("Error receiving data:", error);
@@ -79,6 +96,7 @@ const ChatScreen = ({ route }) => {
     }
   };
 
+  //close the websocket connection
   const closeConnect = () => {
     if (socketRef.current) {
         socketRef.current.close();
@@ -86,7 +104,7 @@ const ChatScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    establishConnection();
+    setConnection();
     navigation.setOptions({ title: route.params.name });
     loadData();
 
@@ -106,6 +124,7 @@ const ChatScreen = ({ route }) => {
     saveData();
   }, [displayMsg]);
 
+  //save data to local storage
   const saveData = async() => {
     try {
       await AsyncStorage.setItem('displayMsg', JSON.stringify(displayMsg));
@@ -114,6 +133,7 @@ const ChatScreen = ({ route }) => {
     }
   };
 
+  //load local storage data
   const loadData = async () => {
     try {
       const saveData = await AsyncStorage.getItem('displayMsg');
@@ -125,6 +145,7 @@ const ChatScreen = ({ route }) => {
     }
   };
 
+  //send message function
   const onSend = async () => {
     if (outboundMsg.trim() === '') {
       return;
@@ -135,7 +156,6 @@ const ChatScreen = ({ route }) => {
         action: 'sendPublic',
         message: outboundMsg,
       };
-
       if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify(messageData));
         setOutboundMsg('');
@@ -147,10 +167,12 @@ const ChatScreen = ({ route }) => {
     }
   };
 
+  //dismiss keyboard
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
+  //display
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}

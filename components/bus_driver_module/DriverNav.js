@@ -151,9 +151,6 @@ function ChatStackScreen() {
                     title:"Chats",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="ios-chatbubbles-sharp" size={size} color={color} />
-                    ),
-                    headerRight: () => (
-                        <Entypo name="new-message" size={18} color={'white'} />
                     )
                 }}
             />

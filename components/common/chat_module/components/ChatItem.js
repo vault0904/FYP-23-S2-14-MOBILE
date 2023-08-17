@@ -9,36 +9,6 @@ import React from 'react';
 
 const ChatListItem = ({ chat }) => {
     const navigation = useNavigation();
-    // const URL = 'wss://uhzn5l19x1.execute-api.ap-southeast-1.amazonaws.com/prod';
-    // const thisUser = usernameValue;
-    
-    // // Create a persistent reference to the WebSocket connection using useRef
-    // const socketRef = useRef(null);
-
-    // const setConnect = async () => {
-    //     console.log("user is going to be connected");
-
-    //     if (!socketRef.current) {
-    //         try {
-    //             const connection = {
-    //                 action: 'setName',
-    //                 name: thisUser,
-    //             };
-
-    //             // Initialize the WebSocket connection
-    //             socketRef.current = new WebSocket(URL);
-
-    //             socketRef.current.onopen = () => {
-    //                 socketRef.current.send(JSON.stringify(connection));
-    //             };
-    //             socketRef.current.onerror = (error) => {
-    //                 console.error("Error establishing connection with socket URL!", error);
-    //             };
-    //         } catch (error) {
-    //             console.error("Error establishing connection", error);
-    //         }
-    //     }socket: socketRef.current 
-    //setConnect();
 
     return(
         <TouchableOpacity 
@@ -47,7 +17,7 @@ const ChatListItem = ({ chat }) => {
         { id: chat.id, name: chat.name})}} style={styles.container}>
             <Avatar.Image
             source={require('../../picture/default.jpg')}
-            size={70}
+            size={60}
             />
 
             <View style={styles.content}>

@@ -3,8 +3,7 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import {View,Text,StyleSheet,TextInput,FlatList,TouchableOpacity, Dimensions,} from "react-native";
 import axios from "axios";
 import { useIsFocused } from "@react-navigation/native";
-import { userSchoolID } from "../Login";
-import { usernameValue } from '../Login';
+import { userSchoolID , usernameValue} from "../Login";
 
 const Item = ({ message }) => (
   <View style={styles.item}>
@@ -208,6 +207,11 @@ const ParentHome = ({ navigation }) => {
               editable={false}
             />
           </View>
+          <TouchableOpacity
+            key = "viewMap"
+            onPress = {() => navigation.navigate("")}>
+            <Text style = {StyleSheet.btnText}>View Map</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
