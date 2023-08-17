@@ -1,6 +1,6 @@
 //import libaries
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import { userSchoolID, usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
@@ -15,6 +15,38 @@ const Item = ({message}) => (
 );
 
 const TeacherHome = ({navigation}) => {
+
+// dummy details for bus pick up  
+const pickupDetails = [
+  {
+    driver: 'Geode',
+  },
+  {
+    driver: 'Gyasi',
+  },
+]
+  // dummy driver list 
+const listTab = [
+  {
+    key: 1,
+    driver: 'Geode'
+  },
+  {
+    key: 2,
+    driver: 'Gyasi'
+  }
+]
+
+  // driver selection tab for pickup details
+  const [driver, setDriver] = useState()
+  const [pickup, setPickupList] = useState()
+  
+  // filter for pickup details 
+  const setDriverFilter = driver => {
+      setPickupList([...pickupDetails.filter(e => e.driver == driver)])
+      setDriver(driver)
+  }
+
   //date setting for current date
   const today = new Date();
   const year = today.getFullYear();
@@ -79,26 +111,44 @@ const TeacherHome = ({navigation}) => {
     );
   };
 
+    // display for each pickup detail
+    const renderItems = ({ item, index }) => {
+      return (
+        <View key={index}>
+          <View>
+            {/* button for location */}
+            <TouchableOpacity
+              key = "viewMap"
+              onPress = {() => navigation.navigate("ViewLocation")}
+              style={styles.locationBtn}>
+              <Text style = {styles.locationText}>View Map</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    };
+  
+
   //display
   return(
-          <View style={styles.container}>
-              <View style={styles.upperRow}>
+      <View style={styles.container}>
+        <View style={styles.upperRow}>
                   
-                  {/* header */}
-                  <Text style={styles.header}>News & Notices</Text>
-                  <TouchableOpacity key='View More'
-                      onPress={() => navigation.navigate('TeacherAnnouncementPage')}
-                  >
-                      <Text style={styles.btnText}>View More</Text>
-                  </TouchableOpacity> 
-              </View>
-              <View style={styles.list}>
-                  <FlatList 
-                  data={announcements}
-                  renderItem={({item}) => <Item message={item.message} />}
-                  keyExtractor={(item) => item.ann_ID.toString()}
-                  />
-              </View>
+          {/* header */}
+          <Text style={styles.header}>News & Notices</Text>
+            <TouchableOpacity key='View More'
+                onPress={() => navigation.navigate('TeacherAnnouncementPage')}
+            >
+          <Text style={styles.btnText}>View More</Text>
+          </TouchableOpacity> 
+        </View>
+        <View style={styles.list}>
+          <FlatList 
+            data={announcements}
+            renderItem={({item}) => <Item message={item.message} />}
+            keyExtractor={(item) => item.ann_ID.toString()}
+          />
+        </View>
       <Text style={styles.header}>Today's gate details{'\t\t\t'}{todayDate}</Text>
       <View>
         <View style={styles.row}>
@@ -120,6 +170,31 @@ const TeacherHome = ({navigation}) => {
           />
         </View>
       </View>
+
+      {/* tabs */}
+      <Text style={styles.busHeader}>Bus driver details</Text>
+      {listTab.length > 0 && ( // Check if listTab is not empty
+        <View style={styles.listTab}>
+          {listTab.map( e => (
+            <TouchableOpacity
+              key={e.key}
+              style={[styles.btnTab, driver === e.driver && styles.btnTabActive]}
+              onPress={() => setDriverFilter(e.driver)}
+            >
+              <Text style={[styles.textTab, driver === e.driver && styles.textTabActive]}>
+                {e.driver}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+  
+      {/* pickup details */}
+      <FlatList
+        data={pickup}
+        keyExtractor={(e, i) => i.toString()}
+        renderItem={renderItems}
+      />
   </View>
   )
 };
@@ -137,6 +212,13 @@ const styles = StyleSheet.create({
     color: '#56844B',
     marginTop: 30,
     marginBottom: 10,
+    marginLeft: 20 
+  },
+  busHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#56844B',
+    marginTop: 15,
     marginLeft: 20 
   },
   gate: {
@@ -229,6 +311,40 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginTop: 20
+  },
+  listTab: {
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    marginBottom: 20,
+    marginTop: 15
+  },
+  btnTab: {
+    width: Dimensions.get('window').width / 4.5,
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#844b5f',
+    padding: 10,
+    justifyContent: 'center',
+    borderRadius: 8, 
+    marginLeft: 10
+  },
+  btnTabActive: {
+    backgroundColor: '#844b5f',
+  },
+  textTab: {
+    color: '#844b5f',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  textTabActive: {
+    color: '#ffffff'
+  },
+  locationBtn: {
+    marginHorizontal: 15, 
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10
   },
   locationText : {
     textAlign: 'center',
