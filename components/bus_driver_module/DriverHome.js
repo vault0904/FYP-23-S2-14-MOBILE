@@ -118,7 +118,15 @@ const DriverHome = ({ navigation }) => {
           <TextInput style={styles.input} value={jobDetails?.dropoff_Region} editable={false} />
         </View>
 
-      </View>
+        {/* button for location */}
+        <TouchableOpacity
+            key = "viewMap"
+            onPress = {() => navigation.navigate("ViewLocation")}
+            style={styles.locationBtn}>
+            <Text style = {styles.locationText}>View Map</Text>
+        </TouchableOpacity>
+        
+    </View>
   );
 }
 
@@ -213,5 +221,18 @@ const styles = StyleSheet.create({
       color: '#56844B',
       marginTop: 35,
       marginLeft: 150 
+  },
+  locationBtn: {
+    marginHorizontal: 15, 
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 20
+  },
+  locationText : {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15
   }
 });

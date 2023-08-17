@@ -19,6 +19,7 @@ import {userLastName} from '../Login';
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
 //import MapView from '../common/MapView';
+import ViewLocation from '../common/ViewLocation'
 
 
 const AnnouncementStack = createNativeStackNavigator();
@@ -153,6 +154,7 @@ function ChildProfileStackScreen() {
     );
 }
 
+// AnnouncementStackScreen keeps code for sub pages in Parents Home Page 
 function AnnouncementStackScreen() {
     //setting last name of user from login
     const Lname = userLastName;
@@ -175,6 +177,14 @@ function AnnouncementStackScreen() {
           component={ParentHome}
           options={{
             title: "Welcome, "+ Lname
+          }}
+        />
+        {/* location map */}
+        <AnnouncementStack.Screen 
+          name="ViewLocation" 
+          component={ViewLocation}
+          options={{
+            title: "Live Location"
           }}
         />
         {/* page to route to from main */}

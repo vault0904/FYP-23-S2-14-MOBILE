@@ -207,10 +207,13 @@ const ParentHome = ({ navigation }) => {
               editable={false}
             />
           </View>
+
+          {/* button for location */}
           <TouchableOpacity
             key = "viewMap"
-            onPress = {() => navigation.navigate("")}>
-            <Text style = {StyleSheet.btnText}>View Map</Text>
+            onPress = {() => navigation.navigate("ViewLocation")}
+            style={styles.locationBtn}>
+            <Text style = {styles.locationText}>View Map</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -402,5 +405,18 @@ const styles = StyleSheet.create({
     },
     textTabActive: {
       color: '#ffffff'
+    },
+    locationBtn: {
+      marginHorizontal: 15, 
+      backgroundColor: '#56844B',
+      padding: 10,
+      borderRadius: 8,
+      marginTop: 20
+    },
+    locationText : {
+      textAlign: 'center',
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 15
     }
 });

@@ -222,5 +222,18 @@ const styles = StyleSheet.create({
     color: '#56844B',
     marginTop: 33,
     marginLeft: 145 
+  },
+  locationBtn: {
+    marginHorizontal: 15, 
+    backgroundColor: '#56844B',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 20
+  },
+  locationText : {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15
   }
 });
