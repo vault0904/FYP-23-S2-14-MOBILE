@@ -16,7 +16,7 @@ import TeacherAnnouncements from '../common/TeacherAnnouncements';
 import StudentQR from './StudentQR';
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
-import ViewLocation from '../common/ViewLocation'
+import ViewLocation from '../common/ViewLocation';
 
 //announcement stack screen
 const AnnouncementStack = createNativeStackNavigator();

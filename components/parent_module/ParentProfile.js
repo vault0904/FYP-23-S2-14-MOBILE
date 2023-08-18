@@ -44,7 +44,7 @@ const ParentProfile = ({ navigation }) => {
   if (!userData) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
+        <Text style = {styles.loadingText}>Loading...</Text>
       </View>
     );
   }
@@ -379,5 +379,14 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     fontWeight: 'bold'
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 3 * 16,
+    fontWeight: 'bold',
   },
 });

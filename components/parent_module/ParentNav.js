@@ -18,8 +18,7 @@ import Subscriptionpage from './subscription_module/SubscriptionPage';
 import {userLastName} from '../Login';
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
-//import MapView from '../common/MapView';
-import ViewLocation from '../common/ViewLocation'
+import ViewLocation from '../common/ViewLocation';
 
 
 const AnnouncementStack = createNativeStackNavigator();
@@ -154,7 +153,6 @@ function ChildProfileStackScreen() {
     );
 }
 
-// AnnouncementStackScreen keeps code for sub pages in Parents Home Page 
 function AnnouncementStackScreen() {
     //setting last name of user from login
     const Lname = userLastName;
@@ -173,9 +171,9 @@ function AnnouncementStackScreen() {
       >
         {/* main page */}
         <AnnouncementStack.Screen 
-          name="ParentHome" 
-          component={ParentHome}
-          options={{
+            name="ParentHome" 
+            component={ParentHome}
+            options={{
             title: "Welcome, "+ Lname
           }}
         />
@@ -189,9 +187,9 @@ function AnnouncementStackScreen() {
         />
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
-          name="ParentAnnouncementPage" 
-          component={ParentAnnouncements} 
-          options={{
+            name="ParentAnnouncementPage" 
+            component={ParentAnnouncements} 
+            options={{
             title:"Announcements"
           }}
         />

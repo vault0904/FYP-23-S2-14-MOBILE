@@ -5,11 +5,9 @@ import {Avatar} from 'react-native-paper'
 import React from 'react';
 
 // ChatListItem is to display the chat messages on main chat page 
-// this is the page to style how each chat segment on main page looks like
-
 const ChatListItem = ({ chat }) => {
     const navigation = useNavigation();
-
+    //display
     return(
         <TouchableOpacity 
         onPress={() => {  
@@ -39,7 +37,7 @@ const ChatListItem = ({ chat }) => {
         </TouchableOpacity>
     )
 };
-
+// styling
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',

@@ -14,7 +14,7 @@ import DriverAnnouncements from '../common/DriverAnnouncements';
 import {userLastName} from '../Login';
 import ChatsScreen from '../common/chat_module/screen/ChatsScreen';
 import ChatScreen from '../common/chat_module/screen/ChatScreen';
-import ViewLocation from '../common/ViewLocation'
+import ViewLocation from '../common/ViewLocation';
 
 {/* stack navigation between profile and edit profile page */}
 const ProfileStack = createNativeStackNavigator();
@@ -115,7 +115,6 @@ function AnnouncementStackScreen() {
             title: "Welcome, "+ Lname
           }}
         />
-
         {/* location map */}
         <AnnouncementStack.Screen 
           name="ViewLocation" 
@@ -124,7 +123,6 @@ function AnnouncementStackScreen() {
             title: "Live Location"
           }}
         />
-  
         {/* page to route to from main */}
         <AnnouncementStack.Screen 
           name="DriverAnnouncementPage" 

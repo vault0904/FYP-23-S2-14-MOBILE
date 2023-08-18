@@ -21,7 +21,7 @@ const ChatScreen = ({ route }) => {
   const [displayMsg, setDisplayMsg] = useState([]);
   const [newMsg, setnewMsg] = useState(false);
   //web socket URL
-  const URL = 'wss://uhzn5l19x1.execute-api.ap-southeast-1.amazonaws.com/prod';
+  const URL = 'wss://nuhyx0cvg8.execute-api.ap-southeast-1.amazonaws.com/prod';
 
   const setConnection = async () => {
     if (!socketRef.current) {
@@ -50,7 +50,6 @@ const ChatScreen = ({ route }) => {
             const receivedMsg = JSON.parse(event.data);
 
             if (receivedMsg.systemMessage) {
-              console.log("received msg0", receivedMsg.systemMessage);
               if (schoolArray.some(school => receivedMsg.systemMessage.includes(school))) {
                 const [senderSchool, message] = receivedMsg.systemMessage.split(' has');
                 const sender = senderSchool.split('--')[0];
@@ -64,11 +63,9 @@ const ChatScreen = ({ route }) => {
                     second: '2-digit'
                   })
                 };
-                console.log("saving msg0", systemMsg);
                 setDisplayMsg(prevMsg => [...prevMsg, systemMsg]);
               }
             } else if (receivedMsg.publicMessage) {
-              console.log("received msg1", receivedMsg.publicMessage);
                 const [senderSchool, message] = receivedMsg.publicMessage.split(": ");
                 const sender = senderSchool.split("--")[0];
                 if (schoolArray.some(school => senderSchool.includes(school))) {
@@ -82,7 +79,6 @@ const ChatScreen = ({ route }) => {
                     second: '2-digit'
                   })
                 };
-                console.log("saving msg0", publicMsg);
                 setDisplayMsg(prevMsg => [...prevMsg, publicMsg]);
               }
             }
@@ -214,6 +210,7 @@ const ChatScreen = ({ route }) => {
   );
 };
 
+// styling
 const styles = StyleSheet.create({
     bg: {
         flex: 1

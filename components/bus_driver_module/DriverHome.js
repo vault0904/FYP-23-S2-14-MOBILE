@@ -1,9 +1,10 @@
 //import new libaries
-import React, { useEffect, useState, useLayoutEffect} from "react";
+import React, { useEffect, useState, useLayoutEffect, useRef} from "react";
 import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import { userVendorID, usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
+import * as Location from 'expo-location';
 
 const Item = ({message}) => (
   <View style={styles.item}>
@@ -12,6 +13,9 @@ const Item = ({message}) => (
 );
 
 const DriverHome = ({ navigation }) => {
+  //web socket URL
+  const URL = 'wss://nuhyx0cvg8.execute-api.ap-southeast-1.amazonaws.com/prod';
+  const socketRef = useRef(null);
   //date setting for current date
   const today = new Date();
   const year = today.getFullYear();
@@ -57,8 +61,66 @@ const DriverHome = ({ navigation }) => {
       });
   };
 
+  const setUpConnect = () => {
+    if (!socketRef.current) {
+      try {
+        socketRef.current= new WebSocket(URL);
+
+        socketRef.current.onopen = () => {
+          const connection = {
+            action: 'setUsers',
+            username: usernameValue,
+          };
+          socketRef.current.send(JSON.stringify(connection));
+        };
+      } catch (err) {
+        console.error("Error establishing connection", err);
+      }
+    }
+  };
+
+  const sendLocationData = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({
+        enableHighAccuracy: true,
+      });
+  
+      const latitude = location.coords.latitude;
+      const longitude = location.coords.longitude;
+  
+      const messageData = {
+        action: 'sendLocation',
+        location: `${latitude}-${longitude}`,
+      };
+  
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify(messageData));
+      } else {
+        console.error("WebSocket connection is not open.");
+      }
+    } catch (error) {
+      console.error("Error sending location data", error);
+    }
+  };
+
   useEffect(() => {
+    setUpConnect();
     fetchData();
+    const interval = setInterval(() => {
+      sendLocationData();
+    }, 4000);
+
+    return () => {
+      clearInterval(interval)
+      if(socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -70,7 +132,7 @@ const DriverHome = ({ navigation }) => {
   if (!announcements && !jobDetails) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
+        <Text style = {styles.loadingText}>Loading...</Text>
       </View>
     );
   }
@@ -117,16 +179,15 @@ const DriverHome = ({ navigation }) => {
           <Text style={styles.label}>Region</Text>
           <TextInput style={styles.input} value={jobDetails?.dropoff_Region} editable={false} />
         </View>
-
         {/* button for location */}
         <TouchableOpacity
             key = "viewMap"
-            onPress = {() => navigation.navigate("ViewLocation")}
+            onPress = {() => 
+            navigation.navigate("ViewLocation", {driverID: thisDriver})}
             style={styles.locationBtn}>
             <Text style = {styles.locationText}>View Map</Text>
         </TouchableOpacity>
-        
-    </View>
+      </View>
   );
 }
 
@@ -234,5 +295,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 15
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 3 * 16,
+    fontWeight: 'bold',
+  },
 });

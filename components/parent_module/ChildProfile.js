@@ -56,7 +56,7 @@ const ChildProfile = () => {
     if (!thisChildData) {
       return (
         <View style={styles.loadingContainer}>
-          <Text>Loading...</Text>
+          <Text style = {styles.loadingText}>Loading...</Text>
         </View>
       );
     }
@@ -323,5 +323,14 @@ const styles = StyleSheet.create({
   qrContainer: {
     marginHorizontal: '25%',
     marginTop: 35
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 3 * 16,
+    fontWeight: 'bold',
+  },
 });

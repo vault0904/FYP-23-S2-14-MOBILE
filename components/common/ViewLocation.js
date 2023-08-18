@@ -1,35 +1,82 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useRef} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
+import { useRoute } from '@react-navigation/native';
+import { usernameValue } from '../Login';
 
-export default function App() {
+export default function LocationDisplay() {
+  const route = useRoute();
+  const {driverID} = route.params;
+  const thisUser = usernameValue;
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  //web socket URL
+  const URL = 'wss://nuhyx0cvg8.execute-api.ap-southeast-1.amazonaws.com/prod';
+  const socketRef = useRef(null);
+
+  const getLocation = async() => {
+    if(!socketRef.current) {
+      const connection = {
+        action: 'setUsers',
+        username: thisUser,
+      };
+
+      socketRef.current = new WebSocket(URL);
+      socketRef.current.onopen = () => {
+        socketRef.current.send(JSON.stringify(connection));
+      };
+
+      socketRef.current.onerror = (error) => {
+        console.error("Error establishing connection with socket URL!", error);
+      };
+
+      socketRef.current.onmessage = (event) => {
+        try {
+          const receivedMsg = JSON.parse(event.data);
+          if (receivedMsg.locationMessage) {
+            const [sender, locationData] = receivedMsg.locationMessage.split(': ');
+            if (sender === driverID) {
+              const [latitude, longitude] =  locationData.split('-').map(parseFloat);
+              console.log("received location", locationData);
+              setLocation ( {
+                latitude,
+                longitude,
+                latitudeDelta: 0.009,
+                longitudeDelta: 0.009,
+              });
+              setIsLoading(false);
+            }
+          }
+        } catch (error) {
+          console.error("Error establishing connection", error);
+        }
+      }
+    }
+  };
+
+  const closeConnection = () => {
+    if (socketRef.current) {
+      socketRef.current.close();
+      socketRef.current = null;
+    }
+  }
 
   useEffect(() => {
-    getLiveLocation();
+    getLocation();
+
+    return () => {
+      closeConnection();
+    };
   }, []);
 
-  const getLiveLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setErrorMsg('Permission denied');
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({
-      enableHighAccuracy: true,
-    });
-
-    setLocation({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.09,
-      longitudeDelta: 0.09,
-    });
-  };
+  if (!location) {
+    return (
+      <View style = {styles.loadingContainer}>
+        <Text style = {styles.loadingText}>Loading data...</Text>
+      </View>
+    )
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -55,5 +102,14 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
     width: '100%',
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 3 * 16,
+    fontWeight: 'bold',
   },
 });

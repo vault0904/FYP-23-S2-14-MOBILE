@@ -57,7 +57,7 @@ const DriverList = ({ navigation }) => {
       if (!driverData) {
         return (
           <View style={styles.loadingContainer}>
-            <Text>Loading...</Text>
+            <Text style = {styles.loadingText}>Loading...</Text>
           </View>
         );
       }
@@ -130,5 +130,14 @@ const styles = StyleSheet.create({
         lineHeight: 14,
         fontWeight: '500',
         color: '#ffffff'
+    },
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    loadingText: {
+      fontSize: 3 * 16,
+      fontWeight: 'bold',
     },
 });

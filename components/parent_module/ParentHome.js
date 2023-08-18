@@ -120,7 +120,7 @@ const ParentHome = ({ navigation }) => {
   if (!announcements && !thisSelfData && !thisBusData) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
+        <Text style = {styles.loadingText}>Loading...</Text>
       </View>
     );
   }
@@ -142,6 +142,9 @@ const ParentHome = ({ navigation }) => {
     return (
       <View key={index}>
         <View>
+          <Text style={{ marginHorizontal: 16, fontSize: 20, fontWeight: 'bold', color: '#844b5f', marginBottom: 10 }}>
+            {item.key}
+          </Text>
           <View style={styles.row}>
             <Text style={styles.label}>Time</Text>
             <TextInput
@@ -204,14 +207,16 @@ const ParentHome = ({ navigation }) => {
               editable={false}
             />
           </View>
-
           {/* button for location */}
-          <TouchableOpacity
-            key = "viewMap"
-            onPress = {() => navigation.navigate("ViewLocation")}
-            style={styles.locationBtn}>
+          {item.setMode === 'Bus Pickup' && (
+            <TouchableOpacity
+              key = "viewMap"
+              onPress = {() => 
+              navigation.navigate("ViewLocation", {driverID: item.driver_ID})}
+              style={styles.locationBtn}>
             <Text style = {styles.locationText}>View Map</Text>
           </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -277,7 +282,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#56844B',
         marginTop: 30,
-        marginBottom: 15,
+        marginBottom: 10,
         marginLeft: 20 
     },
     upperRow: {
@@ -380,8 +385,7 @@ const styles = StyleSheet.create({
     listTab: {
       flexDirection: 'row',
       marginHorizontal: 10,
-      marginBottom: 20,
-      marginTop: 5
+      marginBottom: 20
     },
     btnTab: {
       width: Dimensions.get('window').width / 4.5,
@@ -409,12 +413,21 @@ const styles = StyleSheet.create({
       backgroundColor: '#56844B',
       padding: 10,
       borderRadius: 8,
-      marginTop: 20
+      marginTop: 5
     },
     locationText : {
       textAlign: 'center',
       color: '#fff',
       fontWeight: 'bold',
       fontSize: 15
-    }
+    },
+    loadingContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    loadingText: {
+      fontSize: 3 * 16,
+      fontWeight: 'bold',
+    },
 });

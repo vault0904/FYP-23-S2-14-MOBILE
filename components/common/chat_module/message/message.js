@@ -28,6 +28,7 @@ const Message = ({ message }) => {
         return null;
     }
 
+    //display
     return (
         <View style={[styles.container, {
             backgroundColor: isMyMessage() ? '#85b678' : '#bc8095',
@@ -40,7 +41,7 @@ const Message = ({ message }) => {
         </View>
     );
 };
-
+// styling
 const styles = StyleSheet.create({
     container: {
         margin: 5,

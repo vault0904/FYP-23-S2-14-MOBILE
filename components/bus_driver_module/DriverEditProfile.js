@@ -36,8 +36,6 @@ const DriverEditProfile = () => {
             setEmail(userData.email);
             setContact(userData.contactNo);
             setAddress(userData.address);
-            setCompany(userData.vendor_Name);
-            setLicense(userData.license);
         })
         .catch((error) => {
             console.log('Error fetching data', error);
