@@ -1,6 +1,6 @@
 //import libaries
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Dimensions} from 'react-native';
 import axios from 'axios';
 import { userSchoolID, usernameValue } from '../Login';
 import { useIsFocused } from "@react-navigation/native";
@@ -14,7 +14,17 @@ const Item = ({message}) => (
     </View>
 );
 
+//main home function
 const TeacherHome = ({navigation}) => {
+  //set list tab data
+  const [listTab, setListTab] = useState([]);
+  const [driver, setDriver] = useState(null);
+  const [pickup, setPickupList] = useState([]);
+  const setDriverFilter = (selectedDriver) => {
+    setPickupList([...listTab.filter((e) => e.driver_ID === selectedDriver.driver_ID)]);
+    setDriver(selectedDriver.driver_ID);
+  };
+
   //date setting for current date
   const today = new Date();
   const year = today.getFullYear();
@@ -59,6 +69,25 @@ const TeacherHome = ({navigation}) => {
       .catch((error) => {
         console.log("Error fetching data", error);
       })
+
+    axios
+      .get('https://h4uz91dxm6.execute-api.ap-southeast-1.amazonaws.com/dev/api/get/teacher/homedrivers', {
+        params: {
+          datetime: todayDate,
+          schoolID: thisSchool,
+        },
+      })
+      .then((response) => {
+        const recDriverData = response.data;
+        if (recDriverData && recDriverData.length > 0) {
+          setListTab(recDriverData);
+        } else {
+          setListTab([]);
+        }
+      })
+      .catch((error) => {
+        console.log("Error fetching driver data", error);
+      });
   };
 
   useEffect(() => {
@@ -74,54 +103,103 @@ const TeacherHome = ({navigation}) => {
   if (!announcements && !gateDetails) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style = {styles.loadingText}>Loading...</Text>
+        <Text>Loading...</Text>
       </View>
     );
   };
 
+  // display for each detail
+  const renderItems = ({ item, index }) => {
+    return (
+      <View key={index}>
+        <View>
+          {/* button for location */}
+          <TouchableOpacity
+            key = "viewMap"
+            onPress = {() => navigation.navigate("ViewLocation", {driverID: item.driver_ID})}
+            style={styles.locationBtn}>
+            <Text style = {styles.locationText}>View Map</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+  
   //display
   return(
-          <View style={styles.container}>
-              <View style={styles.upperRow}>
-                  
-                  {/* header */}
-                  <Text style={styles.header}>News & Notices</Text>
-                  <TouchableOpacity key='View More'
-                      onPress={() => navigation.navigate('TeacherAnnouncementPage')}
-                  >
-                      <Text style={styles.btnText}>View More</Text>
-                  </TouchableOpacity> 
-              </View>
-              <View style={styles.list}>
-                  <FlatList 
-                  data={announcements}
-                  renderItem={({item}) => <Item message={item.message} />}
-                  keyExtractor={(item) => item.ann_ID.toString()}
-                  />
-              </View>
-      <Text style={styles.header}>Today's gate details{'\t\t\t'}{todayDate}</Text>
-      <View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Gate ID</Text>
-          <TextInput
-            style={styles.input}
-            value={gateDetails && gateDetails.gate_ID ? gateDetails.gate_ID.toString() : ''}
-            editable={false}
-          />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.upperRow}>        
+        {/* header */}
+        <Text style={styles.header}>News & Notices</Text>
+        <TouchableOpacity key='View More'
+          onPress={() => navigation.navigate('TeacherAnnouncementPage')}
+          >
+        <Text style={styles.btnText}>View More</Text>
+        </TouchableOpacity> 
       </View>
-      <View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Gate</Text>
-          <TextInput
-            style={styles.input}
-            value={gateDetails?.gate_Name}
-            editable={false}
-          />
-        </View>
+      <View style={styles.list}>
+        <FlatList 
+          data={announcements}
+          renderItem={({item}) => <Item message={item.message} />}
+          keyExtractor={(item) => item.ann_ID.toString()}
+        />
       </View>
+    <Text style={styles.header}>Today's gate details{'\t\t\t'}{todayDate}</Text>
+    <View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Gate ID</Text>
+        <TextInput
+          style={styles.input}
+          value={gateDetails && gateDetails.gate_ID ? gateDetails.gate_ID.toString() : ''}
+          editable={false}
+        />
+      </View>
+    </View>
+    <View>
+      <View style={styles.row}>
+        <Text style={styles.label}>Gate</Text>
+        <TextInput
+          style={styles.input}
+          value={gateDetails?.gate_Name}
+          editable={false}
+        />
+      </View>
+    </View>
+
+    {/* tabs */}
+    <Text style={styles.busHeader}>Bus driver details</Text>
+    {listTab.length > 0 && (
+      <View style={styles.listTab}>
+        {listTab.map((e) => (
+          <TouchableOpacity
+            key={e.driver_ID}
+            style={[
+              styles.btnTab,
+              driver === e.driver_ID && styles.btnTabActive,
+            ]}
+            onPress={() => setDriverFilter(e)}
+          >
+            <Text
+              style={[
+                styles.textTab,
+                driver === e.driver_ID && styles.textTabActive,
+              ]}
+            >
+              {e.fullName}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    )}
+
+    {/* flatlist details */}
+    <FlatList
+      data={pickup}
+      keyExtractor={(e, i) => i.toString()}
+      renderItem={renderItems}
+    />
   </View>
-  )
+  );
 };
 
 export default TeacherHome;
@@ -137,6 +215,13 @@ const styles = StyleSheet.create({
     color: '#56844B',
     marginTop: 30,
     marginBottom: 10,
+    marginLeft: 20 
+  },
+  busHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#56844B',
+    marginTop: 15,
     marginLeft: 20 
   },
   gate: {
@@ -223,12 +308,39 @@ const styles = StyleSheet.create({
     marginTop: 33,
     marginLeft: 145 
   },
+  listTab: {
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    marginBottom: 20,
+    marginTop: 15
+  },
+  btnTab: {
+    width: Dimensions.get('window').width / 4.5,
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#844b5f',
+    padding: 10,
+    justifyContent: 'center',
+    borderRadius: 8, 
+    marginLeft: 10
+  },
+  btnTabActive: {
+    backgroundColor: '#844b5f',
+  },
+  textTab: {
+    color: '#844b5f',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  textTabActive: {
+    color: '#ffffff'
+  },
   locationBtn: {
     marginHorizontal: 15, 
     backgroundColor: '#56844B',
     padding: 10,
     borderRadius: 8,
-    marginTop: 20
+    marginTop: 10
   },
   locationText : {
     textAlign: 'center',
@@ -236,7 +348,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15
   },
-  loadingContainer: {
+    loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
